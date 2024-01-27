@@ -1,8 +1,10 @@
-﻿namespace LionHeart.Core.Models;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class User
+namespace LionHeart.Core.Models;
+
+public class User : IdentityUser
 {
-    public string? Name { get; set; }
-    public string? Surname { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
     public decimal PersonalDiscount { get; set; } = 0;
 }

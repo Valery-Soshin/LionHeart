@@ -20,3 +20,22 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.nav-custom-item {
+    background-color: #212529;
+}
+
+.nav-custom-item a:hover {
+    background-color: #292f35;
+}
+
+.nav-btn-hover:hover {
+    background-color: #424d59;
+    color: white;
+}
+
+.custom-button:hover {
+    background-color: DarkSlateGrey;
+}
+
+
