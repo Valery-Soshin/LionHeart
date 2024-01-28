@@ -10,4 +10,6 @@ public class Product
     public int Quantity { get; set; }
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
+
+    public List<Feedback> Feedbacks { get; set; } = new();
 }

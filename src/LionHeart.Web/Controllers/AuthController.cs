@@ -8,11 +8,15 @@ namespace LionHeart.Web.Controllers;
 public class AuthController : Controller
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<User> _signInManager;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+    public AuthController(UserManager<User> userManager,
+                          RoleManager<IdentityRole> roleManager,
+                          SignInManager<User> signInManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _signInManager = signInManager;
     }
 
@@ -34,7 +38,7 @@ public class AuthController : Controller
 
             if (result.Succeeded)
             {
-                return View("GetUserProfile");
+                return Redirect("/Products/ListProducts");
             }
             else
             {
@@ -64,9 +68,15 @@ public class AuthController : Controller
             };  
 
             var result = await _userManager.CreateAsync(user, model.Password);
-
+            
             if (result.Succeeded)
             {
+                if (!await _roleManager.RoleExistsAsync("Customer"))
+                {
+                    var role = new IdentityRole("Customer");
+                    await _roleManager.CreateAsync(role);
+                }
+                await _userManager.AddToRoleAsync(user, "Customer");
                 await _signInManager.SignInAsync(user, model.RemeberMe);
                 return RedirectToAction("Index", "Home");
             }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LionHeart.Web</title>
+    <title>@ViewData["Title"] - LionHeart</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LionHeart.Web.styles.css" asp-append-version="true" />
@@ -18,10 +18,11 @@
 </head>
 <body>
     <header>
+
         <ul class="nav justify-content-center bg-dark">
 
             <li class="nav-item nav-custom-item">
-                <a class="nav-link text-white" href="#">Главное</a>
+                <a asp-action="ListProducts" asp-controller="Products" class="nav-link text-white">Главное</a>
             </li>
 
             <li class="nav-item nav-custom-item">
@@ -29,14 +30,18 @@
             </li>
 
             <li class="nav-item nav-custom-item nav-">
-                <a asp-action="Login" asp-controller="Auth" class="nav-link text-white">Профиль</a>
+                @{
+                    var userId = (await userManager.FindByNameAsync(User?.Identity?.Name ?? "NO AUTHORIZED"))?.Id;
+
+                    <a asp-action="ShowProfile" asp-controller="Profiles" asp-route-userId="@userId" class="nav-link text-white">Профиль</a>
+                }
             </li>
 
             <li class="nav-item nav-custom-item">
                 <a class="nav-link text-white" href="#">Корзина</a>
             </li>
 
-            @if (signManager.IsSignedIn(User))
+            @if (User is not null && signManager.IsSignedIn(User))
             {
                 <li class="nav-item nav-custom-item">
                     <a class="nav-link text-white opacity-75 disabled">@User?.Identity?.Name</a>
@@ -45,6 +50,14 @@
                 <form method="post" asp-action="Logout" asp-controller="Auth">
                 <li class="nav-item nav-btn-hover">
                     <button class="nav-link text-white opacity-75 bg-dark border-0">Выйти</button>
+                </li>
+                </form>
+            }
+            else
+            {
+                <form method="get" asp-action="Login" asp-controller="Auth">
+                <li class="nav-item nav-btn-hover">
+                    <button class="nav-link text-white opacity-75 bg-dark border-0">Войти</button>
                 </li>
                 </form>
             }
@@ -59,7 +72,7 @@
 
     <footer class="border-top footer text-muted" id="layout-footer-id">
         <div class="container">
-            &copy; 2024 - LionHeart.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - LionHeart <a asp-area="" asp-controller="Home" asp-action="Privacy"></a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -68,24 +81,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-@* <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid bg-dark bg-opacity-90 p-1">
-
-        <div class="navbar-item w-25 ps-2">
-            <button class="btn btn-light w-50" type="submit">Главное</button>
-        </div>
-
-        <div class="navbar-item d-flex gap-1 w-50">
-            <input class="w-75" type="search" placeholder="Поиск" aria-label="Search">
-            <button class="btn btn-light" type="submit">Поиск</button>
-        </div>
-
-        <div class="navbar-item pe-2">
-            <button class="btn btn-light" type="submit">Профиль</button>
-            <button class="btn btn-light" type="submit">Корзина</button>
-        </div>
-
-    </div>
-</nav> *@

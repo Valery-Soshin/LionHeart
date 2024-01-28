@@ -15,7 +15,7 @@ namespace LionHeart.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return Redirect("/Products/ListProducts");
         }
 
         public IActionResult Privacy()

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LionHeart.Core\LionHeart.Core.csproj" />
+  </ItemGroup>
+
 </Project>
