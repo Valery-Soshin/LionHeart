@@ -1,9 +1,7 @@
 ﻿using LionHeart.Core.Models;
-using Microsoft.AspNetCore.Identity;
+using LionHeart.DataAccess.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Reflection.Emit;
 
 namespace LionHeart.DataAccess;
 
@@ -27,34 +25,14 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new ProductDetailConfiguration());
+        builder.ApplyConfiguration(new CategoryConfiguration());
+        builder.ApplyConfiguration(new FeedbackConfiguration());
+        builder.ApplyConfiguration(new MarkedProductConfiguration());
+        builder.ApplyConfiguration(new OrderConfiguration());
+        builder.ApplyConfiguration(new OrderDetailConfiguration());
+
         base.OnModelCreating(builder);
-
-        builder.Entity<Product>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<ProductDetail>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<Category>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<Feedback>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<MarkedProduct>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<Order>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Entity<OrderDetail>()
-            .Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
     }
 }
