@@ -1,5 +1,5 @@
 ﻿using LionHeart.Core.Models;
-using LionHeart.Web.Models;
+using LionHeart.Web.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +38,7 @@ public class AuthController : Controller
 
             if (result.Succeeded)
             {
-                return Redirect("/Products/ListProducts");
+                return Redirect("/Products/Index");
             }
             else
             {
@@ -78,7 +78,7 @@ public class AuthController : Controller
                 }
                 await _userManager.AddToRoleAsync(user, "Customer");
                 await _signInManager.SignInAsync(user, model.RemeberMe);
-                return RedirectToAction("Index", "Home");
+                return Redirect("/Products/Index");
             }
 
             foreach (var error in result.Errors)
@@ -94,6 +94,6 @@ public class AuthController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Index", "Home");
+        return Redirect("/Products/Index");
     }
 }

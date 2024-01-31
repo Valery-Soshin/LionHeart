@@ -9,3 +9,4 @@ public class MarkedProduct
     public Product Product { get; set; } = null!;
     public Mark Mark { get; set; }
 }
+

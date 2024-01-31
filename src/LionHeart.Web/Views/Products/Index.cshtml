@@ -1,0 +1,134 @@
+﻿@model List<Product>
+
+<div class="container-fluid">
+    <div class="row row-cols-sm-auto m-5 justify-content-center">
+        @foreach (var product in Model)
+        {
+            <form class="col-3 mb-5">
+                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                        </div>
+                    </div>
+                </button>
+            </form>
+
+            <form class="col-3 mb-5">
+                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                        </div>
+                    </div>
+                </button>
+            </form>
+            <form class="col-3 mb-5">
+                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                        </div>
+                    </div>
+                </button>
+            </form>
+            <form class="col-3 mb-5">
+                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                        </div>
+                    </div>
+                </button>
+            </form>
+            <form class="col-3 mb-5">
+                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-truncate">@product.Description</p>
+                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                        </div>
+                    </div>
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* <div class="m-5 pe-5 ps-5">
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="row row-cols-sm-auto justify-content-around">
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-dark nav-btn-hover">Купить</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+</div> *@

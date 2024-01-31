@@ -17,12 +17,14 @@
     </style>
 </head>
 <body>
+    @{
+        var userId = (await userManager.FindByNameAsync(User?.Identity?.Name ?? "NO AUTHORIZED"))?.Id;
+    }
     <header>
-
         <ul class="nav justify-content-center bg-dark">
 
             <li class="nav-item nav-custom-item">
-                <a asp-action="ListProducts" asp-controller="Products" class="nav-link text-white">Главное</a>
+                <a asp-action="Index" asp-controller="Products" class="nav-link text-white">Главное</a>
             </li>
 
             <li class="nav-item nav-custom-item">
@@ -30,15 +32,11 @@
             </li>
 
             <li class="nav-item nav-custom-item nav-">
-                @{
-                    var userId = (await userManager.FindByNameAsync(User?.Identity?.Name ?? "NO AUTHORIZED"))?.Id;
-
-                    <a asp-action="ShowProfile" asp-controller="Profiles" asp-route-userId="@userId" class="nav-link text-white">Профиль</a>
-                }
+                <a asp-action="Index" asp-controller="Profile" asp-route-userId="@userId" class="nav-link text-white">Профиль</a>
             </li>
 
             <li class="nav-item nav-custom-item">
-                <a class="nav-link text-white" href="#">Корзина</a>
+                <a asp-action="Index" asp-controller="Basket" asp-route-userId="@userId" class="nav-link text-white">Корзина</a>
             </li>
 
             @if (User is not null && signManager.IsSignedIn(User))

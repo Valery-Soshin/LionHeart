@@ -1,4 +1,4 @@
-namespace LionHeart.Web.Models
+namespace LionHeart.Web.Models.Home
 {
     public class ErrorViewModel
     {

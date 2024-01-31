@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LionHeart.Web.Models;
+namespace LionHeart.Web.Models.Auth;
 
 public class RegisterViewModel
 {

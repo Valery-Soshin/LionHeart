@@ -12,8 +12,17 @@ public class ProductsController : Controller
         _productService = productService;
     }
 
+
     [HttpGet]
-    public async Task<IActionResult> ShowProduct(string id, bool showFeedbacks = false)
+    public async Task<IActionResult> Index()
+    {
+        var products = await _productService.GetAll();
+
+        return View(products);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Show(string id, bool showFeedbacks = false)
     {
         var product = await _productService.GetById(id);
 
@@ -27,11 +36,4 @@ public class ProductsController : Controller
         return View(product);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> ListProducts()
-    {
-        var products = await _productService.GetAll();
-
-        return View(products);
-    }
 }

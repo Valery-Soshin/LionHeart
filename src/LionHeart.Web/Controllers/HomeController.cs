@@ -1,4 +1,4 @@
-using LionHeart.Web.Models;
+using LionHeart.Web.Models.Home;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,7 +15,7 @@ namespace LionHeart.Web.Controllers
 
         public IActionResult Index()
         {
-            return Redirect("/Products/ListProducts");
+            return View();
         }
 
         public IActionResult Privacy()

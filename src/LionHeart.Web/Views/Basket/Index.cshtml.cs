@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LionHeart.Web.Views.Auth
+namespace LionHeart.Web.Views.Basket
 {
-    public class GetUserProfileModel : PageModel
+    public class IndexModel : PageModel
     {
         public void OnGet()
         {
