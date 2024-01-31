@@ -5,18 +5,20 @@
     ViewBag.Title = "User Login";
 }
 
-<main style="height:900px">
-    <div class="position-relative" style="height: 700px">
-        <div class="position-absolute top-50 start-50 translate-middle w-25" style="max-width:350px">
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="card w-50" style="max-width:450px">
+        <div class="card-header text-center">
+            <h2>Авторизация</h2>
+        </div>
+        <div class="card-body ">
             <form method="post" id="login-form">
-                <h2 class="mb-5" style="text-align:center">Авторизация</h2>
                 <div class="mb-3">
                     <label class="form-label">Почта</label>
-                    <input asp-for="Email" type="email" class="form-control" form="login-form">
+                    <input asp-for="Email" type="email" class="form-control" form="login-form" placeholder="Почта">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Пароль</label>
-                    <input asp-for="Password" type="password" class="form-control" form="login-form">
+                    <input asp-for="Password" type="password" class="form-control" form="login-form" placeholder="Пароль">
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input">
@@ -25,15 +27,10 @@
             </form>
             <form method="get" id="register-form"></form>
             <div class="d-flex justify-content-between">
-                <div>
-                    <button asp-action="Login" asp-controller="Auth" type="submit" class="btn btn-dark custom-button" form="login-form">Авторизоваться</button>
-                </div>
-                <div>
-                    <button asp-action="Register" asp-controller="Auth" class="btn btn-dark custom-button" form="register-form">Регистрация</button>
-                </div>
+                <button asp-action="Login" asp-controller="Auth" type="submit" class="btn btn-dark custom-button" form="login-form">Авторизоваться</button>
+                <button asp-action="Register" asp-controller="Auth" class="btn btn-dark custom-button" form="register-form">Регистрация</button>
             </div>
-            
         </div>
-        
     </div>
-</main>
+</div>
+</div>

@@ -7,60 +7,11 @@
             <form class="col-3 mb-5">
                 <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
                     <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
+                        <img src="/images/img1.jpg" class="card-img-top">
                         <div class="card-body">
                             <h5 class="card-title">@product.Name</h5>
                             <p class="card-text text-truncate">@product.Description</p>
-                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
-                        </div>
-                    </div>
-                </button>
-            </form>
-
-            <form class="col-3 mb-5">
-                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text text-truncate">@product.Description</p>
-                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
-                        </div>
-                    </div>
-                </button>
-            </form>
-            <form class="col-3 mb-5">
-                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text text-truncate">@product.Description</p>
-                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
-                        </div>
-                    </div>
-                </button>
-            </form>
-            <form class="col-3 mb-5">
-                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text text-truncate">@product.Description</p>
-                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
-                        </div>
-                    </div>
-                </button>
-            </form>
-            <form class="col-3 mb-5">
-                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text text-truncate">@product.Description</p>
-                            <a href="#" class="btn btn-dark nav-btn-hover">В корзину</a>
+                            <a asp-action="" class="btn btn-dark custom-btn">В корзину</a>
                         </div>
                     </div>
                 </button>
