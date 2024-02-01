@@ -1,93 +1,129 @@
 ﻿@using LionHeart.Web.Models.Basket
-@model IndexViewModel
-
+@model List<IndexViewModel>
 
 <div class="container">
-    <div class="row m-5">
-        <div class="col-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Корзина</h3>
+    @if (Model.Any())
+    {
+        <div class="row m-5" id="basket">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Корзина</h3>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var indexModel in Model)
+                        {
+                            <div class="row  d-flex justify-content-center align-items-center text-center">
+                                <div class="col-2">
+                                    <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
+                                </div>
+                                <div class="col-4">
+                                    <label>@indexModel.Product.Name</label>
+                                </div>
+                                <div class="col-3 d-flex justify-content-center align-items-center text-center">
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@indexModel.Product.Id', '@indexModel.Product.Price')">-</a>
+                                    <input disabled id="counter-@indexModel.Product.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px" value="@indexModel.Quantity">
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@indexModel.Product.Id', '@indexModel.Product.Price')">+</a>
+                                </div>
+                                <div class="col-3 d-flex justify-content-end">
+                                    @{
+                                        var price = (indexModel.Product.Price * indexModel.Quantity).ToString().Replace(",", ".");
+                                    }
+                                    <input disabled id="price-@indexModel.Product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray" value="@price">
+                                </div>
+                            </div>
+                            <br />
+                        }
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row  d-flex justify-content-center align-items-center text-center">
-                        <div class="col-2">
-                            <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
-                        </div>
-                        <div class="col-4">
-                            <label class="">
-                                Красивая футболка
-                            </label>
-                        </div>
-                        <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">-</a>
-                            <label style="width: 40px; height: 40px; line-height:40px">1</label>
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">+</a>
-                        </div>
-                        <div class="col-3 d-flex justify-content-end">
-                            <label style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray"><strong>1250р</strong></label>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    @{
+                        var userId = userManager.GetUserId(User);
+                    }
+                    <a id ="total-price-button" asp-action="Index" asp-route-userId="@userId" hidden></a>
+                    <div class="card-header">
+                        Итого:
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div>
+                                Товаров: @Model.Count
+                            </div>
+                            <div>
+                                @{
+                                    var totalPrice = Model.Sum(m => m.Product.Price * m.Quantity).ToString().Replace(",", ".");
+                                }
+                                Стоимость всего: <span id="total-price">@totalPrice</span>
+                            </div>
                         </div>
                     </div>
-                    <br />
-                    <div class="row  d-flex justify-content-center align-items-center text-center">
-                        <div class="col-2">
-                            <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
-                        </div>
-                        <div class="col-4">
-                            <label class="">
-                                Красивая футболка
-                            </label>
-                        </div>
-                        <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">-</a>
-                            <label style="width: 40px; height: 40px; line-height:40px">1</label>
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">+</a>
-                        </div>
-                        <div class="col-3 d-flex justify-content-end">
-                            <label style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray"><strong>1250р</strong></label>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="row  d-flex justify-content-center align-items-center text-center">
-                        <div class="col-2">
-                            <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
-                        </div>
-                        <div class="col-4">
-                            <label class="">
-                                Красивая футболка
-                            </label>
-                        </div>
-                        <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">-</a>
-                            <label style="width: 40px; height: 40px; line-height:40px">1</label>
-                            <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;">+</a>
-                        </div>
-                        <div class="col-3 d-flex justify-content-end">
-                            <label style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray"><strong>1250р</strong></label>
-                        </div>
+                    <div class="card-footer">
+                        <a class="btn btn-dark custom-btn">Заказать</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    Итого:
-                </div>
-                <div class="card-body">
-                    <div>
-                        <div>
-                            Товаров: 2
-                        </div>
-                        <div>
-                            Стоимость всего: 3400р
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a class="btn btn-dark custom-btn">Заказать</a>
-                </div>
+    }
+    else
+    {
+        <div class="row m-5 text-center">
+            <div>
+                <h3>В корзине пока пусто</h3>
+            </div>
+            <div>
+                <p>Загляните на главную, чтобы выбрать товары или найдите нужное в поиске</p>
+            </div>
+            <div>
+                <a asp-action="Index" asp-controller="Products" class="btn btn-dark">Перейти на главную</a>
             </div>
         </div>
-    </div>
+    }
 </div>
+
+<script>
+    async function add(productId, basePrice) {
+        var counter = document.getElementById('counter-' + productId);
+        var price = document.getElementById('price-' + productId);
+
+        counter.value = +counter.value + 1;
+        price.value = (parseFloat(price.value) + parseFloat(basePrice)).toFixed(1);
+
+        await updateProductQuantity(productId, counter.value);
+
+        await process();
+    };
+
+    async function subtract(productId, basePrice) {
+        var counter = document.getElementById('counter-' + productId);
+        var price = document.getElementById('price-' + productId);
+
+        if (+counter.value >= 2) {
+            counter.value = counter.value - 1;
+            price.value = (parseFloat(price.value) - parseFloat(basePrice)).toFixed(1);
+
+            await updateProductQuantity(productId, counter.value);
+
+            await process();
+        }
+    };
+
+    async function updateProductQuantity(id, quantity) {
+        await fetch("/Basket/UpdateProductQuantity", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                productid: id,
+                productquantity: quantity
+            })
+        });
+    };
+
+    async function process() {
+        document.getElementById('total-price-button').click();
+    }
+</script>

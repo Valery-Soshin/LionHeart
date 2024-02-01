@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionHeart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240127142227_CreateDb")]
-    partial class CreateDb
+    [Migration("20240201093211_mig2")]
+    partial class mig2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,13 @@ namespace LionHeart.DataAccess.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "05ecbe31-525b-43a6-ab91-beb844b8db3c",
+                            Name = "Одежда"
+                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.Feedback", b =>
@@ -76,6 +83,9 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasIndex("CustomerId")
                         .HasDatabaseName("ix_feedbacks_customer_id");
 
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_feedbacks_product_id");
+
                     b.ToTable("feedbacks", (string)null);
                 });
 
@@ -97,11 +107,15 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnName("mark");
 
                     b.Property<string>("ProductId")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("product_id");
 
                     b.HasKey("Id")
                         .HasName("pk_marked_products");
+
+                    b.HasAlternateKey("CustomerId", "ProductId")
+                        .HasName("ak_marked_products_customer_id_product_id");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_marked_products_product_id");
@@ -225,6 +239,18 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("ix_products_supplier_id");
 
                     b.ToTable("products", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "0b5920c7-03e8-4d89-93d4-fc42eadd5d66",
+                            CategoryId = "05ecbe31-525b-43a6-ab91-beb844b8db3c",
+                            Description = "Красивая и удобная футболка",
+                            Name = "Футболка",
+                            Price = 1250m,
+                            Quantity = 1,
+                            Specifications = "Размер - XXL"
+                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.ProductDetail", b =>
@@ -519,9 +545,16 @@ namespace LionHeart.DataAccess.Migrations
             modelBuilder.Entity("LionHeart.Core.Models.Feedback", b =>
                 {
                     b.HasOne("LionHeart.Core.Models.User", "Customer")
-                        .WithMany()
+                        .WithMany("Feedbacks")
                         .HasForeignKey("CustomerId")
                         .HasConstraintName("fk_feedbacks_users_customer_id");
+
+                    b.HasOne("LionHeart.Core.Models.Product", null)
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_feedbacks_products_product_id");
 
                     b.Navigation("Customer");
                 });
@@ -531,6 +564,8 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasOne("LionHeart.Core.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_marked_products_products_product_id");
 
                     b.Navigation("Product");
@@ -647,6 +682,16 @@ namespace LionHeart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("LionHeart.Core.Models.Product", b =>
+                {
+                    b.Navigation("Feedbacks");
+                });
+
+            modelBuilder.Entity("LionHeart.Core.Models.User", b =>
+                {
+                    b.Navigation("Feedbacks");
                 });
 #pragma warning restore 612, 618
         }

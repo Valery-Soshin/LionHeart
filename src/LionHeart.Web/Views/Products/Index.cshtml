@@ -1,85 +1,41 @@
-﻿@model List<Product>
-
+﻿@using LionHeart.Web.Models.Products
+@model List<IndexViewModel>
+@{
+    var userId = userManager.GetUserId(User);
+}
 <div class="container-fluid">
     <div class="row row-cols-sm-auto m-5 justify-content-center">
-        @foreach (var product in Model)
+        @foreach (var indexModel in Model)
         {
-            <form class="col-3 mb-5">
-                <button asp-action="Show" asp-controller="Products" asp-route-id="@product.Id" class="border-0 bg-white">
-                    <div class="card" style="width: 18rem;">
-                        <img src="/images/img1.jpg" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text text-truncate">@product.Description</p>
-                            <a asp-action="" class="btn btn-dark custom-btn">В корзину</a>
-                        </div>
-                    </div>
-                </button>
-            </form>
+            <div>
+                <div class="card">
+                    <form class="col-3">
+                        <a asp-action="Show" asp-controller="Products" asp-route-id="@indexModel.Product.Id" class="border-0 bg-white text-center" style="text-decoration:none; color:black">
+                            <div class="card" style="width: 18rem;">
+                                <img src="/images/img1.jpg" class="card-img-top">
+                                <div class="card-body">
+                                    <h5 class="card-title">@indexModel.Product.Name</h5>
+                                    <p class="card-text text-truncate">@indexModel.Product.Description</p>
+                                </div>
+                            </div>
+                        </a>
+                    </form>
+                </div>
+                <div class="card">
+                    @if (indexModel.IsInBasket)
+                    {
+                        <form method="post" id="form-post" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-userId="@userId" asp-route-productId="@indexModel.Product.Id">
+                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">Убрать из корзины</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" id="form-post" asp-action="AddToBasket" asp-controller="Basket" asp-route-userId="@userId" asp-route-productId="@indexModel.Product.Id">
+                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">В корзину</button>
+                        </form>
+                    }
+                </div>
+            </div>
         }
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@* <div class="m-5 pe-5 ps-5">
-    @for (int i = 0; i < 3; i++)
-    {
-        <div class="row row-cols-sm-auto justify-content-around">
-            <div class="col-3">
-                <div class="card" style="width: 18rem;">
-                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-dark nav-btn-hover">Купить</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card" style="width: 18rem;">
-                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card" style="width: 18rem;">
-                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card" style="width: 18rem;">
-                    <img src="/images/img1.jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-dark nav-btn-hover">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br />
-    }
-</div> *@

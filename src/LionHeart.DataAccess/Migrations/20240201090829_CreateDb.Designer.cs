@@ -3,6 +3,7 @@ using System;
 using LionHeart.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionHeart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240201090829_CreateDb")]
+    partial class CreateDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,13 +42,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "05ecbe31-525b-43a6-ab91-beb844b8db3c",
-                            Name = "Одежда"
-                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.Feedback", b =>
@@ -110,9 +106,6 @@ namespace LionHeart.DataAccess.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_marked_products");
-
-                    b.HasAlternateKey("CustomerId", "ProductId")
-                        .HasName("ak_marked_products_customer_id_product_id");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_marked_products_product_id");
@@ -236,18 +229,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("ix_products_supplier_id");
 
                     b.ToTable("products", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "0b5920c7-03e8-4d89-93d4-fc42eadd5d66",
-                            CategoryId = "05ecbe31-525b-43a6-ab91-beb844b8db3c",
-                            Description = "Красивая и удобная футболка",
-                            Name = "Футболка",
-                            Price = 1250m,
-                            Quantity = 1,
-                            Specifications = "Размер - XXL"
-                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.ProductDetail", b =>

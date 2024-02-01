@@ -33,6 +33,25 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderDetailConfiguration());
 
+        var category = new Category()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "Одежда"
+        };
+        var product = new Product()
+        {
+            Id = Guid.NewGuid().ToString(),
+            CategoryId = category.Id,
+            Name = "Футболка",
+            Price = 1250,
+            Quantity = 1,
+            Description = "Красивая и удобная футболка",
+            Specifications = "Размер - XXL"
+        };
+
+        builder.Entity<Category>().HasData(category);
+        builder.Entity<Product>().HasData(product);
+
         base.OnModelCreating(builder);
     }
 }

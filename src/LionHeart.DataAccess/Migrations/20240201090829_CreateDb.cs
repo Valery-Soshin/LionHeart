@@ -173,26 +173,6 @@ namespace LionHeart.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "feedbacks",
-                columns: table => new
-                {
-                    id = table.Column<string>(type: "text", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    customer_id = table.Column<string>(type: "text", nullable: true),
-                    product_id = table.Column<string>(type: "text", nullable: false),
-                    rating = table.Column<int>(type: "integer", nullable: false),
-                    content = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_feedbacks", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_feedbacks_users_customer_id",
-                        column: x => x.customer_id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "products",
                 columns: table => new
                 {
@@ -222,12 +202,38 @@ namespace LionHeart.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "feedbacks",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "text", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    customer_id = table.Column<string>(type: "text", nullable: true),
+                    product_id = table.Column<string>(type: "text", nullable: false),
+                    rating = table.Column<int>(type: "integer", nullable: false),
+                    content = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_feedbacks", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_feedbacks_products_product_id",
+                        column: x => x.product_id,
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_feedbacks_users_customer_id",
+                        column: x => x.customer_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "marked_products",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     customer_id = table.Column<string>(type: "text", nullable: false),
-                    product_id = table.Column<string>(type: "text", nullable: true),
+                    product_id = table.Column<string>(type: "text", nullable: false),
                     mark = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -237,7 +243,8 @@ namespace LionHeart.DataAccess.Migrations
                         name: "fk_marked_products_products_product_id",
                         column: x => x.product_id,
                         principalTable: "products",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -345,6 +352,11 @@ namespace LionHeart.DataAccess.Migrations
                 name: "ix_feedbacks_customer_id",
                 table: "feedbacks",
                 column: "customer_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_feedbacks_product_id",
+                table: "feedbacks",
+                column: "product_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_marked_products_product_id",

@@ -4,5 +4,6 @@ namespace LionHeart.Web.Models.Basket;
 
 public class IndexViewModel
 {
-    public List<MarkedProduct> ProductsInBasket { get; set; } = new();
+    public Product Product { get; set; } = null!;
+    public int Quantity { get; set; }
 }

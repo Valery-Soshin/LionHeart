@@ -19,7 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSql"]));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IMarkedProductRepository, MarkedProductRepository>();
+
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IMarkedProductService, MarkedProductService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

@@ -3,6 +3,7 @@
 public class Product
 {
     public string Id { get; set; } = null!;
+    public string CategoryId { get; set; } = null!;
     public Category Category { get; set; } = null!;
     public User Supplier { get; set; } = null!;
     public string Name { get; set; } = null!;
@@ -11,5 +12,5 @@ public class Product
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
 
-    public List<Feedback> Feedbacks { get; set; } = new();
+    public List<Feedback> Feedbacks { get; set; } = [];
 }
