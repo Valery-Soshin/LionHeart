@@ -1,4 +1,5 @@
 ﻿@using LionHeart.Web.Models.Basket
+@using static LionHeart.Web.Controllers.OrderController
 @model List<IndexViewModel>
 
 <div class="container">
@@ -10,28 +11,33 @@
                     <div class="card-header">
                         <h3>Корзина</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="card-body">
                         @foreach (var indexModel in Model)
                         {
-                            <div class="row  d-flex justify-content-center align-items-center text-center">
+                            <form id="form-0" class="row d-flex justify-content-center align-items-center text-center">
+                                <input hidden id="product-id" value="@indexModel.Product.Id" />
                                 <div class="col-2">
                                     <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
                                 </div>
+
                                 <div class="col-4">
                                     <label>@indexModel.Product.Name</label>
                                 </div>
+
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
                                     <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@indexModel.Product.Id', '@indexModel.Product.Price')">-</a>
-                                    <input disabled id="counter-@indexModel.Product.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px" value="@indexModel.Quantity">
+                                    <input disabled id="quantity-@indexModel.Product.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px" value="@indexModel.Quantity">
                                     <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@indexModel.Product.Id', '@indexModel.Product.Price')">+</a>
                                 </div>
+
                                 <div class="col-3 d-flex justify-content-end">
                                     @{
                                         var price = (indexModel.Product.Price * indexModel.Quantity).ToString().Replace(",", ".");
                                     }
                                     <input disabled id="price-@indexModel.Product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray" value="@price">
                                 </div>
-                            </div>
+
+                            </form>
                             <br />
                         }
                     </div>
@@ -60,7 +66,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-dark custom-btn">Заказать</a>
+                        <button type="submit" class="btn btn-dark custom-btn" onclick="processOrder()">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -81,10 +87,9 @@
         </div>
     }
 </div>
-
 <script>
     async function add(productId, basePrice) {
-        var counter = document.getElementById('counter-' + productId);
+        var counter = document.getElementById('quantity-' + productId);
         var price = document.getElementById('price-' + productId);
 
         counter.value = +counter.value + 1;
@@ -96,7 +101,7 @@
     };
 
     async function subtract(productId, basePrice) {
-        var counter = document.getElementById('counter-' + productId);
+        var counter = document.getElementById('quantity-' + productId);
         var price = document.getElementById('price-' + productId);
 
         if (+counter.value >= 2) {
@@ -125,5 +130,28 @@
 
     async function process() {
         document.getElementById('total-price-button').click();
+    };
+
+    async function processOrder() {
+        var model = [];
+
+        for (let i = 0; i < @Model.Count; i++){
+            const form = document.querySelector('#form-' + i);
+            const data = new FormData();
+
+            model.push(data);
+        }
+        
+        await fetch("/Order/Process", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                models: model
+            })
+        });
     }
 </script>
+

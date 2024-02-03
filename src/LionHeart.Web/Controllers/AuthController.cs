@@ -21,12 +21,13 @@ public class AuthController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
+        ViewBag.ReturnUrL = returnUrl;
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
     {
         if (ModelState.IsValid)
         {
@@ -38,6 +39,11 @@ public class AuthController : Controller
 
             if (result.Succeeded)
             {
+                if (returnUrl is not null)
+                {
+                    return Redirect(returnUrl);
+                }
+
                 return Redirect("/Products/Index");
             }
             else

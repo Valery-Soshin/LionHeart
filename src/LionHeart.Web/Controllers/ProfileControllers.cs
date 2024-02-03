@@ -3,7 +3,6 @@ using LionHeart.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LionHeart.Web.Controllers;
 
@@ -18,13 +17,13 @@ public class ProfileController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string userId)
+    public async Task<IActionResult> Index()
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.GetUserAsync(User);
         
         return View(user);
     }
-
+                   
     [HttpGet]
     public async Task<IActionResult> Edit(string userId)
     {

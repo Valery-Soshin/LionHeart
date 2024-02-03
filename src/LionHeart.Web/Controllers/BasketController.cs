@@ -5,12 +5,9 @@ using LionHeart.Core.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Enums;
 using Microsoft.AspNetCore.Identity;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace LionHeart.Web.Controllers;
-
+                                                   
 [Authorize(Roles = "Customer")]
 public class BasketController : Controller
 {
@@ -28,8 +25,15 @@ public class BasketController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string userId)
+    public async Task<IActionResult> Index()
     {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId is null)
+        {
+            return Redirect("/Auth/Login");
+        }
+
         var markedProducts = await _markedProductService
             .GetAllByCustomerId(userId, Mark.InBasket);
 
@@ -112,9 +116,9 @@ public class BasketController : Controller
         if (TempData.ContainsKey(model.ProductId))
         {
             TempData[$"{model.ProductId}"] = model.ProductQuantity;
+            TempData.Keep();
         }
 
-        TempData.Keep();
         return Ok();
     }
 
