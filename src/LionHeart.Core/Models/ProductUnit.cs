@@ -2,7 +2,7 @@
 
 namespace LionHeart.Core.Models;
 
-public class ProductDetail
+public class ProductUnit
 {
     public string Id { get; set; } = null!;
     public string ProductId { get; set; } = null!;

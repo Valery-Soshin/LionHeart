@@ -8,7 +8,7 @@ namespace LionHeart.DataAccess;
 public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductDetail> ProductDetails { get; set; }
+    public DbSet<ProductUnit> ProductUnits { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<MarkedProduct> MarkedProducts { get; set; }
@@ -26,7 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new ProductConfiguration());
-        builder.ApplyConfiguration(new ProductDetailConfiguration());
+        builder.ApplyConfiguration(new ProductUnitConfiguration());
         builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new FeedbackConfiguration());
         builder.ApplyConfiguration(new MarkedProductConfiguration());

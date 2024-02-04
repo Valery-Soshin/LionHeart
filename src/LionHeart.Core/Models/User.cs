@@ -9,4 +9,6 @@ public class User : IdentityUser
     public decimal PersonalDiscount { get; set; } = 0;
 
     public List<Feedback> Feedbacks { get; set; } = new();
-}
+    public List<Order> Orders { get; set; } = null!;
+    public List<MarkedProduct> MarkedProducts { get; set; } = null!;
+ }

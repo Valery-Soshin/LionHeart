@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Configurations;
 
-public class ProductDetailConfiguration : IEntityTypeConfiguration<ProductDetail>
+public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
 {
-    public void Configure(EntityTypeBuilder<ProductDetail> builder)
+    public void Configure(EntityTypeBuilder<ProductUnit> builder)
     {
         builder.Property(b => b.Id)
             .HasDefaultValueSql("gen_random_uuid()");

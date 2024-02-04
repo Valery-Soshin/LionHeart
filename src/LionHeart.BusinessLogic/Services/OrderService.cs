@@ -7,13 +7,13 @@ namespace LionHeart.BusinessLogic.Services;
 public class OrderService : IOrderService
 {
 	private readonly IOrderRepository _orderRepository;
-	private readonly IProductDetailService _productDetailService;
+	private readonly IProductUnitService _productUnitService;
 
 	public OrderService(IOrderRepository orderRepository,
-						IProductDetailService productDetailService)
+						IProductUnitService productUnitService)
     {
 		_orderRepository = orderRepository;
-		_productDetailService = productDetailService;
+		_productUnitService = productUnitService;
     }
 
     public Task<Order?> GetById(string id)
@@ -26,20 +26,20 @@ public class OrderService : IOrderService
 	}
 	public async Task<int> Add(Order order)
 	{
-		var productQuantity = await _productDetailService.CountByProductId(order.Product.Id);
+		var productQuantity = await _productUnitService.CountByProductId(order.Product.Id);
 
 		if (productQuantity < order.Quantity) return -1;
 
-		var productDetails = await _productDetailService.GetByProductId(order.Product.Id, order.Quantity);
+		var productUnits = await _productUnitService.GetByProductId(order.Product.Id, order.Quantity);
 
-		if (!productDetails.Any()) return -1;
+		if (!productUnits.Any()) return -1;
 
-		foreach (var productDetail in productDetails)
+		foreach (var productUnit in productUnits)
 		{
 			order.OrderDetails.Add(new OrderDetail
 			{
 				OrderId = order.Id,
-				ProductDetail = productDetail
+				ProductUnit = productUnit
 			});
 		}
 
