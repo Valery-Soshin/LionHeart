@@ -3,6 +3,7 @@ using System;
 using LionHeart.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionHeart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240203182330_mig3")]
+    partial class mig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cb52d9d6-b07d-478f-91eb-f2faed541300",
+                            Id = "cd3f58ce-53c6-4400-9514-428f2285f8ec",
                             Name = "Одежда"
                         });
                 });
@@ -174,14 +177,12 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnName("order_id");
 
                     b.Property<string>("ProductDetailId")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("product_detail_id");
 
                     b.HasKey("Id")
                         .HasName("pk_order_details");
-
-                    b.HasIndex("OrderId")
-                        .HasDatabaseName("ix_order_details_order_id");
 
                     b.HasIndex("ProductDetailId")
                         .HasDatabaseName("ix_order_details_product_detail_id");
@@ -243,8 +244,8 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f940ee90-4673-4099-ab2b-0b04b18f9046",
-                            CategoryId = "cb52d9d6-b07d-478f-91eb-f2faed541300",
+                            Id = "d9946d62-f35e-46cd-ae23-2ab4eb723e36",
+                            CategoryId = "cd3f58ce-53c6-4400-9514-428f2285f8ec",
                             Description = "Красивая и удобная футболка",
                             Name = "Футболка",
                             Price = 1250m,
@@ -590,16 +591,11 @@ namespace LionHeart.DataAccess.Migrations
 
             modelBuilder.Entity("LionHeart.Core.Models.OrderDetail", b =>
                 {
-                    b.HasOne("LionHeart.Core.Models.Order", null)
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_order_details_orders_order_id");
-
                     b.HasOne("LionHeart.Core.Models.ProductDetail", "ProductDetail")
                         .WithMany()
                         .HasForeignKey("ProductDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_order_details_product_details_product_detail_id");
 
                     b.Navigation("ProductDetail");
@@ -689,11 +685,6 @@ namespace LionHeart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
-                });
-
-            modelBuilder.Entity("LionHeart.Core.Models.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.Product", b =>

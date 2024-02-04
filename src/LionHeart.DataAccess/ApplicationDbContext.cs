@@ -12,7 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<MarkedProduct> MarkedProducts { get; set; }
-    public DbSet<Order> Order { get; set; }
+    public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
