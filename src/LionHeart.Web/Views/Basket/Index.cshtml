@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-dark custom-btn" onclick="processOrder()">Заказать</button>
+                        <button type="submit" class="btn btn-dark custom-btn">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -131,27 +131,5 @@
     async function process() {
         document.getElementById('total-price-button').click();
     };
-
-    async function processOrder() {
-        var model = [];
-
-        for (let i = 0; i < @Model.Count; i++){
-            const form = document.querySelector('#form-' + i);
-            const data = new FormData();
-
-            model.push(data);
-        }
-        
-        await fetch("/Order/Process", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                models: model
-            })
-        });
-    }
 </script>
 

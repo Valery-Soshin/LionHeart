@@ -10,11 +10,11 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
-    private readonly IMarkedProductService _markedProductService;
+    private readonly IBasketService _markedProductService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
-                              IMarkedProductService markedProductService,
+                              IBasketService markedProductService,
                               UserManager<User> userManager)
     {
         _productService = productService;

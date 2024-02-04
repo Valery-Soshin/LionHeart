@@ -11,11 +11,11 @@ namespace LionHeart.Web.Controllers;
 [Authorize(Roles = "Customer")]
 public class BasketController : Controller
 {
-    private readonly IMarkedProductService _markedProductService;
+    private readonly IBasketService _markedProductService;
     private readonly IProductService _productService;
     private readonly UserManager<User> _userManager;
 
-    public BasketController(IMarkedProductService markedProductService,
+    public BasketController(IBasketService markedProductService,
                             IProductService productService,
                             UserManager<User> userManager)
     {
