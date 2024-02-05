@@ -13,5 +13,8 @@ public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
             .HasDefaultValueSql("gen_random_uuid()");
 
         builder.HasQueryFilter(pu => pu.SaleStatus == SaleStatus.Available);
+
+        builder.HasOne<Product>()
+            .WithMany();
     }
 }

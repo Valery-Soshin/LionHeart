@@ -6,7 +6,7 @@
     {
         <form class="row m-5" id="basket" method="post">
             <input hidden asp-for="Id" id="id-basket" value="@Model.Id" />
-            <input hidden asp-for="CustomerId" id="customer-id-basket" value="@Model.CustomerId" />
+            <input hidden asp-for="UserId" id="customer-id-basket" value="@Model.UserId" />
             <div class="col-8">
                 <div class="card">
                     <div class="card-header">
@@ -20,7 +20,7 @@
                             <div class="row d-flex justify-content-center align-items-center text-center">
                                 <input hidden asp-for="Products[i].Id" id="id-@product.Id" value="@product.Id" />
                                 <input hidden asp-for="Products[i].ProductId" id="product-id-@product.Id" value="@product.ProductId" />
-                                <input hidden asp-for="Products[i].CustomerId" id="customer-id-@product.Id" value="@product.CustomerId" />
+                                <input hidden asp-for="Products[i].UserId" id="customer-id-@product.Id" value="@product.UserId" />
                                 <input hidden asp-for="Products[i].Information.Price" id="info-price-@product.Id" value="@product.Information.Price" />
 
                                 <div class="col-2">

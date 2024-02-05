@@ -11,6 +11,6 @@ public class MarkedProductConfiguration : IEntityTypeConfiguration<MarkedProduct
         builder.Property(b => b.Id)
             .HasDefaultValueSql("gen_random_uuid()");
 
-        builder.HasAlternateKey(p => new { p.CustomerId, p.ProductId });
+        builder.HasAlternateKey(p => new { p.UserId, p.ProductId });
     }
 }

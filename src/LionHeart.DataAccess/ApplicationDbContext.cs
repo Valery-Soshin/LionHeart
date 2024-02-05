@@ -2,6 +2,7 @@
 using LionHeart.DataAccess.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Versioning;
 
 namespace LionHeart.DataAccess;
 
@@ -35,6 +36,14 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new OrderDetailConfiguration());
         builder.ApplyConfiguration(new BasketConfiguration());
 
+        var suppplier = new User
+        {
+            UserName = "admin",
+            Email = "admin",
+        };
+
+        builder.Entity<User>().HasData(suppplier);
+
         var category = new Category()
         {
             Id = Guid.NewGuid().ToString(),
@@ -43,6 +52,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         var product = new Product()
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = suppplier.Id,
             CategoryId = category.Id,
             Name = "Футболка",
             Price = 1250,

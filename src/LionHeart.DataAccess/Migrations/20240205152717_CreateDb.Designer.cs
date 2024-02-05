@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionHeart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240204194349_AddTotalPriceColumnForBasket")]
-    partial class AddTotalPriceColumnForBasket
+    [Migration("20240205152717_CreateDb")]
+    partial class CreateDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,14 +33,14 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("CustomerId")
+                    b.Property<decimal>("BasketTotalPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("basket_total_price");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("customer_id");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric")
-                        .HasColumnName("total_price");
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_baskets");
@@ -69,7 +69,7 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e0930f96-3729-422d-b241-d522f3ad2f83",
+                            Id = "8b3e1ffe-9f69-4908-bc86-3f9b48a6e319",
                             Name = "Одежда"
                         });
                 });
@@ -87,10 +87,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("content");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("text")
-                        .HasColumnName("customer_id");
-
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("text")
@@ -100,14 +96,19 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("rating");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_feedbacks");
 
-                    b.HasIndex("CustomerId")
-                        .HasDatabaseName("ix_feedbacks_customer_id");
-
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_feedbacks_product_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_feedbacks_user_id");
 
                     b.ToTable("feedbacks", (string)null);
                 });
@@ -119,11 +120,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("customer_id");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -137,20 +133,18 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnName("product_id");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_marked_products");
 
-                    b.HasAlternateKey("CustomerId", "ProductId")
-                        .HasName("ak_marked_products_customer_id_product_id");
+                    b.HasAlternateKey("UserId", "ProductId")
+                        .HasName("ak_marked_products_user_id_product_id");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_marked_products_product_id");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_marked_products_user_id");
 
                     b.ToTable("marked_products", (string)null);
 
@@ -171,11 +165,8 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_at");
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("text")
-                        .HasColumnName("customer_id");
-
                     b.Property<string>("ProductId")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("product_id");
 
@@ -187,14 +178,19 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("total_price");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_orders");
 
-                    b.HasIndex("CustomerId")
-                        .HasDatabaseName("ix_orders_customer_id");
-
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_orders_product_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_orders_user_id");
 
                     b.ToTable("orders", (string)null);
                 });
@@ -213,6 +209,7 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnName("order_id");
 
                     b.Property<string>("ProductUnitId")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("product_unit_id");
 
@@ -264,9 +261,10 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("specifications");
 
-                    b.Property<string>("SupplierId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("supplier_id");
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_products");
@@ -274,21 +272,22 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("ix_products_category_id");
 
-                    b.HasIndex("SupplierId")
-                        .HasDatabaseName("ix_products_supplier_id");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_products_user_id");
 
                     b.ToTable("products", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "b4d74fdb-3cc7-4807-bbb9-8133b065bf6f",
-                            CategoryId = "e0930f96-3729-422d-b241-d522f3ad2f83",
+                            Id = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            CategoryId = "8b3e1ffe-9f69-4908-bc86-3f9b48a6e319",
                             Description = "Красивая и удобная футболка",
                             Name = "Футболка",
                             Price = 1250m,
                             Quantity = 1,
-                            Specifications = "Размер - XXL"
+                            Specifications = "Размер - XXL",
+                            UserId = "52ef5ad2-a23c-46d2-853d-0dd5731da7ac"
                         });
                 });
 
@@ -321,6 +320,43 @@ namespace LionHeart.DataAccess.Migrations
                         .HasName("pk_product_units");
 
                     b.ToTable("product_units", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1fb6570e-5348-4e44-927d-baebb0f4cca1",
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 5, 18, 27, 16, 997, DateTimeKind.Unspecified).AddTicks(2807), new TimeSpan(0, 3, 0, 0, 0)),
+                            ProductId = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            SaleStatus = 0
+                        },
+                        new
+                        {
+                            Id = "c1fe1027-018a-493d-b9f7-4ffb83dd152d",
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 5, 18, 27, 16, 997, DateTimeKind.Unspecified).AddTicks(2870), new TimeSpan(0, 3, 0, 0, 0)),
+                            ProductId = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            SaleStatus = 0
+                        },
+                        new
+                        {
+                            Id = "5e9c128a-3dae-4fc9-84de-516ceb5784e9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 5, 18, 27, 16, 997, DateTimeKind.Unspecified).AddTicks(2890), new TimeSpan(0, 3, 0, 0, 0)),
+                            ProductId = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            SaleStatus = 0
+                        },
+                        new
+                        {
+                            Id = "4e786eb9-bd56-4ead-9d2b-fb97eec138c9",
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 5, 18, 27, 16, 997, DateTimeKind.Unspecified).AddTicks(2943), new TimeSpan(0, 3, 0, 0, 0)),
+                            ProductId = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            SaleStatus = 0
+                        },
+                        new
+                        {
+                            Id = "98bf4c61-bfdc-49c8-ba6b-7e0176425c33",
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 5, 18, 27, 16, 997, DateTimeKind.Unspecified).AddTicks(2966), new TimeSpan(0, 3, 0, 0, 0)),
+                            ProductId = "3faadc4d-dadb-42e3-ac5d-1f97b5cd3fdb",
+                            SaleStatus = 0
+                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.User", b =>
@@ -413,6 +449,22 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "52ef5ad2-a23c-46d2-853d-0dd5731da7ac",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6d7b4546-189b-4434-9db1-7fb3fe7db2c6",
+                            Email = "admin",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PersonalDiscount = 0m,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "c578c46d-43f5-4ea5-9f92-8f3394b30ae1",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -587,6 +639,10 @@ namespace LionHeart.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("basket_id");
 
+                    b.Property<int>("ProductsTotalPrice")
+                        .HasColumnType("integer")
+                        .HasColumnName("products_total_price");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
@@ -601,11 +657,6 @@ namespace LionHeart.DataAccess.Migrations
 
             modelBuilder.Entity("LionHeart.Core.Models.Feedback", b =>
                 {
-                    b.HasOne("LionHeart.Core.Models.User", "Customer")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("fk_feedbacks_users_customer_id");
-
                     b.HasOne("LionHeart.Core.Models.Product", null)
                         .WithMany("Feedbacks")
                         .HasForeignKey("ProductId")
@@ -613,7 +664,14 @@ namespace LionHeart.DataAccess.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_feedbacks_products_product_id");
 
-                    b.Navigation("Customer");
+                    b.HasOne("LionHeart.Core.Models.User", "User")
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_feedbacks_users_user_id");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.MarkedProduct", b =>
@@ -628,6 +686,8 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasOne("LionHeart.Core.Models.User", null)
                         .WithMany("MarkedProducts")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_marked_products_asp_net_users_user_id");
 
                     b.Navigation("Information");
@@ -635,19 +695,23 @@ namespace LionHeart.DataAccess.Migrations
 
             modelBuilder.Entity("LionHeart.Core.Models.Order", b =>
                 {
-                    b.HasOne("LionHeart.Core.Models.User", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("fk_orders_users_customer_id");
-
                     b.HasOne("LionHeart.Core.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_orders_products_product_id");
 
-                    b.Navigation("Customer");
+                    b.HasOne("LionHeart.Core.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_orders_users_user_id");
 
                     b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.OrderDetail", b =>
@@ -662,6 +726,8 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasOne("LionHeart.Core.Models.ProductUnit", "ProductUnit")
                         .WithMany()
                         .HasForeignKey("ProductUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_order_details_product_units_product_unit_id");
 
                     b.Navigation("ProductUnit");
@@ -676,14 +742,16 @@ namespace LionHeart.DataAccess.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_products_categories_category_id");
 
-                    b.HasOne("LionHeart.Core.Models.User", "Supplier")
+                    b.HasOne("LionHeart.Core.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .HasConstraintName("fk_products_users_supplier_id");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_products_users_user_id");
 
                     b.Navigation("Category");
 
-                    b.Navigation("Supplier");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

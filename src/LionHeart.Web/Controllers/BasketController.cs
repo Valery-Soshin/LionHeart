@@ -57,7 +57,7 @@ public class BasketController : Controller
         
 		var product = new ProductInBasket()
         {
-            CustomerId = userId,
+            UserId = userId,
             ProductId = productId,
         };
 
@@ -67,7 +67,7 @@ public class BasketController : Controller
         {
             basket = new Basket()
             {
-                CustomerId = userId,
+                UserId = userId,
                 Products = { product }
             };
 

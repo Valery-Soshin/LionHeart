@@ -49,7 +49,7 @@ public class BasketService : IBasketService
         {
             basket = new Basket()
             {
-                CustomerId = customerId
+                UserId = customerId
             };
 
             await _repository.Add(basket);

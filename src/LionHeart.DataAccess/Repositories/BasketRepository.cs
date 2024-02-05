@@ -24,14 +24,14 @@ public class BasketRepository(ApplicationDbContext dbContext) : RepositoryBase<B
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
                 .ThenInclude(p => p.Information)
-            .FirstOrDefaultAsync(b => b.CustomerId == customerId);
+            .FirstOrDefaultAsync(b => b.UserId == customerId);
     }
 	public Task<bool> HasProduct(string customerId, string productId)
     {
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
             .SelectMany(b => b.Products)
-            .Where(p => p.CustomerId == customerId &&
+            .Where(p => p.UserId == customerId &&
                         p.ProductId == productId)
             .AnyAsync();
     }

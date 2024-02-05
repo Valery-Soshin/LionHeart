@@ -37,7 +37,7 @@ public class OrdersController : Controller
             var order = new Order
             {
                 ProductId = product.ProductId,
-                CustomerId = product.CustomerId,
+                UserId = product.UserId,
                 TotalPrice = product.ProductsTotalPrice,
                 Quantity = product.Quantity,
                 CreateAt = DateTimeOffset.UtcNow

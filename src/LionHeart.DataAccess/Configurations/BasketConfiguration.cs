@@ -10,5 +10,8 @@ public class BasketConfiguration : IEntityTypeConfiguration<Basket>
     {
         builder.Property(b => b.Id)
             .HasDefaultValueSql("gen_random_uuid()");
+
+        builder.HasOne<User>()
+            .WithOne();
     }
 }
