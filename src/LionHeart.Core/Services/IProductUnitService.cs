@@ -1,4 +1,5 @@
-﻿using LionHeart.Core.Models;
+﻿using LionHeart.Core.Enums;
+using LionHeart.Core.Models;
 
 namespace LionHeart.Core.Services;
 

@@ -9,6 +9,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
+    public DbSet<MarkedProduct> MarkedProducts{ get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<Basket> Baskets { get; set; }
@@ -32,6 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new MarkedProductConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderDetailConfiguration());
+        builder.ApplyConfiguration(new BasketConfiguration());
 
         var category = new Category()
         {
@@ -51,6 +53,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
         builder.Entity<Category>().HasData(category);
         builder.Entity<Product>().HasData(product);
+
+        for (int i = 0; i < 5; i++)
+        {
+            var productUnit = new ProductUnit
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductId = product.Id,
+                SaleStatus = Core.Enums.SaleStatus.Available,
+                CreatedAt = DateTimeOffset.Now
+            };
+
+            builder.Entity<ProductUnit>().HasData(productUnit);
+        }
 
         base.OnModelCreating(builder);
     }

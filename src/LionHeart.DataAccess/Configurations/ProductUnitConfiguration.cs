@@ -1,4 +1,5 @@
 ﻿using LionHeart.Core.Models;
+using LionHeart.Core.Enums;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,5 +11,7 @@ public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
     {
         builder.Property(b => b.Id)
             .HasDefaultValueSql("gen_random_uuid()");
+
+        builder.HasQueryFilter(pu => pu.SaleStatus == SaleStatus.Available);
     }
 }

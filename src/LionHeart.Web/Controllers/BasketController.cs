@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LionHeart.Web.Models.Basket;
 using Microsoft.AspNetCore.Authorization;
 using LionHeart.Core.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace LionHeart.Web.Controllers;
@@ -11,16 +9,19 @@ namespace LionHeart.Web.Controllers;
 [Authorize(Roles = "Customer")]
 public class BasketController : Controller
 {
-    private readonly IBasketService _markedProductService;
+    private readonly IBasketService _basketService;
     private readonly IProductService _productService;
+    private readonly IOrderService _orderService;
     private readonly UserManager<User> _userManager;
 
-    public BasketController(IBasketService markedProductService,
+    public BasketController(IBasketService basketService,
                             IProductService productService,
+                            IOrderService orderService,
                             UserManager<User> userManager)
     {
-        _markedProductService = markedProductService;
+        _basketService = basketService;
         _productService = productService;
+        _orderService = orderService;
         _userManager = userManager;
     }
 
@@ -34,93 +35,120 @@ public class BasketController : Controller
             return Redirect("/Auth/Login");
         }
 
-        var markedProducts = await _markedProductService
-            .GetAllByCustomerId(userId, Mark.InBasket);
+        var basket = await _basketService.GetByCustomerId(userId);
 
-        var models = new List<IndexViewModel>();
+        
 
-        foreach (var markedProduct in markedProducts)
-        {
-            var model = new IndexViewModel()
-            {
-                Product = markedProduct.Product,
-                Quantity = 1
-            };
-            models.Add(model);
+        //foreach (var products in basket.Products)
+        //{
+        //    var model = new ProductInBasket()
+        //    {
+        //        p                
+        //    };
+        //    models.Add(model);
 
-            if (TempData.ContainsKey($"{model.Product.Id}"))
-            {
-                if (int.TryParse(TempData[$"{model.Product.Id}"]?.ToString(), out var result))
-                {
-                    model.Quantity = result;
-                }
-            }
-            else
-            {
-                TempData[$"{model.Product.Id}"] = model.Quantity;
-            }
-        }
+        //    if (TempData.ContainsKey($"{model.Product.Id}"))
+        //    {
+        //        if (int.TryParse(TempData[$"{model.Product.Id}"]?.ToString(), out var result))
+        //        {
+        //            model.Quantity = result;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TempData[$"{model.Product.Id}"] = model.Quantity;
+        //    }
+        //}
+        //TempData.Keep();
 
-        TempData.Keep();
-        return View(models);
+        return View(basket);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddToBasket(string userId, string productId)
+    public async Task<IActionResult> AddToBasket(string productId)
     {
-        if (!ModelState.IsValid)
+		var userId = _userManager.GetUserId(User);
+
+		if (!ModelState.IsValid || userId is null)
         {
             return BadRequest("ID Пользователя или ID Продукта не было передано");
         }
-
-        var markedProduct = new MarkedProduct()
+        
+		var product = new ProductInBasket()
         {
             CustomerId = userId,
             ProductId = productId,
-            Mark = Mark.InBasket
         };
 
-        await _markedProductService.Add(markedProduct);
+		var basket = await _basketService.GetByCustomerId(userId);
 
-        return Redirect("/Products/Index");
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> RemoveFromBasket(string userId, string productId)
-    {
-        if (!ModelState.IsValid)
+		if (basket is null)
         {
-            return BadRequest("ID Пользователя или ID Продукта не было передано");
+            basket = new Basket()
+            {
+                CustomerId = userId,
+                Products = { product }
+            };
+
+            await _basketService.Add(basket);
         }
-
-        var markedProduct = await _markedProductService
-            .GetByCustomerIdProductId(userId, productId, Mark.InBasket);
-
-        if (markedProduct is null)
+        else
         {
-            return BadRequest("Такая отметка о выбранном продукте не существует!");
-        }
-
-        await _markedProductService.Remove(markedProduct);
-        if (TempData.ContainsKey(productId))
-        {
-            TempData.Remove(productId);
+            basket.Products.Add(product);
+            await _basketService.Update(basket);
         }
 
         return Redirect("/Products/Index");
     }
 
     [HttpPost]
-    public IActionResult UpdateProductQuantity([FromBody] UpdateProductQuantityViewModel model)
+    public async Task<IActionResult> RemoveFromBasket(string productId)
     {
-        if (TempData.ContainsKey(model.ProductId))
+		var userId = _userManager.GetUserId(User);
+
+		if (!ModelState.IsValid || userId is null)
+		{
+			return BadRequest("ID Пользователя или ID Продукта не было передано");
+		}
+
+        var basket = await _basketService.GetByCustomerId(userId);
+
+        if (basket is null)
         {
-            TempData[$"{model.ProductId}"] = model.ProductQuantity;
-            TempData.Keep();
+            // logging
+        }
+        else
+        {
+            var product = basket.Products.FirstOrDefault(p => p.ProductId == productId);
+
+            if (product is null)
+            {
+                // logging
+                return BadRequest("Такой продукт не существует");
+            }
+
+            basket.Products.Remove(product);
+            await _basketService.Update(basket);
         }
 
-        return Ok();
+
+        //if (TempData.ContainsKey(productId))
+        //{
+        //    TempData.Remove(productId);
+        //}
+
+        return Redirect("/Products/Index");
     }
 
-    public record class UpdateProductQuantityViewModel(string ProductId, int ProductQuantity);
+    //[HttpPost]
+    //public IActionResult UpdateProductQuantity([FromBody] UpdateProductQuantityViewModel model)
+    //{
+    //    if (TempData.ContainsKey(model.ProductId))
+    //    {
+    //        TempData[$"{model.ProductId}"] = model.ProductQuantity;
+    //        TempData.Keep();
+    //    }
+
+    //    return Ok();
+    //}
 }

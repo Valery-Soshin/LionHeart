@@ -19,10 +19,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSql"]));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductUnitRepository, ProductUnitRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
 builder.Services.AddScoped<IBasketService, BasketService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

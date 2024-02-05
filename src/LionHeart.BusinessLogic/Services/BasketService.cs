@@ -1,5 +1,4 @@
-﻿using LionHeart.Core.Enums;
-using LionHeart.Core.Models;
+﻿using LionHeart.Core.Models;
 using LionHeart.Core.Repositories;
 using LionHeart.Core.Services;
 
@@ -18,9 +17,11 @@ public class BasketService : IBasketService
     {
         return _repository.GetById(id);
     }
-    public Task<Basket?> GetByCustomerId(string customerId)
+    public async Task<Basket> GetByCustomerId(string customerId)
     {
-        return _repository.GetByCustomerId(customerId);
+        var basket = await _repository.GetByCustomerId(customerId);
+
+        return await EnsureBasket(customerId, basket);
     }
     public Task<List<Basket>> GetAll()
     {
@@ -41,5 +42,19 @@ public class BasketService : IBasketService
     public Task<bool> HasProduct(string customerId, string productId)
     {
         return _repository.HasProduct(customerId, productId);
+    }
+    private async Task<Basket> EnsureBasket(string customerId, Basket? basket)
+    {
+        if (basket is null)
+        {
+            basket = new Basket()
+            {
+                CustomerId = customerId
+            };
+
+            await _repository.Add(basket);
+        }
+
+        return basket;
     }
 }

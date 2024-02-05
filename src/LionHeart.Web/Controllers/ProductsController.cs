@@ -10,38 +10,49 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
-    private readonly IBasketService _markedProductService;
+    private readonly IBasketService _basketService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
-                              IBasketService markedProductService,
+                              IBasketService basketService,
                               UserManager<User> userManager)
     {
         _productService = productService;
-        _markedProductService = markedProductService;
+        _basketService = basketService;
         _userManager = userManager;
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var products = await _productService.GetAll();
-
         var userId = _userManager.GetUserId(User);
 
-        var productsInBasket = await _markedProductService
-            .GetAllByCustomerId(userId ?? "", Mark.InBasket) ?? [];
-
+        var products = await _productService.GetAll();
         var models = new List<IndexViewModel>();
 
-        foreach (var product in products)
+        if (userId is not null)
         {
-            models.Add(new IndexViewModel()
+            var basket = await _basketService.GetByCustomerId(userId);
+
+            foreach (var product in products)
             {
-                Product = product,
-                IsInBasket = productsInBasket.Exists(p => p.ProductId == product.Id)
-            });
+                models.Add(new IndexViewModel()
+                {
+                    Product = product,
+                    IsInBasket = basket.Products.Exists(p => p.ProductId == product.Id)
+                });
+            }
+        }
+        else
+        {
+            foreach (var product in products)
+            {
+                models.Add(new IndexViewModel()
+                {
+                    Product = product,
+                    IsInBasket = false
+                });
+            }
         }
 
         return View(models);
@@ -61,5 +72,4 @@ public class ProductsController : Controller
 
         return View(product);
     }
-
 }
