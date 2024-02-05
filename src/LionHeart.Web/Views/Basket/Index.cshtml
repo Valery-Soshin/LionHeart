@@ -4,7 +4,7 @@
 <div class="container">
     @if (Model.Products.Any())
     {
-        <form class="row m-5" id="basket" method="post" asp-action="CreateOrder" asp-controller="Orders">
+        <form class="row m-5" id="basket" method="post">
             <input hidden asp-for="Id" id="id-basket" value="@Model.Id" />
             <input hidden asp-for="CustomerId" id="customer-id-basket" value="@Model.CustomerId" />
             <div class="col-8">
@@ -21,6 +21,7 @@
                                 <input hidden asp-for="Products[i].Id" id="id-@product.Id" value="@product.Id" />
                                 <input hidden asp-for="Products[i].ProductId" id="product-id-@product.Id" value="@product.ProductId" />
                                 <input hidden asp-for="Products[i].CustomerId" id="customer-id-@product.Id" value="@product.CustomerId" />
+                                <input hidden asp-for="Products[i].Information.Price" id="info-price-@product.Id" value="@product.Information.Price" />
 
                                 <div class="col-2">
                                     <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
@@ -32,20 +33,20 @@
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@product.ProductId', '@product.Information.Price')">-</a>
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@product.Id')">-</a>
 
                                     <label id="label-quantity-@product.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px">@product.Quantity</label>
                                     <input hidden asp-for="Products[i].Quantity" id="input-quantity-@product.Id" value="@product.Quantity" />
 
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@product.ProductId', '@product.Information.Price')">+</a>
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@product.Id')">+</a>
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-end">
                                     @{
-                                        var price = (product.Information.Price * product.Quantity).ToString().Replace(",", ".");
+                                        var productsTotalPrice = (product.Information.Price * product.Quantity).ToString().Replace(",", ".");
                                     }
-                                    <label id="lable-price-@product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@price</label>
-                                    <input hidden asp-for="Products[i].Information.Price" id="input-total-price-@product.Id" value="@price" />
+                                    <label id="label-products-total-price-@product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice</label>
+                                    <input hidden asp-for="Products[i].ProductsTotalPrice" id="input-products-total-price-@product.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>
                             <br />
@@ -65,13 +66,14 @@
                             </div>
                             <div>
                                 Стоимость всего:
-                                <label id="label-total-price-basket">@Model.TotalPrice</label>
-                                <input hidden asp-for="TotalPrice" id="input-total-price" value="@Model.TotalPrice" />
+                                <label id="label-basket-total-price-basket">@Model.BasketTotalPrice</label>
+                                <input hidden asp-for="BasketTotalPrice" id="input-basket-total-price-basket" value="@Model.BasketTotalPrice" />
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-dark custom-btn">Заказать</button>
+                        <button asp-action="CreateOrder" asp-controller="Orders" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
+                        <button hidden id="update-basket" asp-action="UpdateBasket" asp-controller="Basket" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -93,16 +95,22 @@
     }
 </div>
 <script>
-    async function add(productId, basePrice) {
-        var counter = document.getElementById('quantity-' + productId);
-        var price = document.getElementById('price-' + productId);
+    async function add(productInBasketID) {
+        var quantityLabel = document.getElementById('label-quantity-' + productInBasketID);
+        var quantityInput = document.getElementById('input-quantity-' + productInBasketID);
 
-        counter.value = +counter.value + 1;
-        price.value = (parseFloat(price.value) + parseFloat(basePrice)).toFixed(1);
+        var totalPriceLabel = document.getElementById('label-products-total-price-' + productInBasketID);
+        var totalPriceInput = document.getElementById('input-products-total-price-' + productInBasketID);
 
-        await updateProductQuantity(productId, counter.value);
+        var basePrice = document.getElementById('info-price-' + productInBasketID);
+        
+        quantityLabel.textContent = +quantityInput.value + 1;
+        quantityInput.value = +quantityInput.value + 1;
 
-        await process();
+        totalPriceLabel.textContent = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
+        totalPriceInput.value = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
+
+        document.getElementById('update-basket').click();
     };
 
     async function subtract(productId, basePrice) {
@@ -113,9 +121,10 @@
             counter.value = counter.value - 1;
             price.value = (parseFloat(price.value) - parseFloat(basePrice)).toFixed(1);
 
-            await updateProductQuantity(productId, counter.value);
+            updateProductQuantity2();
+            //await updateProductQuantity(productId, counter.value);
 
-            await process();
+            //await process();
         }
     };
 

@@ -37,30 +37,11 @@ public class BasketController : Controller
 
         var basket = await _basketService.GetByCustomerId(userId);
 
-        
-
-        //foreach (var products in basket.Products)
-        //{
-        //    var model = new ProductInBasket()
-        //    {
-        //        p                
-        //    };
-        //    models.Add(model);
-
-        //    if (TempData.ContainsKey($"{model.Product.Id}"))
-        //    {
-        //        if (int.TryParse(TempData[$"{model.Product.Id}"]?.ToString(), out var result))
-        //        {
-        //            model.Quantity = result;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        TempData[$"{model.Product.Id}"] = model.Quantity;
-        //    }
-        //}
-        //TempData.Keep();
-
+        return View(basket);
+    }
+    [HttpPost]
+    public IActionResult Index(Basket basket)
+    {
         return View(basket);
     }
 
@@ -140,15 +121,11 @@ public class BasketController : Controller
         return Redirect("/Products/Index");
     }
 
-    //[HttpPost]
-    //public IActionResult UpdateProductQuantity([FromBody] UpdateProductQuantityViewModel model)
-    //{
-    //    if (TempData.ContainsKey(model.ProductId))
-    //    {
-    //        TempData[$"{model.ProductId}"] = model.ProductQuantity;
-    //        TempData.Keep();
-    //    }
+    [HttpPost]
+    public IActionResult UpdateBasket(Basket basket)
+    {
+        _basketService.Update(basket);
 
-    //    return Ok();
-    //}
+        return RedirectToAction("Index", "Basket", new { basket });
+    }
 }

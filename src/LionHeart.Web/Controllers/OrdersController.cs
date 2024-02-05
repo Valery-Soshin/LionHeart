@@ -38,7 +38,7 @@ public class OrdersController : Controller
             {
                 ProductId = product.ProductId,
                 CustomerId = product.CustomerId,
-                TotalPrice = product.TotalPrice,
+                TotalPrice = product.ProductsTotalPrice,
                 Quantity = product.Quantity,
                 CreateAt = DateTimeOffset.UtcNow
             };
