@@ -17,11 +17,11 @@ public class BasketService : IBasketService
     {
         return _repository.GetById(id);
     }
-    public async Task<Basket> GetByCustomerId(string customerId)
+    public async Task<Basket> GetByCustomerId(string userId)
     {
-        var basket = await _repository.GetByCustomerId(customerId);
+        var basket = await _repository.GetByCustomerId(userId);
 
-        return await EnsureBasket(customerId, basket);
+        return await EnsureBasket(userId, basket);
     }
     public Task<List<Basket>> GetAll()
     {
@@ -39,17 +39,17 @@ public class BasketService : IBasketService
     {
         return _repository.Remove(basket);
     }
-    public Task<bool> HasProduct(string customerId, string productId)
+    public Task<bool> HasProduct(string userId, string productId)
     {
-        return _repository.HasProduct(customerId, productId);
+        return _repository.HasProduct(userId, productId);
     }
-    private async Task<Basket> EnsureBasket(string customerId, Basket? basket)
+    private async Task<Basket> EnsureBasket(string userId, Basket? basket)
     {
         if (basket is null)
         {
             basket = new Basket()
             {
-                UserId = customerId
+                UserId = userId
             };
 
             await _repository.Add(basket);

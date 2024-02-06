@@ -2,7 +2,7 @@
 
 public class CreateOrderViewModel
 {
-    public string CustomerId { get; set; } = null!;
+    public string UserId { get; set; } = null!;
     public decimal FullPrice { get; set; }
     public List<ProductInBasketViewModel> Products{ get; set; } = [];
 }

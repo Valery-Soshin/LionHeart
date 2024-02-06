@@ -19,19 +19,19 @@ public class BasketRepository(ApplicationDbContext dbContext) : RepositoryBase<B
                 .ThenInclude(p => p.Product)
             .ToListAsync();
     }
-    public Task<Basket?> GetByCustomerId(string customerId)
+    public Task<Basket?> GetByCustomerId(string userId)
     {
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
                 .ThenInclude(p => p.Product)
-            .FirstOrDefaultAsync(b => b.UserId == customerId);
+            .FirstOrDefaultAsync(b => b.UserId == userId);
     }
-	public Task<bool> HasProduct(string customerId, string productId)
+	public Task<bool> HasProduct(string userId, string productId)
     {
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
             .SelectMany(b => b.Products)
-            .Where(p => p.UserId == customerId &&
+            .Where(p => p.UserId == userId &&
                         p.ProductId == productId)
             .AnyAsync();
     }
