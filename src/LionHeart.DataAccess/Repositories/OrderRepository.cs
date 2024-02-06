@@ -4,12 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Repositories;
 
-public class OrderRepository : RepositoryBase<Order>, IOrderRepository
+public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Order>(dbContext), IOrderRepository
 {
-	public OrderRepository(ApplicationDbContext dbContext)
-	: base(dbContext) { }
-
-	public override Task<Order?> GetById(string id)
+    public override Task<Order?> GetById(string id)
 	{
 		return _dbContext.Orders.AsNoTracking()
 			.Include(o => o.User)

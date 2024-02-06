@@ -4,11 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Repositories;
 
-public class ProductRepository : RepositoryBase<Product>, IProductRepository
+public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<Product>(dbContext), IProductRepository
 {
-    public ProductRepository(ApplicationDbContext dbContext)
-        : base(dbContext) { }
-
     public override Task<Product?> GetById(string id)
     {
         return _dbContext.Products.AsNoTracking()
