@@ -8,5 +8,4 @@ public class ProductUnit
     public string ProductId { get; set; } = null!;
     public SaleStatus SaleStatus { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? SoldOn { get; set; }
 }
