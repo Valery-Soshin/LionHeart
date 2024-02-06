@@ -21,15 +21,15 @@
                                 <input hidden asp-for="Products[i].Id" id="id-@product.Id" value="@product.Id" />
                                 <input hidden asp-for="Products[i].ProductId" id="product-id-@product.Id" value="@product.ProductId" />
                                 <input hidden asp-for="Products[i].UserId" id="customer-id-@product.Id" value="@product.UserId" />
-                                <input hidden asp-for="Products[i].Information.Price" id="info-price-@product.Id" value="@product.Information.Price" />
+                                <input hidden asp-for="Products[i].Product.Price" id="info-price-@product.Id" value="@product.Product.Price" />
 
                                 <div class="col-2">
                                     <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
                                 </div>
 
                                 <div class="col-4">
-                                    <label id="label-info-name-@product.Id">@product.Information.Name</label>
-                                    <input hidden asp-for="Products[i].Information.Name" id="input-info-name-@product.Id" value="@product.Information.Name" />
+                                    <label id="label-info-name-@product.Id">@product.Product.Name</label>
+                                    <input hidden asp-for="Products[i].Product.Name" id="input-info-name-@product.Id" value="@product.Product.Name" />
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
@@ -43,7 +43,7 @@
 
                                 <div class="col-3 d-flex justify-content-end">
                                     @{
-                                        var productsTotalPrice = (product.Information.Price * product.Quantity).ToString().Replace(",", ".");
+                                        var productsTotalPrice = (product.Product.Price * product.Quantity).ToString().Replace(",", ".");
                                     }
                                     <label id="label-products-total-price-@product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice</label>
                                     <input hidden asp-for="Products[i].ProductsTotalPrice" id="input-products-total-price-@product.Id" value="@productsTotalPrice" />

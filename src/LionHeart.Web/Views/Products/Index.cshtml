@@ -1,8 +1,6 @@
 ﻿@using LionHeart.Web.Models.Products
 @model List<IndexViewModel>
-@{
-    var userId = userManager.GetUserId(User);
-}
+
 <div class="container-fluid">
     <div class="row row-cols-sm-auto m-5 justify-content-center">
         @foreach (var indexModel in Model)
@@ -24,13 +22,13 @@
                 <div class="card">
                     @if (indexModel.IsInBasket)
                     {
-                        <form method="post" id="form-post" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-userId="@userId" asp-route-productId="@indexModel.Product.Id">
+                        <form method="post" id="form-post" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-productId="@indexModel.Product.Id">
                             <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">Убрать из корзины</button>
                         </form>
                     }
                     else
                     {
-                        <form method="post" id="form-post" asp-action="AddToBasket" asp-controller="Basket" asp-route-userId="@userId" asp-route-productId="@indexModel.Product.Id">
+                        <form method="post" id="form-post" asp-action="AddToBasket" asp-controller="Basket" asp-route-productId="@indexModel.Product.Id">
                             <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">В корзину</button>
                         </form>
                     }

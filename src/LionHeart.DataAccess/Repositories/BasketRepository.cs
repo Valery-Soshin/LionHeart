@@ -16,14 +16,14 @@ public class BasketRepository(ApplicationDbContext dbContext) : RepositoryBase<B
     {
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
-                .ThenInclude(p => p.Information)
+                .ThenInclude(p => p.Product)
             .ToListAsync();
     }
     public Task<Basket?> GetByCustomerId(string customerId)
     {
         return _dbContext.Baskets.AsNoTracking()
             .Include(b => b.Products)
-                .ThenInclude(p => p.Information)
+                .ThenInclude(p => p.Product)
             .FirstOrDefaultAsync(b => b.UserId == customerId);
     }
 	public Task<bool> HasProduct(string customerId, string productId)

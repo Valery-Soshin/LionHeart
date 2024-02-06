@@ -27,17 +27,17 @@ public class BasketService : IBasketService
     {
         return _repository.GetAll();
     }
-    public Task<int> Add(Basket product)
+    public Task<int> Add(Basket basket)
     {
-        return _repository.Add(product);
+        return _repository.Add(basket);
     }
-    public Task<int> Update(Basket product)
+    public Task<int> Update(Basket basket)
     {
-        return _repository.Update(product);
+        return _repository.Update(basket);
     }
-    public Task<int> Remove(Basket product)
+    public Task<int> Remove(Basket basket)
     {
-        return _repository.Remove(product);
+        return _repository.Remove(basket);
     }
     public Task<bool> HasProduct(string customerId, string productId)
     {

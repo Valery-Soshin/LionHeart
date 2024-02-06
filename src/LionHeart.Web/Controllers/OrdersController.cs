@@ -31,7 +31,7 @@ public class OrdersController : Controller
 
             if (units.Count < product.Quantity)
             {
-                return NotFound($"Необходимое количество товара \"{product.Information.Name}\" не доступно.");
+                return NotFound($"Необходимое количество товара \"{product.Product.Name}\" не доступно.");
             }
 
             var order = new Order
