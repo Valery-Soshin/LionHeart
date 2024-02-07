@@ -1,6 +1,6 @@
 ﻿namespace LionHeart.Core.Models;
 
-public abstract class MarkedProduct
+public class FavoriteProduct
 {
     public string Id { get; set; } = null!;
     public string UserId { get; set; } = null!;

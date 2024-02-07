@@ -9,8 +9,7 @@ public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
 {
     public void Configure(EntityTypeBuilder<ProductUnit> builder)
     {
-        builder.Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(b => b.Id).ValueGeneratedOnAdd();
 
         builder.HasQueryFilter(pu => pu.SaleStatus == SaleStatus.Available);
 

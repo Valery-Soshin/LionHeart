@@ -20,12 +20,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitRepository>();
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<IBasketEntryRepository, BasketEntryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
-builder.Services.AddScoped<IBasketService, BasketService>();
+builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -36,7 +36,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();

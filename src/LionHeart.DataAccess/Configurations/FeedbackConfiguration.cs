@@ -8,7 +8,6 @@ public class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
 {
     public void Configure(EntityTypeBuilder<Feedback> builder)
     {
-        builder.Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }
 }

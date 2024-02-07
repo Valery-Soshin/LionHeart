@@ -8,7 +8,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        builder.Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }
 }

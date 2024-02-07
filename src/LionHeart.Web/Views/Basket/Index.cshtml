@@ -1,52 +1,50 @@
 ﻿@using LionHeart.Web.Models.Basket
-@model Basket;
+@model BasketViewModel
 
 <div class="container">
-    @if (Model.Products.Any())
+    @if (Model.Entries.Any())
     {
         <form class="row m-5" id="basket" method="post">
-            <input hidden asp-for="Id" id="id-basket" value="@Model.Id" />
-            <input hidden asp-for="UserId" id="customer-id-basket" value="@Model.UserId" />
             <div class="col-8">
                 <div class="card">
                     <div class="card-header">
                         <h3>Корзина</h3>
                     </div>
                     <div class="card-body" id="card-body">
-                        @for(int i = 0; i < Model.Products.Count; i++)
+                        @for(int i = 0; i < Model.Entries.Count; i++)
                         {
-                            var product = @Model.Products[i];
+                            var entry = @Model.Entries[i];
 
                             <div class="row d-flex justify-content-center align-items-center text-center">
-                                <input hidden asp-for="Products[i].Id" id="id-@product.Id" value="@product.Id" />
-                                <input hidden asp-for="Products[i].ProductId" id="product-id-@product.Id" value="@product.ProductId" />
-                                <input hidden asp-for="Products[i].UserId" id="customer-id-@product.Id" value="@product.UserId" />
-                                <input hidden asp-for="Products[i].Product.Price" id="info-price-@product.Id" value="@product.Product.Price" />
+                                <input hidden asp-for="Entries[i].Id" id="id-@entry.Id" value="@entry.Id" />
+                                <input hidden asp-for="Entries[i].UserId" id="customer-id-@entry.Id" value="@entry.UserId" />
+                                <input hidden asp-for="Entries[i].ProductId" id="product-id-@entry.Id" value="@entry.ProductId" />
+                                <input hidden asp-for="Entries[i].ProductPrice" id="info-price-@entry.Id" value="@entry.ProductPrice" />
 
                                 <div class="col-2">
                                     <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
                                 </div>
 
                                 <div class="col-4">
-                                    <label id="label-info-name-@product.Id">@product.Product.Name</label>
-                                    <input hidden asp-for="Products[i].Product.Name" id="input-info-name-@product.Id" value="@product.Product.Name" />
+                                    <label id="label-info-name-@entry.Id">@entry.ProductName</label>
+                                    <input hidden asp-for="Entries[i].ProductName" id="input-info-name-@entry.Id" value="@entry.ProductName" />
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@product.Id')">-</a>
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@entry.Id')">-</a>
 
-                                    <label id="label-quantity-@product.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px">@product.Quantity</label>
-                                    <input hidden asp-for="Products[i].Quantity" id="input-quantity-@product.Id" value="@product.Quantity" />
+                                    <label id="label-quantity-@entry.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px">@entry.ProductQuantity</label>
+                                    <input hidden asp-for="Entries[i].ProductQuantity" id="input-quantity-@entry.Id" value="@entry.ProductQuantity" />
 
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@product.Id')">+</a>
+                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@entry.Id')">+</a>
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-end">
                                     @{
-                                        var productsTotalPrice = (product.Product.Price * product.Quantity).ToString().Replace(",", ".");
+                                        var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
-                                    <label id="label-products-total-price-@product.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice</label>
-                                    <input hidden asp-for="Products[i].ProductsTotalPrice" id="input-products-total-price-@product.Id" value="@productsTotalPrice" />
+                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice</label>
+                                    <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>
                             <br />
@@ -62,7 +60,7 @@
                     <div class="card-body">
                         <div>
                             <div>
-                                Товаров: @Model.Products.Count
+                                Товаров: @Model.Entries.Count
                             </div>
                             <div>
                                 Стоимость всего:

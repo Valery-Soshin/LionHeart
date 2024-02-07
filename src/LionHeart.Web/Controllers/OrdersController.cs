@@ -3,6 +3,8 @@ using LionHeart.Core.Services;
 using LionHeart.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using LionHeart.Web.Models.Orders;
+using Microsoft.AspNetCore.Identity;
 
 namespace LionHeart.Web.Controllers;
 
@@ -12,34 +14,46 @@ public class OrdersController : Controller
     private readonly IOrderService _orderService;
     private readonly IProductService _productService;
     private readonly IProductUnitService _productUnitService;
+    private readonly UserManager<User> _userManager;
 
     public OrdersController(IOrderService orderService,
                            IProductService productService,
-                           IProductUnitService productUnitService)
+                           IProductUnitService productUnitService, 
+                           UserManager<User> userManager)
     {
         _orderService = orderService;
         _productService = productService;
         _productUnitService = productUnitService;
+        _userManager = userManager;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateOrder(Basket basket)
+    public async Task<IActionResult> CreateOrder(CreateOrderViewModel model)
     {
-        foreach (var product in basket.Products)
-        {
-            var units = await _productUnitService.GetByProductId(product.ProductId, product.Quantity);
+        var userId = _userManager.GetUserId(User);
 
-            if (units.Count < product.Quantity)
+        foreach (var entry in model.Entries)
+        {
+            var units = await _productUnitService.GetByProductId(entry.ProductId, entry.ProductQuantity);
+            var product = await _productService.GetById(entry.ProductId);
+
+            if (product is null)
             {
-                return NotFound($"Необходимое количество товара \"{product.Product.Name}\" не доступно.");
+                // logging
+                continue;
+            }
+
+            if (units.Count < entry.ProductQuantity)
+            {
+                continue;
             }
 
             var order = new Order
             {
-                ProductId = product.ProductId,
-                UserId = product.UserId,
-                TotalPrice = product.ProductsTotalPrice,
-                Quantity = product.Quantity,
+                ProductId = product.Id,
+                UserId = userId,
+                TotalPrice = product.Price * entry.ProductQuantity,
+                Quantity = entry.ProductQuantity,
                 CreateAt = DateTimeOffset.UtcNow
             };
 

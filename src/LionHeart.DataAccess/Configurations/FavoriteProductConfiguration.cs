@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Configurations;
 
-public class OrderConfiguration : IEntityTypeConfiguration<Order>
+public class FavoriteProductConfiguration : IEntityTypeConfiguration<FavoriteProduct>
 {
-    public void Configure(EntityTypeBuilder<Order> builder)
+    public void Configure(EntityTypeBuilder<FavoriteProduct> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }

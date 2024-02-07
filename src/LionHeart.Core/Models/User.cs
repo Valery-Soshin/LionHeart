@@ -10,5 +10,5 @@ public class User : IdentityUser
 
     public List<Feedback> Feedbacks { get; set; } = new();
     public List<Order> Orders { get; set; } = null!;
-    public List<MarkedProduct> MarkedProducts { get; set; } = null!;
+    public List<BasketEntry> BasketEntries { get; set; } = null!;
  }

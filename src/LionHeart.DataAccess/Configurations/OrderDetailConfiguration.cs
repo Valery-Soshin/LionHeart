@@ -8,7 +8,6 @@ public class OrderDetailConfiguration : IEntityTypeConfiguration<OrderDetail>
 {
     public void Configure(EntityTypeBuilder<OrderDetail> builder)
     {
-        builder.Property(b => b.Id)
-            .HasDefaultValueSql("gen_random_uuid()");
+        builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }
 }

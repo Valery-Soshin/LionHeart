@@ -1,5 +1,4 @@
-﻿using LionHeart.Core.Enums;
-using LionHeart.Core.Models;
+﻿using LionHeart.Core.Models;
 using LionHeart.Core.Services;
 using LionHeart.Web.Models.Products;
 using Microsoft.AspNetCore.Identity;
@@ -10,15 +9,15 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
-    private readonly IBasketService _basketService;
+    private readonly IBasketEntryService _basketEntryService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
-                              IBasketService basketService,
+                              IBasketEntryService basketEntryService,
                               UserManager<User> userManager)
     {
         _productService = productService;
-        _basketService = basketService;
+        _basketEntryService = basketEntryService;
         _userManager = userManager;
     }
 
@@ -32,14 +31,14 @@ public class ProductsController : Controller
 
         if (userId is not null)
         {
-            var basket = await _basketService.GetByCustomerId(userId);
+            var entries = await _basketEntryService.GetEntriesByUserId(userId);
 
             foreach (var product in products)
             {
                 models.Add(new IndexViewModel()
                 {
                     Product = product,
-                    IsInBasket = basket.Products.Exists(p => p.ProductId == product.Id)
+                    IsInBasket = entries.Exists(e => e.ProductId == product.Id)
                 });
             }
         }

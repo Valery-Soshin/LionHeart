@@ -2,7 +2,6 @@
 using LionHeart.DataAccess.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Versioning;
 
 namespace LionHeart.DataAccess;
 
@@ -10,10 +9,10 @@ public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
-    public DbSet<MarkedProduct> MarkedProducts{ get; set; }
+    public DbSet<BasketEntry> BasketEntries{ get; set; }
+    public DbSet<FavoriteProduct> FavoriteProducts{ get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
-    public DbSet<Basket> Baskets { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }
 
@@ -29,12 +28,12 @@ public class ApplicationDbContext : IdentityDbContext<User>
     {
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new ProductUnitConfiguration());
+        builder.ApplyConfiguration(new BasketEntryConfiguration());
+        builder.ApplyConfiguration(new FavoriteProductConfiguration());
         builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new FeedbackConfiguration());
-        builder.ApplyConfiguration(new MarkedProductConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderDetailConfiguration());
-        builder.ApplyConfiguration(new BasketConfiguration());
 
         var suppplier = new User
         {

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LionHeart.DataAccess.Configurations;
 
-public class ProductConfiguration : IEntityTypeConfiguration<Product>
+public class BasketEntryConfiguration : IEntityTypeConfiguration<BasketEntry>
 {
-    public void Configure(EntityTypeBuilder<Product> builder)
+    public void Configure(EntityTypeBuilder<BasketEntry> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }
