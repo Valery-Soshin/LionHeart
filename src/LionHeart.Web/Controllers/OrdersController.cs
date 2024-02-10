@@ -34,8 +34,8 @@ public class OrdersController : Controller
 
         foreach (var entry in model.Entries)
         {
-            var units = await _productUnitService.GetByProductId(entry.ProductId, entry.ProductQuantity);
             var product = await _productService.GetById(entry.ProductId);
+            var units = await _productUnitService.GetByProductId(entry.ProductId, entry.ProductQuantity);
 
             if (product is null)
             {

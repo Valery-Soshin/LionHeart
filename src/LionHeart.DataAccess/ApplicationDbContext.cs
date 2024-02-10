@@ -55,7 +55,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
             CategoryId = category.Id,
             Name = "Футболка",
             Price = 1250,
-            Quantity = 1,
             Description = "Красивая и удобная футболка",
             Specifications = "Размер - XXL"
         };

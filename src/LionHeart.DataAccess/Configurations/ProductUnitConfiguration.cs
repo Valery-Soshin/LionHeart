@@ -12,8 +12,5 @@ public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
 
         builder.HasQueryFilter(pu => pu.SaleStatus == SaleStatus.Available);
-
-        builder.HasOne<Product>()
-            .WithMany();
     }
 }
