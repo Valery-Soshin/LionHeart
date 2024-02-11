@@ -9,4 +9,5 @@ public interface IRepository<TEntity> : IDisposable where TEntity: class
     Task<int> Add(TEntity entity);
     Task<int> Update(TEntity entity);
     Task<int> Remove(TEntity entity);
+    Task<int> Remove(string id);
 }

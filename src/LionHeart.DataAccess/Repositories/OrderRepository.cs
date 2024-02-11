@@ -9,15 +9,32 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
     public override Task<Order?> GetById(string id)
 	{
 		return _dbContext.Orders.AsNoTracking()
-			.Include(o => o.User)
-			.Include(o => o.Product)
-			.FirstOrDefaultAsync(o => o.Id == id);
+            .Include(o => o.Items)
+                .ThenInclude(i => i.Details)
+            .FirstOrDefaultAsync(o => o.Id == id);
 	}
 	public override Task<List<Order>> GetAll()
 	{
 		return _dbContext.Orders.AsNoTracking()
-			.Include(o => o.User)
-			.Include(o => o.Product)
+			.Include(o => o.Items)
+				.ThenInclude(i => i.Details)
 			.ToListAsync();
 	}
+    public override async Task<int> Update(Order order)
+    {
+        await EFUpdateHelper.CheckItemsOnDelete(
+			order.Items, _dbContext, i => i.OrderId == order.Id);
+        await EFUpdateHelper.CheckItemsOnAdd(
+			order.Items, _dbContext, i => i.OrderId == order.Id);
+
+        foreach (var item in order.Items)
+        {
+            await EFUpdateHelper.CheckItemsOnDelete(
+                item.Details, _dbContext, d => d.OrderItemId == item.Id);
+            await EFUpdateHelper.CheckItemsOnAdd(
+                item.Details, _dbContext, d => d.OrderItemId == item.Id);
+        }
+
+        return await base.Update(order);
+    }
 }

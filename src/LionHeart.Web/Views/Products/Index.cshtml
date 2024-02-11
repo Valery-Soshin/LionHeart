@@ -3,33 +3,33 @@
 
 <div class="container-fluid">
     <div class="row row-cols-sm-auto m-5 justify-content-center">
-        @foreach (var indexModel in Model)
+        @foreach (var product in Model)
         {
             <div>
                 <div class="card">
                     <form class="col-3">
-                        <a asp-action="Show" asp-controller="Products" asp-route-id="@indexModel.Product.Id" class="border-0 bg-white text-center" style="text-decoration:none; color:black">
+                        <a asp-action="Show" asp-controller="Products" asp-route-id="@product.Product.Id" class="border-0 bg-white text-center" style="text-decoration:none; color:black">
                             <div class="card" style="width: 18rem;">
                                 <img src="/images/img1.jpg" class="card-img-top">
                                 <div class="card-body">
-                                    <h5 class="card-title">@indexModel.Product.Name</h5>
-                                    <p class="card-text text-truncate">@indexModel.Product.Description</p>
+                                    <h5 class="card-title">@product.Product.Name</h5>
+                                    <p class="card-text text-truncate">@product.Product.Description</p>
                                 </div>
                             </div>
                         </a>
                     </form>
                 </div>
                 <div class="card">
-                    @if (indexModel.IsInBasket)
+                    @if (product.IsInBasket)
                     {
-                        <form method="post" id="form-post" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-productId="@indexModel.Product.Id">
-                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">Убрать из корзины</button>
+                        <form method="post" id="form-post-@product.Product.Id" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-productId="@product.Product.Id">
+                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post-@product.Product.Id">Убрать из корзины</button>
                         </form>
                     }
                     else
                     {
-                        <form method="post" id="form-post" asp-action="AddToBasket" asp-controller="Basket" asp-route-productId="@indexModel.Product.Id">
-                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post">В корзину</button>
+                        <form method="post" id="form-post-@product.Product.Id" asp-action="AddToBasket" asp-controller="Basket" asp-route-productId="@product.Product.Id">
+                            <button class="btn btn-dark custom-btn" style="width:100%" form="form-post-@product.Product.Id">В корзину</button>
                         </form>
                     }
                 </div>

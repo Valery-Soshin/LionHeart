@@ -10,4 +10,5 @@ public interface IBasketEntryService
     Task<int> Add(BasketEntry entry);
     Task<int> Update(BasketEntry entry);
     Task<int> Remove(BasketEntry entry);
+    Task<int> Remove(string id);
 }

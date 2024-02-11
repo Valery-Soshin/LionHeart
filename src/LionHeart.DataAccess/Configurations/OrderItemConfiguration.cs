@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Configurations;
 
-public class OrderDetailConfiguration : IEntityTypeConfiguration<OrderDetail>
+public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 {
-    public void Configure(EntityTypeBuilder<OrderDetail> builder)
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }

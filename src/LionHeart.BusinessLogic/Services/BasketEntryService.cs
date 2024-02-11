@@ -37,4 +37,8 @@ public class BasketEntryService : IBasketEntryService
     {
         return _repository.Remove(entry);
     }
+    public Task<int> Remove(string id)
+    {
+        return _repository.Remove(id);
+    }
 }

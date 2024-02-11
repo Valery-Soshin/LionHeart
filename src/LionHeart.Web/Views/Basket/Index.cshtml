@@ -43,7 +43,7 @@
                                     @{
                                         var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
-                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice</label>
+                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice<span>р</span></label>
                                     <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>
@@ -60,18 +60,18 @@
                     <div class="card-body">
                         <div>
                             <div>
-                                Товаров: @Model.Entries.Count
+                                Товаров: @Model.Entries.Sum(e => e.ProductQuantity)
                             </div>
                             <div>
                                 Стоимость всего:
-                                <label id="label-basket-total-price-basket">@Model.BasketTotalPrice</label>
+                                <label id="label-basket-total-price-basket">@Model.BasketTotalPrice<span>р</span></label>
                                 <input hidden asp-for="BasketTotalPrice" id="input-basket-total-price-basket" value="@Model.BasketTotalPrice" />
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button asp-action="CreateOrder" asp-controller="Orders" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
-                        <button hidden id="update-basket" asp-action="UpdateBasket" asp-controller="Basket" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
+                        <button asp-action="CreateOrder" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
+                        <button hidden id="update-basket" asp-action="UpdateBasket" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -102,27 +102,32 @@
 
         var basePrice = document.getElementById('info-price-' + productInBasketID);
         
-        quantityLabel.textContent = +quantityInput.value + 1;
+        //quantityLabel.innerText = +quantityInput.value + 1;
         quantityInput.value = +quantityInput.value + 1;
 
-        totalPriceLabel.textContent = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
+        //totalPriceLabel.innerText = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
         totalPriceInput.value = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
 
         document.getElementById('update-basket').click();
     };
 
-    async function subtract(productId, basePrice) {
-        var counter = document.getElementById('quantity-' + productId);
-        var price = document.getElementById('price-' + productId);
+    async function subtract(productInBasketID) {
+        var quantityLabel = document.getElementById('label-quantity-' + productInBasketID);
+        var quantityInput = document.getElementById('input-quantity-' + productInBasketID);
 
-        if (+counter.value >= 2) {
-            counter.value = counter.value - 1;
-            price.value = (parseFloat(price.value) - parseFloat(basePrice)).toFixed(1);
+        var totalPriceLabel = document.getElementById('label-products-total-price-' + productInBasketID);
+        var totalPriceInput = document.getElementById('input-products-total-price-' + productInBasketID);
 
-            updateProductQuantity2();
-            //await updateProductQuantity(productId, counter.value);
+        var basePrice = document.getElementById('info-price-' + productInBasketID);
 
-            //await process();
+        if (+quantityInput.value >= 2) {
+            quantityLabel.ariaValueText = +quantityInput.value - 1;
+            quantityInput.value = +quantityInput.value - 1;
+
+            totalPriceLabel.ariaValueText = (parseFloat(totalPriceInput.value) - parseFloat(basePrice)).toFixed(1);
+            totalPriceInput.value = (parseFloat(totalPriceInput.value) - parseFloat(basePrice)).toFixed(1);
+
+            document.getElementById('update-basket').click();
         }
     };
 
@@ -138,10 +143,6 @@
                 productquantity: quantity
             })
         });
-    };
-
-    async function process() {
-        document.getElementById('total-price-button').click();
     };
 </script>
 

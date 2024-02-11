@@ -12,6 +12,6 @@ public class Product
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
 
-    public List<ProductUnit> ProductUnits { get; set; } = [];
+    public List<ProductUnit> Units { get; set; } = [];
     public List<Feedback> Feedbacks { get; set; } = [];
 }

@@ -11,6 +11,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+            .Include(p => p.Units)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
     public override Task<List<Product>> GetAll()
@@ -27,5 +28,15 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Feedbacks)
             .Where(p => p.Category.Id == categoryId)
             .ToListAsync();
+    }
+    public override async Task<int> Update(Product product)
+    {
+        await EFUpdateHelper.CheckItemsOnDelete(
+            product.Units, _dbContext, u => u.ProductId == product.Id);
+
+        await EFUpdateHelper.CheckItemsOnAdd(
+            product.Units, _dbContext, u => u.ProductId == product.Id);
+
+        return await base.Update(product);
     }
 }

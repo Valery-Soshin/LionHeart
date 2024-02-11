@@ -4,6 +4,7 @@ using LionHeart.Core.Services;
 using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using LionHeart.Web.Models.Basket;
+using LionHeart.Core.Enums;
 
 namespace LionHeart.Web.Controllers;
 												   
@@ -17,7 +18,7 @@ public class BasketController : Controller
 
 	public BasketController(IBasketEntryService basketEntryService,
 							IProductService productService,
-							IOrderService orderService,
+                            IOrderService orderService,
 							UserManager<User> userManager)
 	{
 		_basketEntryService = basketEntryService;
@@ -59,13 +60,59 @@ public class BasketController : Controller
 
 		return View(basket);
 	}
-	//[HttpPost]
-	//public IActionResult Index(Basket basket)
-	//{
-	//	return View(basket);
-	//}
 
-	[HttpPost]
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(BasketViewModel basket)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId is null) return Unauthorized();
+
+        var order = new Order
+        {
+            UserId = userId,
+            TotalPrice = basket.BasketTotalPrice,
+            CreateAt = DateTimeOffset.UtcNow
+        };
+
+        foreach (var entry in basket.Entries)
+        {
+            var product = await _productService.GetById(entry.ProductId);
+
+			if (product is null) continue;
+			if (product.Units.Count < entry.ProductQuantity)
+				return Content($"Продукт \"{product.Name}\" отсутствует на складе");
+
+			var orderItem = new OrderItem
+			{
+				OrderId = order.Id,
+				ProductId = product.Id,
+				ProductPrice = product.Price,
+				ProductQuantity = entry.ProductQuantity
+			};
+			order.Items.Add(orderItem);
+			
+            for(int i = 0; i < entry.ProductQuantity; i++)
+            {
+				var unit = product.Units[i];
+
+                orderItem.Details.Add(new OrderItemDetail
+                {
+                    OrderItemId = order.Id,
+                    ProductUnitId = unit.Id
+                });
+                unit.SaleStatus = SaleStatus.Sold;
+            }
+
+            await _productService.Update(product);
+			await _basketEntryService.Remove(entry.Id);
+        }
+        await _orderService.Add(order);
+
+        return Redirect("/Products/Index");
+    }
+
+    [HttpPost]
 	public async Task<IActionResult> AddToBasket(string productId)
 	{
 		var userId = _userManager.GetUserId(User);
@@ -117,11 +164,27 @@ public class BasketController : Controller
         return Redirect("/Products/Index");
 	}
 
-	[HttpPost]
-	public async Task<IActionResult> UpdateBasket(BasketViewModel basket)
-	{
-		
 
-		return null;
-	}
+    [HttpPost]
+    public async Task<IActionResult> UpdateBasket(BasketViewModel basket)
+    {
+		var userId = _userManager.GetUserId(User);
+		var entries = await _basketEntryService.GetEntriesByUserId(userId);
+
+		if (entries.Count != basket.Entries.Count)
+			return BadRequest();
+
+		foreach (var entry in basket.Entries)
+		{
+			var updateEntry = entries.FirstOrDefault(e => e.UserId == entry.UserId &&
+										e.ProductId == entry.ProductId);
+
+			if (updateEntry is null) continue;
+
+			updateEntry.Quantity = entry.ProductQuantity;
+			await _basketEntryService.Update(updateEntry);
+		}
+
+        return RedirectToAction("Index");
+    }
 }

@@ -38,7 +38,13 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
         _dbSet.Remove(entity);
         return SaveChangesAsync();
     }
-
+    public async Task<int> Remove(string id)
+    {
+        var type = _dbSet.EntityType.ClrType;
+        var entry = await _dbContext.FindAsync(type, id);
+        _dbContext.Remove(entry);
+        return await SaveChangesAsync();
+    }
     protected virtual Task<int> SaveChangesAsync()
     {
         return _dbContext.SaveChangesAsync();
