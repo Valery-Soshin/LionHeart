@@ -9,6 +9,13 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
     public BasketEntryRepository(ApplicationDbContext dbContext)
         : base(dbContext) { }
 
+    public override Task<BasketEntry?> GetById(string id)
+    {
+        return _dbContext.BasketEntries.AsNoTracking()
+            .Include(e => e.Product)
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+
     public Task<BasketEntry?> GetByUserProduct(string userId, string productId)
     {
         return _dbContext.BasketEntries.AsNoTracking()

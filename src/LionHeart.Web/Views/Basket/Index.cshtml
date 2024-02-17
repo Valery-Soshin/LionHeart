@@ -93,53 +93,65 @@
     }
 </div>
 <script>
-    async function add(productInBasketID) {
-        var quantityLabel = document.getElementById('label-quantity-' + productInBasketID);
-        var quantityInput = document.getElementById('input-quantity-' + productInBasketID);
+    async function add(basketEntryId) {
+        var quantityLabel = document.getElementById('label-quantity-' + basketEntryId);
+        var quantityInput = document.getElementById('input-quantity-' + basketEntryId);
 
-        var totalPriceLabel = document.getElementById('label-products-total-price-' + productInBasketID);
-        var totalPriceInput = document.getElementById('input-products-total-price-' + productInBasketID);
+        var totalProductsPriceLabel = document.getElementById('label-products-total-price-' + basketEntryId);
+        var totalProductsPriceInput = document.getElementById('input-products-total-price-' + basketEntryId);
 
-        var basePrice = document.getElementById('info-price-' + productInBasketID);
+        var totalBasketPriceLabel = document.getElementById('label-basket-total-price-basket');
+        var totalBasketPriceInput = document.getElementById('input-basket-total-price-basket');
+
+        var basePrice = document.getElementById('info-price-' + basketEntryId);
         
-        //quantityLabel.innerText = +quantityInput.value + 1;
+        quantityLabel.textContent = +quantityInput.value + 1;
         quantityInput.value = +quantityInput.value + 1;
 
-        //totalPriceLabel.innerText = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
-        totalPriceInput.value = (parseFloat(totalPriceInput.value) + parseFloat(basePrice)).toFixed(1);
+        totalProductsPriceLabel.textContent = (parseFloat(totalProductsPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
+        totalProductsPriceInput.value = (parseFloat(totalProductsPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
 
-        document.getElementById('update-basket').click();
-    };
+        totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
+        totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
 
-    async function subtract(productInBasketID) {
-        var quantityLabel = document.getElementById('label-quantity-' + productInBasketID);
-        var quantityInput = document.getElementById('input-quantity-' + productInBasketID);
+        updateEntry(basketEntryId, quantityInput.value);
+        };
 
-        var totalPriceLabel = document.getElementById('label-products-total-price-' + productInBasketID);
-        var totalPriceInput = document.getElementById('input-products-total-price-' + productInBasketID);
+    async function subtract(basketEntryId) {
+        var quantityLabel = document.getElementById('label-quantity-' + basketEntryId);
+        var quantityInput = document.getElementById('input-quantity-' + basketEntryId);
 
-        var basePrice = document.getElementById('info-price-' + productInBasketID);
+        var totalProductsPriceLabel = document.getElementById('label-products-total-price-' + basketEntryId);
+        var totalProductsPriceInput = document.getElementById('input-products-total-price-' + basketEntryId);
+
+        var totalBasketPriceLabel = document.getElementById('label-basket-total-price-basket');
+        var totalBasketPriceInput = document.getElementById('input-basket-total-price-basket');
+
+        var basePrice = document.getElementById('info-price-' + basketEntryId);
 
         if (+quantityInput.value >= 2) {
-            quantityLabel.ariaValueText = +quantityInput.value - 1;
+            quantityLabel.textContent = +quantityInput.value - 1;
             quantityInput.value = +quantityInput.value - 1;
 
-            totalPriceLabel.ariaValueText = (parseFloat(totalPriceInput.value) - parseFloat(basePrice)).toFixed(1);
-            totalPriceInput.value = (parseFloat(totalPriceInput.value) - parseFloat(basePrice)).toFixed(1);
+            totalProductsPriceLabel.textContent = (parseFloat(totalProductsPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
+            totalProductsPriceInput.value = (parseFloat(totalProductsPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
 
-            document.getElementById('update-basket').click();
+            totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
+            totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
+
+            updateEntry(basketEntryId, quantityInput.value);
         }
     };
 
-    async function updateProductQuantity(id, quantity) {
-        await fetch("/Basket/UpdateProductQuantity", {
+    async function updateEntry(id, quantity) {
+        await fetch("/Basket/UpdateBasket", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                productid: id,
+                entryid: id,
                 productquantity: quantity
             })
         });

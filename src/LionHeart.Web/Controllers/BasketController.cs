@@ -165,26 +165,40 @@ public class BasketController : Controller
 	}
 
 
-    [HttpPost]
-    public async Task<IActionResult> UpdateBasket(BasketViewModel basket)
+  //  [HttpPost]
+  //  public async Task<IActionResult> UpdateBasket(BasketViewModel basket)
+  //  {
+		//var userId = _userManager.GetUserId(User);
+		//var entries = await _basketEntryService.GetEntriesByUserId(userId);
+
+		//if (entries.Count != basket.Entries.Count)
+		//	return BadRequest();
+
+		//foreach (var entry in basket.Entries)
+		//{
+		//	var updateEntry = entries.FirstOrDefault(e => e.UserId == entry.UserId &&
+		//								e.ProductId == entry.ProductId);
+
+		//	if (updateEntry is null) continue;
+
+		//	updateEntry.Quantity = entry.ProductQuantity;
+		//	await _basketEntryService.Update(updateEntry);
+		//}
+
+  //      return RedirectToAction("Index");
+  //  }
+    public async Task<IActionResult> UpdateBasket([FromBody]UpdateTempData model)
     {
 		var userId = _userManager.GetUserId(User);
-		var entries = await _basketEntryService.GetEntriesByUserId(userId);
+		var entry = await _basketEntryService.GetById(model.EntryId);
 
-		if (entries.Count != basket.Entries.Count)
-			return BadRequest();
+		if (entry is null || entry.UserId != userId) return BadRequest();
 
-		foreach (var entry in basket.Entries)
-		{
-			var updateEntry = entries.FirstOrDefault(e => e.UserId == entry.UserId &&
-										e.ProductId == entry.ProductId);
+		entry.Quantity = model.ProductQuantity;
+		await _basketEntryService.Update(entry);
 
-			if (updateEntry is null) continue;
+		return Ok();
+	}
 
-			updateEntry.Quantity = entry.ProductQuantity;
-			await _basketEntryService.Update(updateEntry);
-		}
-
-        return RedirectToAction("Index");
-    }
+	public record class UpdateTempData(string EntryId, int ProductQuantity);
 }

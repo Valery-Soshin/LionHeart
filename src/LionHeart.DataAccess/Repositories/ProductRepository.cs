@@ -26,8 +26,8 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
-            .Where(p => p.Category.Id == categoryId)
-            .ToListAsync();
+            .Where(p => p.CategoryId == categoryId)
+            .ToListAsync();     
     }
     public override async Task<int> Update(Product product)
     {

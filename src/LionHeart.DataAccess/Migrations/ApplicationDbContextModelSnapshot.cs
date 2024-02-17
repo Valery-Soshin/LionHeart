@@ -71,13 +71,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "9452c798-a228-4b36-92f0-acfc838def3c",
-                            Name = "Одежда"
-                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.FavoriteProduct", b =>
@@ -279,18 +272,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("ix_products_user_id");
 
                     b.ToTable("products", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            CategoryId = "9452c798-a228-4b36-92f0-acfc838def3c",
-                            Description = "Красивая и удобная футболка",
-                            Name = "Футболка",
-                            Price = 1250m,
-                            Specifications = "Размер - XXL",
-                            UserId = "6511dfde-30e7-4581-94c8-6ec7eb2516c1"
-                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.ProductUnit", b =>
@@ -320,43 +301,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("ix_product_units_product_id");
 
                     b.ToTable("product_units", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "2eab019d-4cc4-4145-81ba-63f455397e6a",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 11, 10, 38, 39, 508, DateTimeKind.Unspecified).AddTicks(501), new TimeSpan(0, 3, 0, 0, 0)),
-                            ProductId = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            SaleStatus = 0
-                        },
-                        new
-                        {
-                            Id = "1634e4cf-ce4b-4912-945f-f712a38ce03c",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 11, 10, 38, 39, 508, DateTimeKind.Unspecified).AddTicks(565), new TimeSpan(0, 3, 0, 0, 0)),
-                            ProductId = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            SaleStatus = 0
-                        },
-                        new
-                        {
-                            Id = "beada3f1-612e-4ffc-91c4-b60640ebfa7a",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 11, 10, 38, 39, 508, DateTimeKind.Unspecified).AddTicks(584), new TimeSpan(0, 3, 0, 0, 0)),
-                            ProductId = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            SaleStatus = 0
-                        },
-                        new
-                        {
-                            Id = "71cf0489-534b-431c-8b9b-7571834ad8f0",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 11, 10, 38, 39, 508, DateTimeKind.Unspecified).AddTicks(602), new TimeSpan(0, 3, 0, 0, 0)),
-                            ProductId = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            SaleStatus = 0
-                        },
-                        new
-                        {
-                            Id = "ae455eb5-18ef-4cd8-a00e-ec7c30f5427b",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 2, 11, 10, 38, 39, 508, DateTimeKind.Unspecified).AddTicks(619), new TimeSpan(0, 3, 0, 0, 0)),
-                            ProductId = "f81cee91-b971-474a-a7a7-c7e2fd3e90f5",
-                            SaleStatus = 0
-                        });
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.User", b =>
@@ -449,22 +393,6 @@ namespace LionHeart.DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "6511dfde-30e7-4581-94c8-6ec7eb2516c1",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "d65b4895-2028-4040-bf94-3dcadddbe437",
-                            Email = "admin",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            PersonalDiscount = 0m,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "926e12c7-f7d2-47b7-9b64-92a184fb2975",
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

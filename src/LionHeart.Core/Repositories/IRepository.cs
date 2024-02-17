@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace LionHeart.Core.Repositories;
+﻿namespace LionHeart.Core.Repositories;
 
 public interface IRepository<TEntity> : IDisposable where TEntity: class
 {

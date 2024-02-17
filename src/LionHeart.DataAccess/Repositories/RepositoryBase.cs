@@ -1,6 +1,5 @@
 ﻿using LionHeart.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -20,7 +19,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
         return await _dbSet.FindAsync(id);
     }
     public virtual Task<List<TEntity>> GetAll()
-    {
+    {                       
         return _dbSet.ToListAsync();
     }
     public virtual Task<int> Add(TEntity entity)
@@ -42,12 +41,15 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
     {
         var type = _dbSet.EntityType.ClrType;
         var entry = await _dbContext.FindAsync(type, id);
+        if (entry is null) return -1;
         _dbContext.Remove(entry);
         return await SaveChangesAsync();
     }
-    protected virtual Task<int> SaveChangesAsync()
+    protected virtual async Task<int> SaveChangesAsync()
     {
-        return _dbContext.SaveChangesAsync();
+        var result = await _dbContext.SaveChangesAsync();
+        _dbContext.ChangeTracker.Clear();
+        return result;
     }
 
     public void Dispose()

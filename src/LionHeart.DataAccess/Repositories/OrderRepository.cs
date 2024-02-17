@@ -23,9 +23,9 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
     public override async Task<int> Update(Order order)
     {
         await EFUpdateHelper.CheckItemsOnDelete(
-			order.Items, _dbContext, i => i.OrderId == order.Id);
+            order.Items, _dbContext, i => i.OrderId == order.Id);
         await EFUpdateHelper.CheckItemsOnAdd(
-			order.Items, _dbContext, i => i.OrderId == order.Id);
+            order.Items, _dbContext, i => i.OrderId == order.Id);
 
         foreach (var item in order.Items)
         {

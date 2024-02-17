@@ -6,7 +6,7 @@ namespace LionHeart.DataAccess.Repositories;
 
 public class ProductUnitRepository(ApplicationDbContext dbContext) : RepositoryBase<ProductUnit>(dbContext), IProductUnitRepository
 {
-    public new Task<ProductUnit?> GetById(string id)
+    public override Task<ProductUnit?> GetById(string id)
 	{
 		return _dbContext.ProductUnits.AsNoTracking()
 			.FirstOrDefaultAsync(pd => pd.Id == id);
