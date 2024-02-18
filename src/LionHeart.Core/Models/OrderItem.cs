@@ -5,6 +5,7 @@ public class OrderItem
     public string Id { get; set; } = null!;
     public string OrderId { get; set; } = null!;
     public string ProductId { get; set; } = null!;
+    public Product? Product { get; set; }
     public decimal ProductPrice { get; set; }
     public int ProductQuantity { get; set; }
     public List<OrderItemDetail> Details { get; set; } = [];

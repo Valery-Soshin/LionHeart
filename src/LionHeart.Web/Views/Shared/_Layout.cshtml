@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using LionHeart.Core.Services
+@inject IOrderService orderService;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -32,11 +35,16 @@
             </li>
 
             <li class="nav-item nav-custom-item nav-">
-                <a asp-action="Index" asp-controller="Profile" asp-route-userId="@userId" class="nav-link text-white">Профиль</a>
+                <a asp-action="Index" asp-controller="Profile" class="nav-link text-white">Профиль</a>
             </li>
-
+            @if (userId is not null && await orderService.Any(userId))
+            {
+                <li class="nav-item nav-custom-item">
+                    <a asp-action="ListOrders" asp-controller="Orders" class="nav-link text-white">Заказы</a>
+                </li>
+            }
             <li class="nav-item nav-custom-item">
-                <a asp-action="Index" asp-controller="Basket" asp-route-userId="@userId" class="nav-link text-white">Корзина</a>
+                <a asp-action="Index" asp-controller="Basket" class="nav-link text-white">Корзина</a>
             </li>
 
             @if (User is not null && signManager.IsSignedIn(User))

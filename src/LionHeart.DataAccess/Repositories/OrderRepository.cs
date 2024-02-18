@@ -13,6 +13,14 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
                 .ThenInclude(i => i.Details)
             .FirstOrDefaultAsync(o => o.Id == id);
 	}
+    public Task<List<Order>> GetOrdersByUserId(string userId)
+    {
+        return _dbContext.Orders.AsNoTracking()
+            .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+            .Where(o => o.UserId == userId)
+            .ToListAsync();
+    }
 	public override Task<List<Order>> GetAll()
 	{
 		return _dbContext.Orders.AsNoTracking()
@@ -36,5 +44,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
         }
 
         return await base.Update(order);
+    }
+    public Task<bool> Any(string userId)
+    {
+        return _dbContext.Orders
+            .AnyAsync(o => o.UserId == userId);
     }
 }

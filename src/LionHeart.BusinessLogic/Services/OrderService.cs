@@ -6,31 +6,39 @@ namespace LionHeart.BusinessLogic.Services;
 
 public class OrderService : IOrderService
 {
-	private readonly IOrderRepository _orderRepository;
+	private readonly IOrderRepository _repository;
 
 	public OrderService(IOrderRepository orderRepository)
     {
-		_orderRepository = orderRepository;
+		_repository = orderRepository;
     }
 
     public Task<Order?> GetById(string id)
 	{
-		return _orderRepository.GetById(id);
+		return _repository.GetById(id);
+	}
+	public Task<List<Order>> GetOrdersByUserId(string userId)
+	{
+		return _repository.GetOrdersByUserId(userId);
 	}
 	public Task<List<Order>> GetAll()
 	{
-		return _orderRepository.GetAll();
+		return _repository.GetAll();
 	}
 	public Task<int> Add(Order order)
 	{
-		return _orderRepository.Add(order);
+		return _repository.Add(order);
 	}
 	public Task<int> Update(Order order)
 	{
-		return _orderRepository.Update(order);
+		return _repository.Update(order);
 	}
 	public Task<int> Remove(Order order)
 	{
-		return _orderRepository.Remove(order);
+		return _repository.Remove(order);
+	}
+	public Task<bool> Any(string userId)
+	{
+		return _repository.Any(userId);
 	}
 }
