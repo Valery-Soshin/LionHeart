@@ -1,0 +1,23 @@
+﻿@model Product
+
+<div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="m-5 w-50">
+        <form>
+            <div class="mb-3">
+                <h3 class="text-center">Добавление продукта</h3>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Название</label>
+                <input asp-for="Name" type="text" class="form-control" placeholder="Название">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Цена</label>
+                <input asp-for="Price" type="number" class="form-control" placeholder="Цена">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Количество</label>
+                <input asp-for="Units" type="text" class="form-control" placeholder="Количество">
+            </div>
+        </form>
+    </div>
+</div>

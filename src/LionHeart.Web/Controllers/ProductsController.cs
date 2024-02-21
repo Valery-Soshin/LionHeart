@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Models;
 using LionHeart.Core.Services;
 using LionHeart.Web.Models.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -70,5 +71,19 @@ public class ProductsController : Controller
         ViewBag.ShowFeedbacks = showFeedbacks;
 
         return View(product);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> CreateProduct()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> Create()
+    {
+        return null;
     }
 }

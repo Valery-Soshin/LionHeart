@@ -4,21 +4,21 @@
     var showFeebacks = ViewBag.ShowFeedbacks;
 }
 
-<div class="container">
-    <div class="card m-5">
+<div class="site-body-container">
+    <div class="card">
         <div class="card">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <div id="carouselExample" class="carousel slide">
+                    <div id="carouselExample" class="carousel slide m-3">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="/images/img1.jpg" class="img-thumbnail" style="border-radius: 25px">
+                                <img src="/images/img2.jpg" class="img-thumbnail" style="border-radius: 25px">
                             </div>
                             <div class="carousel-item">
-                                <img src="/images/img1.jpg" class="img-thumbnail" style="border-radius: 25px">
+                                <img src="/images/img2.jpg" class="img-thumbnail" style="border-radius: 25px">
                             </div>
                             <div class="carousel-item">
-                                <img src="/images/img1.jpg" class="img-thumbnail" style="border-radius: 25px">
+                                <img src="/images/img2.jpg" class="img-thumbnail" style="border-radius: 25px">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card m-5">
-                        <div class="card-body">
+                        <div class="card-body" style="background-color:#930667; color:white;">
                             <h5 class="card-title">@Model.Name</h5>
                             <p class="card-text">@Model.Description</p>
                             <p class="card-text"><small class="text-body-secondary">@Model.Specifications</small></p>
@@ -57,7 +57,7 @@
 
                                 <div class="card">
 
-                                    <div class="card-header">
+                                    <div class="card-header" style="background-color:#930667; color:white; ">
                                         Валерий Сошин
                                     </div>
 
@@ -77,9 +77,13 @@
                 }
                 else
                 {
-                    <a asp-action="Show" asp-route-id="@Model.Id" asp-route-showFeedbacks="true" class="btn btn-dark nav-btn-hover" style="max-width: 200px;" id="showFeedbacks">
-                        Посмотреть отзывы
-                    </a>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-center">
+                            <a class="btn btn-grad w-50" asp-action="Show" asp-route-id="@Model.Id" asp-route-showFeedbacks="true" id="showFeedbacks">
+                                Посмотреть отзывы
+                            </a>
+                        </div>
+                    </div>
                 }
             </div>
         </div>

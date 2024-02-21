@@ -1,41 +1,43 @@
 ﻿@model List<Order>
 
-<div class="container">
-    <div class="m-5">
-        <table class="table text-center">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Продукт</th>
-                    <th scope="col">Цена ед.</th>
-                    <th scope="col">Количество</th>
-                    <th scope="col">Дата заказа</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int rowNumber = 1;
-                }
-                @foreach (var order in Model)
+<style>
+    
+</style>
+
+<div class="site-body-container">
+    <table class="table text-center" style="color: #930667">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Продукт</th>
+                <th scope="col">Цена ед.</th>
+                <th scope="col">Количество</th>
+                <th scope="col">Дата заказа</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int rowNumber = 1;
+            }
+            @foreach (var order in Model.OrderBy(o => o.CreateAt))
+            {
+                foreach (var orderItem in order.Items)
                 {
-                    foreach (var orderItem in order.Items)
-                    {
-                        var product = orderItem.Product;
+                    var product = orderItem.Product;
 
-                        if (product is null) continue;
+                    if (product is null) continue;
 
-                        <tr>
-                            <th scope="row">@rowNumber</th>
-                            <td>@product.Name</td>
-                            <td>@orderItem.ProductPrice</td>
-                            <td>@orderItem.ProductQuantity</td>
-                            <td>@order.CreateAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
-                        </tr>
+                    <tr>
+                        <th scope="row">@rowNumber</th>
+                        <td>@product.Name</td>
+                        <td>@orderItem.ProductPrice</td>
+                        <td>@orderItem.ProductQuantity</td>
+                        <td>@order.CreateAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
+                    </tr>
 
-                        rowNumber++;
-                    }
+                    rowNumber++;
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
+            }
+        </tbody>
+    </table>
+ </div>

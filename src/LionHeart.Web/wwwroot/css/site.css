@@ -20,27 +20,74 @@ html {
 body {
   margin-bottom: 60px;
 }
-/*
-.nav-custom-item {
-    background-color: #212529;
-}*/
 
-.nav-custom-item a:hover {
-    background-color: #292f35;
+
+.site-nav-item {
+    background-color: #930667;
+    color: white;
+    border: 0px;
+}
+.site-nav-item:hover {
+    color: #daa0c7;
+}
+.site-nav-item::after{
+    color:white;
 }
 
-.nav-btn-hover:hover {
-    background-color: #424d59;
+.profile-nav-link {
     color: white;
 }
-
+.profile-nav-link:hover {
+    color: #3a0227;
+}
 
 .custom-btn:hover {
-    background-color: DarkSlateGrey;
-}
-.custom-button:active {
-    
+    background-color: darkslategray;
 }
 
+.custom-btn {
+    font-size: 20px;
+}
+
+.custom-input{
+    font-size: 20px;
+}
 
 
+.site-body-container {
+    margin: 50px 200px 200px;
+}
+
+
+
+.supplier-panel-btn{
+    font-size: 25px;
+}
+
+.supplier-panel-btn:hover{
+    background-color:whitesmoke;
+    color: black;
+}
+
+
+
+
+.btn-grad {
+    background-image: linear-gradient(to right, #AA076B 0%, #61045F 51%, #AA076B 100%);
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
+}
+
+.btn-grad:hover {
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
+}

@@ -1,17 +1,17 @@
 ﻿@using LionHeart.Web.Models.Basket
 @model BasketViewModel
 
-<div class="container">
+<div class="site-body-container">
     @if (Model.Entries.Any())
     {
-        <form class="row m-5" id="basket" method="post">
+        <form class="row" id="basket" method="post">
             <div class="col-8">
                 <div class="card">
                     <div class="card-header">
                         <h3>Корзина</h3>
                     </div>
                     <div class="card-body" id="card-body">
-                        @for(int i = 0; i < Model.Entries.Count; i++)
+                        @for (int i = 0; i < Model.Entries.Count; i++)
                         {
                             var entry = @Model.Entries[i];
 
@@ -22,7 +22,7 @@
                                 <input hidden asp-for="Entries[i].ProductPrice" id="info-price-@entry.Id" value="@entry.ProductPrice" />
 
                                 <div class="col-2">
-                                    <img src="/images/img1.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
+                                    <img src="/images/img2.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
                                 </div>
 
                                 <div class="col-4">
@@ -31,12 +31,12 @@
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="subtract('@entry.Id')">-</a>
+                                    <a class="btn btn-grad" style="width: 40px; height: 40px;" onclick="subtract('@entry.Id')">-</a>
 
                                     <label id="label-quantity-@entry.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px">@entry.ProductQuantity</label>
                                     <input hidden asp-for="Entries[i].ProductQuantity" id="input-quantity-@entry.Id" value="@entry.ProductQuantity" />
 
-                                    <a class="btn btn-dark custom-btn" style="width: 40px; height: 40px;" onclick="add('@entry.Id')">+</a>
+                                    <a class="btn btn-grad" style="width: 40px; height: 40px;" onclick="add('@entry.Id')">+</a>
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-end">
@@ -70,8 +70,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button asp-action="CreateOrder" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
-                        <button hidden id="update-basket" asp-action="UpdateBasket" type="submit" class="btn btn-dark custom-btn" form="basket">Заказать</button>
+                        <button asp-action="CreateOrder" type="submit" class="btn btn-grad" form="basket">Заказать</button>
+                        <button hidden id="update-basket" asp-action="UpdateBasket" type="submit" class="btn btn-grad" form="basket">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -79,15 +79,17 @@
     }
     else
     {
-        <div class="row m-5 text-center">
+        <div class="row m-5 text-center" style="color: #930667">
             <div>
                 <h3>В корзине пока пусто</h3>
             </div>
             <div>
                 <p>Загляните на главную, чтобы выбрать товары или найдите нужное в поиске</p>
             </div>
-            <div>
-                <a asp-action="Index" asp-controller="Products" class="btn btn-dark">Перейти на главную</a>
+            <div class="d-flex justify-content-center">
+                <div>
+                    <a asp-action="Index" asp-controller="Products" class="btn btn-grad">Перейти на главную</a>
+                </div>
             </div>
         </div>
     }

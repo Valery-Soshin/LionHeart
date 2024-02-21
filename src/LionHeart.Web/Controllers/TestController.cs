@@ -34,6 +34,7 @@ namespace LionHeart.Web.Controllers
                 Email = "supplier@yandex.ru",
             };
             await _userManager.CreateAsync(supplier, "Supplier2024-");
+            await _userManager.AddToRoleAsync(supplier, "Customer");
             await _userManager.AddToRoleAsync(supplier, "Supplier");
             await CreateProducts(supplier);
 
