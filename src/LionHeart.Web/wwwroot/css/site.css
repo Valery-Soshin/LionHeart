@@ -21,6 +21,10 @@ body {
   margin-bottom: 60px;
 }
 
+.site-body-container {
+    margin: 50px 200px 200px;
+}
+
 
 .site-nav-item {
     background-color: #930667;
@@ -34,11 +38,13 @@ body {
     color:white;
 }
 
-.profile-nav-link {
+.main-theme {
+    background-color: #930667;
     color: white;
 }
-.profile-nav-link:hover {
-    color: #3a0227;
+
+.main-color {
+   color: #930667;
 }
 
 .custom-btn:hover {
@@ -52,23 +58,6 @@ body {
 .custom-input{
     font-size: 20px;
 }
-
-
-.site-body-container {
-    margin: 50px 200px 200px;
-}
-
-
-
-.supplier-panel-btn{
-    font-size: 25px;
-}
-
-.supplier-panel-btn:hover{
-    background-color:whitesmoke;
-    color: black;
-}
-
 
 
 

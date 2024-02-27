@@ -77,11 +77,6 @@ public class AuthController : Controller
             
             if (result.Succeeded)
             {
-                if (!await _roleManager.RoleExistsAsync("Customer"))
-                {
-                    var role = new IdentityRole("Customer");
-                    await _roleManager.CreateAsync(role);
-                }
                 await _userManager.AddToRoleAsync(user, "Customer");
                 await _signInManager.SignInAsync(user, model.RemeberMe);
                 return Redirect("/Products/Index");

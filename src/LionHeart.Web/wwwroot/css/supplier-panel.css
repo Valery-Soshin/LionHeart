@@ -1,0 +1,8 @@
+﻿.supplier-panel-btn {
+    font-size: 25px;
+}
+
+.supplier-panel-btn:hover {
+    background-color: whitesmoke;
+    color: black;
+}

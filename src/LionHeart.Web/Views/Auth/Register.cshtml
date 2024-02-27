@@ -2,34 +2,30 @@
 @model RegisterViewModel
 
 <div class="container min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="card w-50" style="max-width:450px">
-        <div class="card-header text-center" style="text-align:center;">
-            <h2 class="" >Регистрация</h2>
+    <div class="card w-50 main-color" style="max-width:500px">
+        <div class="card-header text-center main-theme">
+            <h2>Регистрация</h2>
         </div>
         <div class="card-body">
             <form asp-action="Register" method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="col">
-                    <label class="form-label">Имя</label>
+                <div class="mb-3">
+                    <label class="form-label">Введите имя</label>
                     <input asp-for="FirstName" type="text" class="form-control" placeholder="Имя">
                 </div>
-                <div class="col">
-                    <br />
-                    <label class="form-label">Фамилия</label>
+                <div class="mb-3">
+                    <label class="form-label">Введите фамилию</label>
                     <input asp-for="LastName" type="text" class="form-control" placeholder="Фамилия">
                 </div>
-                <div>
-                    <br />
-                    <label class="form-label">Почта</label>
+                <div class="mb-3">
+                    <label class="form-label">Введите почту</label>
                     <input asp-for="Email" type="email" class="form-control" placeholder="Почта">
                 </div>
-                <div>
-                    <br />
-                    <label class="form-label">Пароль</label>
+                <div class="mb-3">
+                    <label class="form-label">Введите пароль</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="Пароль">
                 </div>
-                <div>
-                    <br />
+                <div class="mb-3">
                     <div class="form-check">
                         <input asp-for="RemeberMe" class="form-check-input" type="checkbox">
                         <label class="form-check-label">
@@ -37,17 +33,13 @@
                         </label>
                     </div>
                 </div>
-                <div>
-                    <br />
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-dark custom-button">Зарегистрироваться</button>
-                        <button asp-action="Login" class="btn btn-dark custom-button">Отменить</button>
+                <div class="mb-3">
+                    <div>
+                        <button type="submit" class="btn btn-grad custom-button m-0 mt-2 mb-2 mt-5 w-100">Зарегистрироваться</button>
+                        <button asp-action="Login" class="btn btn-grad custom-button m-0 mt-5 mb-2 w-100">Отменить</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-
-
