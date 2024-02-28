@@ -10,20 +10,20 @@
             <form asp-action="Register" method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="mb-3">
-                    <label class="form-label">Введите имя</label>
-                    <input asp-for="FirstName" type="text" class="form-control" placeholder="Имя">
+                    <label class="form-label">Имя</label>
+                    <input asp-for="FirstName" type="text" class="form-control custom-input" placeholder="Введите имя">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Введите фамилию</label>
-                    <input asp-for="LastName" type="text" class="form-control" placeholder="Фамилия">
+                    <label class="form-label">Фамилия</label>
+                    <input asp-for="LastName" type="text" class="form-control custom-input" placeholder="Введите фамилию">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Введите почту</label>
-                    <input asp-for="Email" type="email" class="form-control" placeholder="Почта">
+                    <label class="form-label">Почта</label>
+                    <input asp-for="Email" type="email" class="form-control custom-input" placeholder="Введите почту">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Введите пароль</label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Пароль">
+                    <label class="form-label">Пароль</label>
+                    <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Введите пароль">
                 </div>
                 <div class="mb-3">
                     <div class="form-check">

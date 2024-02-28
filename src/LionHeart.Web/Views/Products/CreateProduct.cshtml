@@ -1,22 +1,48 @@
-﻿@model Product
+﻿@using LionHeart.Core.Services
+@using LionHeart.Web.Models.Products
+@model CreateProductViewModel
+@inject ICategoryService categoryService 
 
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="m-5 w-50">
-        <form>
-            <div class="mb-3">
-                <h3 class="text-center">Добавление продукта</h3>
+    <div class="m-5 w-50 main-color">
+        <form asp-action="CreateProduct" method="post" class="card">
+            <div class="p-3 main-theme ">
+                <h3 class="text-center m-0 ">Добавление товара</h3>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Название</label>
-                <input asp-for="Name" type="text" class="form-control" placeholder="Название">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Цена</label>
-                <input asp-for="Price" type="number" class="form-control" placeholder="Цена">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Количество</label>
-                <input asp-for="Units" type="text" class="form-control" placeholder="Количество">
+            <div class="bg-light p-4">
+                <div class="mb-3">
+                    <label class="form-label">Название</label>
+                    <input asp-for="Name" type="text" class="form-control custom-input" placeholder="Введите название товара">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Категория</label>
+                    <select asp-for="CategoryId" class="form-select custom-input" aria-label="Default select example">
+                        <option selected>Выберите категорию товара</option>
+                        @foreach (var category in await categoryService.GetAll())
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Цена</label>
+                    <input asp-for="Price" type="number" class="form-control custom-input" placeholder="Введите цену товара">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Количество</label>
+                    <input asp-for="Quantity" type="text" class="form-control custom-input" placeholder="Введите количество товара">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Описание</label>
+                    <textarea asp-for="Description" class="form-control custom-input" rows="3" placeholder="Расскажите о товаре"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Характеристики</label>
+                    <textarea asp-for="Specifications" class="form-control custom-input" rows="3" placeholder="Введите характеристики товара"></textarea>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-grad m-0 w-25">Добавить</button>
+                </div>
             </div>
         </form>
     </div>

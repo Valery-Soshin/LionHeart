@@ -12,6 +12,7 @@ public class EditViewModel
     public string? LastName { get; set; } = null!;
 
     [Phone]
+    [Display(Name ="\"Phone\"")]
     public string? PhoneNumber { get; set; } = null!;
 
     [DataType(DataType.Password)]
@@ -22,5 +23,6 @@ public class EditViewModel
     public string? Password { get; set; } = null!;
 
     [DataType(DataType.Password)]
+    [Display(Name = "\"Пароль повторно\"")]
     public string? ConfirmPassword { get; set; } = null!;
 }

@@ -14,12 +14,12 @@
             <form method="post" id="login-form">
                 <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
                 <div class="mb-3">
-                    <label class="form-label">Введите почту</label>
-                    <input asp-for="Email" type="email" class="form-control custom-input" form="login-form" placeholder="Почта">
+                    <label class="form-label">Почта</label>
+                    <input asp-for="Email" type="email" class="form-control custom-input" form="login-form" placeholder="Введите почту">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Введите пароль</label>
-                    <input asp-for="Password" type="password" class="form-control custom-input" form="login-form" placeholder="Пароль">
+                    <label class="form-label">Пароль</label>
+                    <input asp-for="Password" type="password" class="form-control custom-input" form="login-form" placeholder="Введите пароль">
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input">
