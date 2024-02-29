@@ -29,6 +29,14 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Where(p => p.CategoryId == categoryId)
             .ToListAsync();     
     }
+    public Task<List<Product>> GetProductsByUserId(string userId)
+    {
+        return _dbContext.Products.AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
+            .Where(p => p.UserId == userId)
+            .ToListAsync();
+    }
     public override async Task<int> Update(Product product)
     {
         await EFUpdateHelper.CheckItemsOnDelete(

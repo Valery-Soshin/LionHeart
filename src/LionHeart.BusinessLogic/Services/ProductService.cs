@@ -25,6 +25,10 @@ public class ProductService : IProductService
     {
         return _productRepository.GetProductsByCategoryId(categoryId);
     }
+    public Task<List<Product>> GetProductsByUserId(string userId)
+    {
+        return _productRepository.GetProductsByUserId(userId);
+    }
     public Task<int> Add(Product product)
     {
         return _productRepository.Add(product);

@@ -1,8 +1,8 @@
 ﻿@model List<Order>
 
 <div class="site-body-container">
-    <table class="table text-center" style="color: #930667">
-        <thead>
+    <table class="table text-center bg-light" style="color: #930667">
+        <thead class="main-theme border-1">
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Продукт</th>
@@ -11,7 +11,7 @@
                 <th scope="col">Дата заказа</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="border-1">
             @{
                 int rowNumber = 1;
             }

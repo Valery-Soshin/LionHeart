@@ -11,14 +11,17 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
+    private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
+                              IProductUnitService productUnitService,
                               IBasketEntryService basketEntryService,
                               UserManager<User> userManager)
     {
         _productService = productService;
+        _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
         _userManager = userManager;
     }
@@ -95,7 +98,8 @@ public class ProductsController : Controller
             UserId = supplierId,
             Price = model.Price,
             Description = model.Description,
-            Specifications = model.Specifications
+            Specifications = model.Specifications,
+            CreatedAt = DateTimeOffset.UtcNow
         };
 
         await _productService.Add(product);
@@ -116,5 +120,77 @@ public class ProductsController : Controller
         }
 
         return Redirect("/SupplierPanel");
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> EditProduct(string productId)
+    {
+        var product = await _productService.GetById(productId);
+
+        if (product is null) return NotFound(); // logging
+
+        var model = new SupplierProductViewModel()
+        {
+            Product = product,
+            Quantity = await _productUnitService.CountByProductId(productId)
+        };
+
+        return View(model);
+    }
+    [HttpPost]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> EditProduct(SupplierProductViewModel model)
+    {
+        var product = await _productService.GetById(model.Product.Id);
+
+        if (product is null) return NotFound(); // logging
+
+        product.Name = model.Product.Name;
+        product.Price = model.Product.Price;
+        product.CategoryId = model.Product.CategoryId;
+        product.Description = model.Product.Description ?? string.Empty;
+        product.Specifications = model.Product.Specifications ?? string.Empty;
+
+        await _productService.Update(product);
+
+        return RedirectToAction("ListSupplierProducts");
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> DeleteProduct(string productId)
+    {
+        // сделать мягкое удаление
+
+        var product = await _productService.GetById(productId);
+        if (product is null) return NotFound(); // logging
+
+        await _productService.Remove(product);
+
+        return RedirectToAction("ListSupplierProducts");
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Supplier")]
+    public async Task<IActionResult> ListSupplierProducts()
+    {
+        var supplierId = _userManager.GetUserId(User);
+        if (supplierId is null) return BadRequest(); // logging
+
+        var products = await _productService.GetProductsByUserId(supplierId);
+
+        var models = new List<SupplierProductViewModel>();
+
+        foreach (var product in products)
+        {
+            models.Add(new SupplierProductViewModel()
+            {
+                Product = product,
+                Quantity = await _productUnitService.CountByProductId(product.Id)
+            });
+        }
+
+        return View(models);
     }
 }

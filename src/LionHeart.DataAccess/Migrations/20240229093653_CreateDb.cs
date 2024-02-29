@@ -202,7 +202,8 @@ namespace LionHeart.DataAccess.Migrations
                     name = table.Column<string>(type: "text", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
-                    specifications = table.Column<string>(type: "text", nullable: false)
+                    specifications = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -217,27 +218,6 @@ namespace LionHeart.DataAccess.Migrations
                         name: "fk_products_users_user_id",
                         column: x => x.user_id,
                         principalTable: "AspNetUsers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "order_items",
-                columns: table => new
-                {
-                    id = table.Column<string>(type: "text", nullable: false),
-                    order_id = table.Column<string>(type: "text", nullable: false),
-                    product_id = table.Column<string>(type: "text", nullable: false),
-                    product_price = table.Column<decimal>(type: "numeric", nullable: false),
-                    product_quantity = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_order_items", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_order_items_orders_order_id",
-                        column: x => x.order_id,
-                        principalTable: "orders",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -310,6 +290,33 @@ namespace LionHeart.DataAccess.Migrations
                         name: "fk_feedbacks_users_user_id",
                         column: x => x.user_id,
                         principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "order_items",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "text", nullable: false),
+                    order_id = table.Column<string>(type: "text", nullable: false),
+                    product_id = table.Column<string>(type: "text", nullable: false),
+                    product_price = table.Column<decimal>(type: "numeric", nullable: false),
+                    product_quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_order_items", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_order_items_orders_order_id",
+                        column: x => x.order_id,
+                        principalTable: "orders",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_order_items_products_product_id",
+                        column: x => x.product_id,
+                        principalTable: "products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -426,6 +433,11 @@ namespace LionHeart.DataAccess.Migrations
                 column: "order_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_order_items_product_id",
+                table: "order_items",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_orders_user_id",
                 table: "orders",
                 column: "user_id");
@@ -486,10 +498,10 @@ namespace LionHeart.DataAccess.Migrations
                 name: "order_items");
 
             migrationBuilder.DropTable(
-                name: "products");
+                name: "orders");
 
             migrationBuilder.DropTable(
-                name: "orders");
+                name: "products");
 
             migrationBuilder.DropTable(
                 name: "categories");

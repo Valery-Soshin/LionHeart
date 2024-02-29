@@ -197,6 +197,9 @@ namespace LionHeart.DataAccess.Migrations
                     b.HasIndex("OrderId")
                         .HasDatabaseName("ix_order_items_order_id");
 
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_order_items_product_id");
+
                     b.ToTable("order_items", (string)null);
                 });
 
@@ -237,6 +240,10 @@ namespace LionHeart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("category_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -627,6 +634,15 @@ namespace LionHeart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_order_items_orders_order_id");
+
+                    b.HasOne("LionHeart.Core.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_items_products_product_id");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("LionHeart.Core.Models.OrderItemDetail", b =>

@@ -20,7 +20,7 @@ namespace LionHeart.Web.Controllers
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<IActionResult> Fill()
+        public async Task<IActionResult> AddUsersAndProducts()
         {
             _applicationDbContext.Database.EnsureDeleted();
             _applicationDbContext.Database.EnsureCreated();
@@ -49,6 +49,20 @@ namespace LionHeart.Web.Controllers
             return Redirect("/Home/Index");
         }
 
+        public async Task<IActionResult> AddCategories()
+        {
+            _applicationDbContext.Categories.AddRange(
+                new Category() { Name = "Ноутбуки"},
+                new Category() { Name = "Обувь"},
+                new Category() { Name = "Мебель"},
+                new Category() { Name = "Ювелирные изделия"}
+                );
+
+            await _applicationDbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
         private Task CreateProducts(User supplier)
         {
             var category = new Category()
@@ -69,7 +83,8 @@ namespace LionHeart.Web.Controllers
                     Name = "Футболка",
                     Price = 1250,
                     Description = "Красивая и удобная футболка.",
-                    Specifications = "Размер - XXL"
+                    Specifications = "Размер - XXL",
+                    CreatedAt = DateTimeOffset.UtcNow
                 };
                 var product2 = new Product()
                 {
@@ -79,7 +94,8 @@ namespace LionHeart.Web.Controllers
                     Name = "Мяч",
                     Price = 1250,
                     Description = "Футбольный мяч, может быть использован даже во время дождя.",
-                    Specifications = ""
+                    Specifications = "",
+                    CreatedAt = DateTimeOffset.UtcNow
                 };
 
                 _applicationDbContext.AddRange(product, product2);
