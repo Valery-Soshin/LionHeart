@@ -47,7 +47,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
     }
     public Task<bool> Any(string userId)
     {
-        return _dbContext.Orders
+        return _dbContext.Orders.AsNoTracking()
             .AnyAsync(o => o.UserId == userId);
     }
 }

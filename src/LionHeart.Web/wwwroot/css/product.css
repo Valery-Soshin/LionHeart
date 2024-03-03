@@ -1,0 +1,14 @@
+﻿.favorites-button #toFavorites {
+    opacity: 0;
+}
+
+.favorites-button:hover #toFavorites {
+    background-color: #dcb9d7;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.favorites-button #toFavorites:hover {  
+    background-color: #a56c93;
+    border-radius: 5px;
+}

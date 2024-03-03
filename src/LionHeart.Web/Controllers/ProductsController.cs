@@ -4,7 +4,6 @@ using LionHeart.Web.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace LionHeart.Web.Controllers;
 
@@ -13,16 +12,19 @@ public class ProductsController : Controller
     private readonly IProductService _productService;
     private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
+    private readonly IFavoriteProductService _favoriteProductService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
                               IProductUnitService productUnitService,
                               IBasketEntryService basketEntryService,
+                              IFavoriteProductService favoriteProductService,
                               UserManager<User> userManager)
     {
         _productService = productService;
         _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
+        _favoriteProductService = favoriteProductService;
         _userManager = userManager;
     }
 
@@ -43,7 +45,8 @@ public class ProductsController : Controller
                 models.Add(new IndexViewModel()
                 {
                     Product = product,
-                    IsInBasket = entries.Exists(e => e.ProductId == product.Id)
+                    IsInBasket = entries.Exists(e => e.ProductId == product.Id),
+                    IsInFavorites = await _favoriteProductService.Any(userId, product.Id)
                 });
             }
         }

@@ -164,29 +164,6 @@ public class BasketController : Controller
         return Redirect("/Products/Index");
 	}
 
-
-  //  [HttpPost]
-  //  public async Task<IActionResult> UpdateBasket(BasketViewModel basket)
-  //  {
-		//var userId = _userManager.GetUserId(User);
-		//var entries = await _basketEntryService.GetEntriesByUserId(userId);
-
-		//if (entries.Count != basket.Entries.Count)
-		//	return BadRequest();
-
-		//foreach (var entry in basket.Entries)
-		//{
-		//	var updateEntry = entries.FirstOrDefault(e => e.UserId == entry.UserId &&
-		//								e.ProductId == entry.ProductId);
-
-		//	if (updateEntry is null) continue;
-
-		//	updateEntry.Quantity = entry.ProductQuantity;
-		//	await _basketEntryService.Update(updateEntry);
-		//}
-
-  //      return RedirectToAction("Index");
-  //  }
     public async Task<IActionResult> UpdateBasket([FromBody]UpdateTempData model)
     {
 		var userId = _userManager.GetUserId(User);

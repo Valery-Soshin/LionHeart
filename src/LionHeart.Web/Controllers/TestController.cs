@@ -63,6 +63,11 @@ namespace LionHeart.Web.Controllers
             return Ok();
         }
 
+        public IActionResult TestEventInView()
+        {
+            return View();
+        }
+
         private Task CreateProducts(User supplier)
         {
             var category = new Category()
