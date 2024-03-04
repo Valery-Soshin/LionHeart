@@ -22,9 +22,9 @@
                                     <div class="card-img-overlay m-0 p-0 text-end">
                                         @if(product.IsInFavorites)
                                         {
-                                            <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Product.Id')">❤</button>
+                                            <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Product.Id')">❤</button>
                                         }
-                                        else
+                                         else
                                         {
                                             <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Product.Id')">⁠🤍</button>
                                         }
@@ -61,6 +61,16 @@
 <script>
     async function addToFavorites(productId) {
         await fetch("/Favorites/AddToFavorites", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+    }
+    async function removeFromFavorites(productId) {
+        await fetch("/Favorites/RemoveFromFavorites", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

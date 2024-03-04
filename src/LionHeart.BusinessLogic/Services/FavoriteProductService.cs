@@ -17,22 +17,26 @@ public class FavoriteProductService : IFavoriteProductService
     {
         return _repository.GetById(id);
     }
-
+    public Task<FavoriteProduct?> GetByUserIdProductId(string userId, string productId)
+    {
+        return _repository.GetByUserIdProductId(userId, productId);
+    }
     public Task<List<FavoriteProduct>> GetAll()
     {
         return _repository.GetAll();
     }
-
+    public Task<List<FavoriteProduct>> GetAllByUserId(string userId)
+    {
+        return _repository.GetAllByUserId(userId);
+    }
     public Task Add(FavoriteProduct favoriteProduct)
     {
         return _repository.Add(favoriteProduct);
     }
-
     public Task Update(FavoriteProduct favoriteProduct)
     {
         return _repository.Update(favoriteProduct);
     }
-
     public Task Remove(FavoriteProduct favoriteProduct)
     {
         return _repository.Remove(favoriteProduct);

@@ -3,9 +3,11 @@ using LionHeart.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace LionHeart.Web.Controllers;
 
+[Authorize(Roles = "Customer, Supplier")]
 public class FavoritesController : Controller
 {
     private readonly IFavoriteProductService _favoriteProductService;
@@ -21,9 +23,19 @@ public class FavoritesController : Controller
         _userManager = userManager;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized(); // logging
+
+        var favoriteProducts = await _favoriteProductService.GetAllByUserId(userId);
+
+        return View(favoriteProducts);
+    }
+    
     [HttpPost]
-    [Authorize(Roles = "Customer, Supplier")]
-    public async Task<IActionResult> AddToFavorites([FromBody]string productId)
+    public async Task<IActionResult> AddToFavorites([FromBody]string productId, string? returnURL = null)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); // logging
@@ -39,6 +51,32 @@ public class FavoritesController : Controller
 
         await _favoriteProductService.Add(favoriteProduct);
 
-        return Ok();
+        if (returnURL is not null)
+        {
+            return Redirect(returnURL);
+        }
+        return Redirect("Index");
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Customer, Supplier")]
+    public async Task<IActionResult> RemoveFromFavorites([FromBody] string productId, string? returnURL= null)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized(); // logging
+
+        var product = await _productService.GetById(productId);
+        if (product is null) return NotFound(); // logging
+
+        var favoriteProduct = await _favoriteProductService.GetByUserIdProductId(userId, productId);
+        if (favoriteProduct is null) return NotFound(); // logging
+
+        await _favoriteProductService.Remove(favoriteProduct);
+
+        if (returnURL is not null)
+        {
+            return Json(new { returnURL });
+        }
+        return Json(new { returnURL = Url.Action("Index") });
     }
 }
