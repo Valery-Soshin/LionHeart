@@ -29,11 +29,28 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(List<string>? ids = null)
     {
         var userId = _userManager.GetUserId(User);
 
-        var products = await _productService.GetAll();
+        var products = new List<Product>();
+
+        if (ids is null)
+        {
+            products = await _productService.GetAll();
+        }
+        else
+        {
+            foreach (var id in ids)
+            {
+                var product = await _productService.GetById(id);
+                if (product is not null)
+                {
+                    products.Add(product);
+                }
+            }
+        }
+
         var models = new List<IndexViewModel>();
 
         if (userId is not null)
@@ -172,6 +189,26 @@ public class ProductsController : Controller
         await _productService.Remove(product);
 
         return RedirectToAction("ListSupplierProducts");
+    }
+
+    [HttpGet]
+    public IActionResult SearchProducts()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> SearchProducts(SearchProductsViewModel model)
+    {
+        if (!ModelState.IsValid) return View();
+
+        var products = await _productService.Search(model.ProductName);
+        
+        if (products is not null && products.Any())
+        {
+            return RedirectToAction("Index", new { ids = products.Select(p => p.Id).ToList()});
+        }
+
+        return View();
     }
 
     [HttpGet]

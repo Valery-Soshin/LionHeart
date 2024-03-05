@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Models;
 using LionHeart.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -35,6 +36,19 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Where(p => p.UserId == userId)
+            .ToListAsync();
+    }
+    public Task<List<Product>> Search(string productName)
+    {
+        var firstSymbol = productName[0].ToString().ToUpper();
+        var lastSymbols = productName[1..].ToLower();
+
+        productName = firstSymbol + lastSymbols;
+
+        return _dbContext.Products.AsNoTracking()
+            .Include(p => p.Category)
+            .Where(p => p.Name == productName ||
+                        p.Name.StartsWith(productName))
             .ToListAsync();
     }
     public override async Task<int> Update(Product product)

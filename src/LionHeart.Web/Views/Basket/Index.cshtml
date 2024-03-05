@@ -47,7 +47,7 @@
                                         var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
                                     <div class="main-theme p-2">
-                                        <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice</label><span>р</span>
+                                        <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice.0</label><span>р</span>
                                     </div>
 
                                     <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />

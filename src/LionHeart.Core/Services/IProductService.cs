@@ -8,6 +8,7 @@ public interface IProductService
     Task<List<Product>> GetAll();
     Task<List<Product>> GetProductsByCategoryId(string categoryId);
     Task<List<Product>> GetProductsByUserId(string userId);
+    Task<List<Product>> Search(string productName);
     Task<int> Add(Product product);
     Task<int> Update(Product product);
     Task<int> Remove(Product product);

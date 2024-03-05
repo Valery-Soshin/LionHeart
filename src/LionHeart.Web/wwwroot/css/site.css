@@ -35,7 +35,10 @@ body {
     color: #daa0c7;
 }
 .site-nav-item::after{
-    color:white;
+    color:#daa0c7;
+}
+.site-nav-item:focus {
+    color: #daa0c7;
 }
 
 .main-theme {

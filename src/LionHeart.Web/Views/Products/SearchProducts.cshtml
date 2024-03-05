@@ -1,0 +1,12 @@
+﻿@using LionHeart.Web.Models.Products
+@model SearchProductsViewModel
+
+<div class="site-body-container">
+    <div style="height: 300px;"></div>
+    <div class="d-flex justify-content-center">
+        <form method="post" asp-action="SearchProducts" class="d-flex gap-2">
+            <input asp-for="ProductName" type="text" class="form-control custom-input" placeholder="Введите названия продукта" style="width:500px;">
+            <button class="btn btn-grad">Найти</button>
+        </form>
+    </div>
+</div>

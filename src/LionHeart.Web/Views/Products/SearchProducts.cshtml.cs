@@ -1,0 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace LionHeart.Web.Views.Products
+{
+    public class SearchProductsModel : PageModel
+    {
+        public void OnGet()
+        {
+        }
+    }
+}
