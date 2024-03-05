@@ -10,7 +10,7 @@
                     <div class="card-header main-theme">
                         <h3>Корзина</h3>
                     </div>
-                    <div class="card-body" id="card-body">
+                    <div class="card-body bg-light" id="card-body">
                         @for (int i = 0; i < Model.Entries.Count; i++)
                         {
                             var entry = @Model.Entries[i];
@@ -31,19 +31,19 @@
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                                    <a class="btn btn-grad" style="width: 40px; height: 40px;" onclick="subtract('@entry.Id')">-</a>
+                                    <a class="btn fs-2 main-theme" style="border-radius: 70px; width: 50px;" onclick="subtract('@entry.Id')">-</a>
 
                                     <label id="label-quantity-@entry.Id" class="border-0 text-center" style="width: 40px; height: 40px; line-height:40px">@entry.ProductQuantity</label>
                                     <input hidden asp-for="Entries[i].ProductQuantity" id="input-quantity-@entry.Id" value="@entry.ProductQuantity" />
 
-                                    <a class="btn btn-grad" style="width: 40px; height: 40px;" onclick="add('@entry.Id')">+</a>
+                                    <a class="btn fs-2 main-theme" style="border-radius: 70px; width: 50px;" onclick="add('@entry.Id')">+</a>
                                 </div>
 
                                 <div class="col-3 d-flex justify-content-end">
                                     @{
                                         var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
-                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center bg-white" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice<span>р</span></label>
+                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center main-theme" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice<span>р</span></label>
                                     <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>

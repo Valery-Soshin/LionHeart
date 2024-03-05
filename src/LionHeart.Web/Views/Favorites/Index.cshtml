@@ -34,9 +34,7 @@
                         </form>
                     </div>
                     <div class="card border-0">
-                        <form method="post" id="form-post-@product.Product.Id" asp-action="AddToBasket" asp-controller="Basket" asp-route-productId="@product.Product.Id" asp-route-returnURL="/Basket/Index">
-                            <button class="btn btn-grad" style="width:100%; margin:0px;" form="form-post-@product.Product.Id">Купить</button>
-                        </form>
+                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="buyProduct('@product.Product.Id')">Купить</button>
                     </div>
                     <br />
                 </div>
@@ -63,6 +61,7 @@ else
 
 <script>
     async function removeFromFavorites(productId) {
+        event.preventDefault();
         const response = await fetch("/Favorites/RemoveFromFavorites", {
             method: "POST",
             headers: {
@@ -71,7 +70,18 @@ else
             },
             body: JSON.stringify(productId)
         });
-
-        window.location.href = "/Favorites/Index";
+        window.location.reload();
+    }
+    async function buyProduct(productId) {
+        event.preventDefault();
+        const response = await fetch("/Basket/AddToBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.pathname = "/Basket/Index";
     }
 </script>

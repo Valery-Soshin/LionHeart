@@ -28,7 +28,7 @@ public class BasketController : Controller
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index()
 	{
 		var userId = _userManager.GetUserId(User);
 
@@ -113,7 +113,7 @@ public class BasketController : Controller
     }
 
     [HttpPost]
-	public async Task<IActionResult> AddToBasket(string productId, string? returnURL = null)
+	public async Task<IActionResult> AddToBasket([FromBody]string productId)
 	{
 		var userId = _userManager.GetUserId(User);
 
@@ -136,15 +136,11 @@ public class BasketController : Controller
 			// logging
 		}
 
-		if (returnURL is not null)
-		{
-			return Redirect(returnURL);
-		}
-		return Redirect("/Products/Index");
+		return Ok();
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> RemoveFromBasket(string productId, string? returnURL = null)
+	public async Task<IActionResult> RemoveFromBasket([FromBody] string productId)
 	{
 		var userId = _userManager.GetUserId(User);
 
@@ -165,11 +161,7 @@ public class BasketController : Controller
 			// logging
 		}
 
-        if (returnURL is not null)
-        {
-            return Redirect(returnURL);
-        }
-        return Redirect("/Products/Index");
+        return Ok();
     }
 
     public async Task<IActionResult> UpdateBasket([FromBody]UpdateTempData model)

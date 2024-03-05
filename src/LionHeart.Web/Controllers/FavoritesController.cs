@@ -3,7 +3,6 @@ using LionHeart.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
 
 namespace LionHeart.Web.Controllers;
 
@@ -51,15 +50,10 @@ public class FavoritesController : Controller
 
         await _favoriteProductService.Add(favoriteProduct);
 
-        if (returnURL is not null)
-        {
-            return Redirect(returnURL);
-        }
-        return Redirect("Index");
+        return Ok();
     }
 
     [HttpPost]
-    [Authorize(Roles = "Customer, Supplier")]
     public async Task<IActionResult> RemoveFromFavorites([FromBody] string productId, string? returnURL= null)
     {
         var userId = _userManager.GetUserId(User);
@@ -73,10 +67,6 @@ public class FavoritesController : Controller
 
         await _favoriteProductService.Remove(favoriteProduct);
 
-        if (returnURL is not null)
-        {
-            return Json(new { returnURL });
-        }
-        return Json(new { returnURL = Url.Action("Index") });
+        return Ok();
     }
 }

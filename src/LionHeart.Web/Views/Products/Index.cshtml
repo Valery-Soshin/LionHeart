@@ -41,15 +41,11 @@
                 <div class="card border-0">
                     @if (product.IsInBasket)
                     {
-                        <form method="post" id="form-post-@product.Product.Id" asp-action="RemoveFromBasket" asp-controller="Basket" asp-route-productId="@product.Product.Id">
-                            <button class="btn btn-grad" style="width:100%; margin:0px;" form="form-post-@product.Product.Id">Убрать из корзины</button>
-                        </form>
+                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Product.Id')">Убрать из корзины</button>
                     }
                     else
                     {
-                        <form method="post" id="form-post-@product.Product.Id" asp-action="AddToBasket" asp-controller="Basket" asp-route-productId="@product.Product.Id">
-                            <button class="btn btn-grad" style="width:100%; margin:0px;" form="form-post-@product.Product.Id">В корзину</button>
-                        </form>
+                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Product.Id')">В корзину</button>
                     }
                 </div>
                 <br />
@@ -60,6 +56,7 @@
 
 <script>
     async function addToFavorites(productId) {
+        event.preventDefault();
         await fetch("/Favorites/AddToFavorites", {
             method: "POST",
             headers: {
@@ -68,8 +65,11 @@
             },
             body: JSON.stringify(productId)
         });
-    }
+        window.location.reload();
+    };
+
     async function removeFromFavorites(productId) {
+        event.preventDefault();
         await fetch("/Favorites/RemoveFromFavorites", {
             method: "POST",
             headers: {
@@ -78,5 +78,32 @@
             },
             body: JSON.stringify(productId)
         });
-    }
+        window.location.reload();
+    };
+
+    async function addToBasket(productId) {
+        event.preventDefault();
+        await fetch("/Basket/AddToBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
+
+    async function removeFromBasket(productId) {
+        event.preventDefault();
+        await fetch("/Basket/RemoveFromBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
 </script>
