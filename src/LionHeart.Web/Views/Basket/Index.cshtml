@@ -10,16 +10,19 @@
                     <div class="card-header main-theme">
                         <h3>Корзина</h3>
                     </div>
-                    <div class="card-body bg-light" id="card-body">
+                    <div class="card-body bg-light p-4" id="card-body">
                         @for (int i = 0; i < Model.Entries.Count; i++)
                         {
                             var entry = @Model.Entries[i];
 
-                            <div class="row d-flex justify-content-center align-items-center text-center">
+                            <div class="row d-flex justify-content-center align-items-center text-center position-relative">
                                 <input hidden asp-for="Entries[i].Id" id="id-@entry.Id" value="@entry.Id" />
                                 <input hidden asp-for="Entries[i].UserId" id="customer-id-@entry.Id" value="@entry.UserId" />
                                 <input hidden asp-for="Entries[i].ProductId" id="product-id-@entry.Id" value="@entry.ProductId" />
                                 <input hidden asp-for="Entries[i].ProductPrice" id="info-price-@entry.Id" value="@entry.ProductPrice" />
+                                <div class="position-absolute top-0 start-0 text-start m-0 p-0">
+                                    <button class="btn main-theme custom-btn" style="opacity: 0.9" onclick="removeFromBasket('@entry.ProductId')">🗑️</button>
+                                </div>
 
                                 <div class="col-2">
                                     <img src="/images/img2.jpg" class="img-thumbnail" style="width: 150px; border-radius: 25px">
@@ -43,11 +46,17 @@
                                     @{
                                         var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
-                                    <label id="label-products-total-price-@entry.Id" class="border-0 text-center main-theme" style="width: 80px; height: 40px; line-height:40px; border-bottom: 1px solid lightgray">@productsTotalPrice<span>р</span></label>
+                                    <div class="main-theme p-2">
+                                        <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice</label><span>р</span>
+                                    </div>
+
                                     <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>
-                            <br />
+                            @if (i != Model.Entries.Count - 1)
+                            {
+                                <hr />
+                            }
                         }
                     </div>
                 </div>
@@ -64,7 +73,7 @@
                             </div>
                             <div>
                                 Стоимость всего:
-                                <label id="label-basket-total-price-basket">@Model.BasketTotalPrice<span>р</span></label>
+                                <label id="label-basket-total-price-basket">@Model.BasketTotalPrice</label><span>р</span>
                                 <input hidden asp-for="BasketTotalPrice" id="input-basket-total-price-basket" value="@Model.BasketTotalPrice" />
                             </div>
                         </div>
@@ -106,7 +115,7 @@
         var totalBasketPriceInput = document.getElementById('input-basket-total-price-basket');
 
         var basePrice = document.getElementById('info-price-' + basketEntryId);
-        
+
         quantityLabel.textContent = +quantityInput.value + 1;
         quantityInput.value = +quantityInput.value + 1;
 
@@ -117,7 +126,7 @@
         totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
 
         updateEntry(basketEntryId, quantityInput.value);
-        };
+    };
 
     async function subtract(basketEntryId) {
         var quantityLabel = document.getElementById('label-quantity-' + basketEntryId);
@@ -158,4 +167,17 @@
             })
         });
     };
+
+    async function removeFromBasket(productId) {
+        event.preventDefault();
+        const response = await fetch("/Basket/RemoveFromBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    }
 </script>

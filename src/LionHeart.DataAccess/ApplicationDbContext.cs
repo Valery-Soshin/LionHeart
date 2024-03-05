@@ -18,9 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<OrderItemDetail> OrderItemDetails { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
