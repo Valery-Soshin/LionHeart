@@ -4,8 +4,8 @@ using LionHeart.Web.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
 namespace LionHeart.Web.Controllers;
+
 
 public class ProductsController : Controller
 {
@@ -13,18 +13,22 @@ public class ProductsController : Controller
     private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
     private readonly IFavoriteProductService _favoriteProductService;
+    private readonly ILogger<ProductsController> _logger;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
                               IProductUnitService productUnitService,
                               IBasketEntryService basketEntryService,
                               IFavoriteProductService favoriteProductService,
+                              ILogger<ProductsController> logger,
                               UserManager<User> userManager)
+                              
     {
         _productService = productService;
         _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
         _favoriteProductService = favoriteProductService;
+        _logger = logger;
         _userManager = userManager;
     }
 

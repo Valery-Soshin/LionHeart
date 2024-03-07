@@ -11,13 +11,10 @@ namespace LionHeart.Web.Controllers;
 public class ProfileController : Controller
 {
     private readonly UserManager<User> _userManager;
-    private readonly TranslateService _translateService;
 
-    public ProfileController(UserManager<User> userManager,
-                             TranslateService translateService)
+    public ProfileController(UserManager<User> userManager)
     {
         _userManager = userManager;
-        _translateService = translateService;
     }
 
     [HttpGet]
@@ -62,9 +59,7 @@ public class ProfileController : Controller
                     {
                         foreach (var error in result.Errors)
                         {
-                            string translatedText = await _translateService.Translate(error.Description);
-
-                            ModelState.AddModelError("", translatedText);
+                            ModelState.AddModelError("", error.Description);
                         }
                     }
 
@@ -83,9 +78,7 @@ public class ProfileController : Controller
         {
             foreach (var error in value.Errors)
             {
-                string translatedText = await _translateService.Translate(error.ErrorMessage);
-
-                ModelState.AddModelError("", translatedText);
+                ModelState.AddModelError("", error.ErrorMessage);
             }
             value.Errors.Clear();
         }

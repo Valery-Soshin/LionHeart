@@ -6,9 +6,12 @@ using LionHeart.DataAccess;
 using LionHeart.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+builder.Host.UseNLog();
 
 builder.Services.AddControllersWithViews();
 
@@ -31,7 +34,6 @@ builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
-builder.Services.AddScoped<TranslateService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
