@@ -7,3 +7,5 @@ Technologies:
 - EF Core
 - PostgreSQL
 - Repository Pattern
+- Слоистая архитектура
+- NLog
