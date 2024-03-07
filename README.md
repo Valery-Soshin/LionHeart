@@ -6,6 +6,6 @@ Technologies:
 - ASP.NET Core Identity
 - EF Core
 - PostgreSQL
+- Layered architecture
 - Repository Pattern
-- Слоистая архитектура
 - NLog
