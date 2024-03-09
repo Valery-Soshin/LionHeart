@@ -31,9 +31,10 @@ builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
 builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderService, LoggingOrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
+builder.Services.AddScoped<OrderService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

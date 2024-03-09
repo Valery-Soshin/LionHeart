@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 namespace LionHeart.Web.Controllers;
 
-
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
@@ -22,7 +21,6 @@ public class ProductsController : Controller
                               IFavoriteProductService favoriteProductService,
                               ILogger<ProductsController> logger,
                               UserManager<User> userManager)
-                              
     {
         _productService = productService;
         _productUnitService = productUnitService;
@@ -93,6 +91,7 @@ public class ProductsController : Controller
 
         if (product is null)
         {
+            _logger.LogWarning("The product (ID - {id}) was not found", id);
             return View("Error");
         }
 
