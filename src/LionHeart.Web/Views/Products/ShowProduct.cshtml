@@ -1,8 +1,5 @@
-﻿@model Product
-
-@{
-    var showFeebacks = ViewBag.ShowFeedbacks;
-}
+﻿@using LionHeart.Web.Models.Products
+@model ShowProductViewModel
 
 <div class="site-body-container">
     <div class="card">
@@ -43,7 +40,7 @@
             </div>
             <br />
             <div class="row g-0">
-                @if (showFeebacks)
+                @if (Model.ShowFeedbacks)
                 {
                     <div class="card">
 
@@ -79,7 +76,7 @@
                 {
                     <div class="card-footer">
                         <div class="d-flex justify-content-center">
-                            <a class="btn btn-grad w-50" asp-action="Show" asp-route-id="@Model.Id" asp-route-showFeedbacks="true" id="showFeedbacks">
+                            <a class="btn btn-grad w-50" asp-action="ShowProduct" asp-route-id="@Model.Id" asp-route-showFeedbacks="true">
                                 Посмотреть отзывы
                             </a>
                         </div>

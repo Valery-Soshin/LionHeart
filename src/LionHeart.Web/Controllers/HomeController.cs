@@ -15,7 +15,7 @@ namespace LionHeart.Web.Controllers
 
         public IActionResult Index()
         {
-            return Redirect("/Products/Index");
+            return Redirect("/Products");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

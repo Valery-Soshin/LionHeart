@@ -11,6 +11,7 @@ using NLog.Web;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
 builder.Services.AddControllersWithViews();
@@ -59,7 +60,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

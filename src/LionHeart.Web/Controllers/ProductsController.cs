@@ -1,9 +1,11 @@
 ﻿using LionHeart.Core.Models;
+using LionHeart.Core.Enums;
 using LionHeart.Core.Services;
 using LionHeart.Web.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
 namespace LionHeart.Web.Controllers;
 
 public class ProductsController : Controller
@@ -34,7 +36,6 @@ public class ProductsController : Controller
     public async Task<IActionResult> Index(List<string>? ids = null)
     {
         var userId = _userManager.GetUserId(User);
-
         var products = new List<Product>();
 
         if (ids is null)
@@ -58,7 +59,6 @@ public class ProductsController : Controller
         if (userId is not null)
         {
             var entries = await _basketEntryService.GetEntriesByUserId(userId);
-
             foreach (var product in products)
             {
                 models.Add(new IndexViewModel()
@@ -80,24 +80,24 @@ public class ProductsController : Controller
                 });
             }
         }
-
         return View(models);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Show(string id, bool showFeedbacks = false)
+    public async Task<IActionResult> ShowProduct(string id, bool showFeedbacks = false)
     {
         var product = await _productService.GetById(id);
+        if (product is null) return NotFound();
 
-        if (product is null)
+        var model = new ShowProductViewModel()
         {
-            _logger.LogWarning("The product (ID - {id}) was not found", id);
-            return View("Error");
-        }
-
-        ViewBag.ShowFeedbacks = showFeedbacks;
-
-        return View(product);
+            Id = id,
+            Name = product.Name,
+            Description = product.Description,
+            Specifications = product.Specifications,
+            ShowFeedbacks = showFeedbacks
+        };
+        return View(model);
     }
 
     [HttpGet]
@@ -106,42 +106,36 @@ public class ProductsController : Controller
     {
         return View();
     }
-
     [HttpPost]
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> CreateProduct(CreateProductViewModel model)
     {
-        var supplierId = _userManager.GetUserId(User);
-        if (supplierId is null) return BadRequest("SupplierId is NULL");
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
 
         var product = new Product
         {
             Name = model.Name,
             CategoryId = model.CategoryId,
-            UserId = supplierId,
+            UserId = userId,
             Price = model.Price,
             Description = model.Description,
             Specifications = model.Specifications,
             CreatedAt = DateTimeOffset.UtcNow
         };
-
         await _productService.Add(product);
 
-        if (model.Quantity > 0)
+        var createdAt = DateTimeOffset.UtcNow;
+        for (int i = 0; i < model.Quantity; i++)
         {
-            var createdAt = DateTimeOffset.UtcNow;
-            for (int i = 0; i < model.Quantity; i++)
+            product.Units.Add(new ProductUnit
             {
-                product.Units.Add(new ProductUnit
-                {
-                    ProductId = product.Id,
-                    CreatedAt = createdAt,
-                    SaleStatus = Core.Enums.SaleStatus.Available
-                });
-            }
-            await _productService.Update(product);
+                ProductId = product.Id,
+                CreatedAt = createdAt,
+                SaleStatus = SaleStatus.Available
+            });
         }
-
+        await _productService.Update(product);
         return Redirect("/SupplierPanel");
     }
 
@@ -149,48 +143,53 @@ public class ProductsController : Controller
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> EditProduct(string productId)
     {
+        if (!ModelState.IsValid) return BadRequest();
+
         var product = await _productService.GetById(productId);
+        if (product is null) return NotFound(); 
 
-        if (product is null) return NotFound(); // logging
-
-        var model = new SupplierProductViewModel()
+        var model = new EditProductViewModel()
         {
-            Product = product,
-            Quantity = await _productUnitService.CountByProductId(productId)
+            Id = product.Id,
+            CategoryId = product.CategoryId,
+            CategoryName = product.Category.Name,
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description,
+            Specifications = product.Specifications,
+            Quantity = await _productUnitService.CountByProductId(product.Id)
         };
-
         return View(model);
     }
     [HttpPost]
     [Authorize(Roles = "Supplier")]
-    public async Task<IActionResult> EditProduct(SupplierProductViewModel model)
+    public async Task<IActionResult> EditProduct(EditProductViewModel model)
     {
-        var product = await _productService.GetById(model.Product.Id);
+        if (ModelState.IsValid)
+        {
+            var product = await _productService.GetById(model.Id);
+            if (product is null) return NotFound();
 
-        if (product is null) return NotFound(); // logging
+            product.Name = model.Name;
+            product.Price = model.Price;
+            product.CategoryId = model.CategoryId;
+            product.Description = model.Description;
+            product.Specifications = model.Specifications;
 
-        product.Name = model.Product.Name;
-        product.Price = model.Product.Price;
-        product.CategoryId = model.Product.CategoryId;
-        product.Description = model.Product.Description ?? string.Empty;
-        product.Specifications = model.Product.Specifications ?? string.Empty;
-
-        await _productService.Update(product);
-
-        return RedirectToAction("ListSupplierProducts");
+            await _productService.Update(product);
+            return RedirectToAction("ListSupplierProducts");
+        }
+        return RedirectToAction("EditProduct", "Products", model.Id);
     }
 
     [HttpPost]
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> DeleteProduct(string productId)
     {
-        // сделать мягкое удаление
-
         var product = await _productService.GetById(productId);
-        if (product is null) return NotFound(); // logging
+        if (product is null) return NotFound(); 
 
         await _productService.Remove(product);
-
         return RedirectToAction("ListSupplierProducts");
     }
 
@@ -202,15 +201,14 @@ public class ProductsController : Controller
     [HttpPost]
     public async Task<IActionResult> SearchProducts(SearchProductsViewModel model)
     {
-        if (!ModelState.IsValid) return View();
-
-        var products = await _productService.Search(model.ProductName);
-        
-        if (products is not null && products.Any())
+        if (ModelState.IsValid)
         {
-            return RedirectToAction("Index", new { ids = products.Select(p => p.Id).ToList()});
+            var products = await _productService.Search(model.Name);
+            if (products.Count != 0)
+            {
+                return RedirectToAction("Index", new { ids = products.Select(p => p.Id).ToList() });
+            }
         }
-
         return View();
     }
 
@@ -218,22 +216,26 @@ public class ProductsController : Controller
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> ListSupplierProducts()
     {
-        var supplierId = _userManager.GetUserId(User);
-        if (supplierId is null) return BadRequest(); // logging
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized(); 
 
-        var products = await _productService.GetProductsByUserId(supplierId);
-
+        var products = await _productService.GetProductsByUserId(userId);
         var models = new List<SupplierProductViewModel>();
-
         foreach (var product in products)
         {
             models.Add(new SupplierProductViewModel()
             {
-                Product = product,
+                Id = product.Id,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                Specifications = product.Specifications,
+                CreatedAt = product.CreatedAt,
                 Quantity = await _productUnitService.CountByProductId(product.Id)
             });
         }
-
         return View(models);
     }
 }

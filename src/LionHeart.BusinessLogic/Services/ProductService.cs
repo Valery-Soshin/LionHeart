@@ -6,43 +6,43 @@ namespace LionHeart.BusinessLogic.Services;
 
 public class ProductService : IProductService
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRepository _repository;
 
 	public ProductService(IProductRepository productRepository)
     {
-        _productRepository = productRepository;
+        _repository = productRepository;
     }
 
     public Task<Product?> GetById(string id)
     {
-        return _productRepository.GetById(id);
+        return _repository.GetById(id);
     }
     public Task<List<Product>> GetAll()
     {
-        return _productRepository.GetAll();
+        return _repository.GetAll();
     }
     public Task<List<Product>> GetProductsByCategoryId(string categoryId)
     {
-        return _productRepository.GetProductsByCategoryId(categoryId);
+        return _repository.GetProductsByCategoryId(categoryId);
     }
     public Task<List<Product>> GetProductsByUserId(string userId)
     {
-        return _productRepository.GetProductsByUserId(userId);
+        return _repository.GetProductsByUserId(userId);
     }
     public Task<List<Product>> Search(string productName)
     {
-        return _productRepository.Search(productName);
+        return _repository.Search(productName);
     }
     public Task<int> Add(Product product)
     {
-        return _productRepository.Add(product);
+        return _repository.Add(product);
     }
     public Task<int> Update(Product product)
     {
-        return _productRepository.Update(product);
+        return _repository.Update(product);
     }
     public Task<int> Remove(Product product)
     {
-        return _productRepository.Remove(product);
+        return _repository.Remove(product);
     }
 }

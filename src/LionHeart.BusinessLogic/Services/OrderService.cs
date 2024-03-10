@@ -8,7 +8,7 @@ public class OrderService : IOrderService
 {
 	private readonly IOrderRepository _repository;
 
-	public OrderService(IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository)
     {
 		_repository = orderRepository;
     }
@@ -29,7 +29,7 @@ public class OrderService : IOrderService
 	{
 		return _repository.Add(order);
 	}
-	public Task<int> Update(Order order)
+    public Task<int> Update(Order order)
 	{
 		return _repository.Update(order);
 	}

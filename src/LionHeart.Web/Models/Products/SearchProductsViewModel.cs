@@ -2,5 +2,5 @@
 
 public class SearchProductsViewModel
 {
-    public string ProductName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 }

@@ -1,5 +1,4 @@
-﻿using LionHeart.BusinessLogic.Services;
-using LionHeart.Core.Models;
+﻿using LionHeart.Core.Models;
 using LionHeart.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-[Authorize(Roles = "Customer")]
+[Authorize]
 public class ProfileController : Controller
 {
     private readonly UserManager<User> _userManager;
@@ -21,70 +20,64 @@ public class ProfileController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null) return Unauthorized();
 
-        return View(user);
+        var model = new IndexViewModel()
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = user.PhoneNumber,
+            PersonalDiscount = user.PersonalDiscount
+        };
+        return View(model);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(string userId)
+    public async Task<IActionResult> EditUser()
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return Unauthorized();
 
-        ViewBag.User = user;
-
-        return View();
+        var model = new EditUserViewModel
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = user.PhoneNumber,
+            PersonalDiscount = user.PersonalDiscount
+        };
+        return View(model);
     }
-
     [HttpPost]
-    public async Task<IActionResult> Edit(EditViewModel model)
+    public async Task<IActionResult> EditUser(EditUserViewModel model)
     {
-        var user = await _userManager.FindByIdAsync(model.Id);
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return Unauthorized();
 
         if (ModelState.IsValid)
         {
-            if (user is not null)
-            {
-                user.UserName = model.Email;
-                user.Email = model.Email;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.PhoneNumber = model.PhoneNumber;
+            user.UserName = model.Email;
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
 
-                if (model.Password is not null && model.CurrentPassword is not null)
+            if (!string.IsNullOrWhiteSpace(model.Password) && !string.IsNullOrWhiteSpace(model.CurrentPassword))
+            {
+                var result = await _userManager
+                    .ChangePasswordAsync(user, model.CurrentPassword, model.Password);
+
+                if (!result.Succeeded)
                 {
-                    var result = await _userManager
-                        .ChangePasswordAsync(user, model.CurrentPassword, model.Password);
-
-                    if (!result.Succeeded)
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                    }
-
-                    ViewBag.User = user;
-                    ViewBag.ShowModal = "true";
-                    return View("Edit");
+                    return Redirect("/Profile/EditUser");
                 }
-
-                await _userManager.UpdateAsync(user);
-
-                return RedirectToAction("Index", new { UserId = model.Id });
             }
+            await _userManager.UpdateAsync(user);
+            return Redirect("/Profile");
         }
-
-        foreach (var value in ModelState.Values)
-        {
-            foreach (var error in value.Errors)
-            {
-                ModelState.AddModelError("", error.ErrorMessage);
-            }
-            value.Errors.Clear();
-        }
-
-        ViewBag.User = user;
-        ViewBag.ShowModal = "true";
-        return View("Edit");
+        return Redirect("/Profile/EditUser");
     }
 }

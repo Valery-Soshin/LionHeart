@@ -27,31 +27,23 @@ public class AuthController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (ModelState.IsValid)
         {
             var result = await _signInManager.PasswordSignInAsync(
                 model.Email,
-                model.Password, 
-                model.RememberMe, 
+                model.Password,
+                model.RememberMe,
                 lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                if (returnUrl is not null)
-                {
-                    return Redirect(returnUrl);
-                }
-
-                return Redirect("/Products/Index");
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return returnUrl is not null
+                    ? Redirect(returnUrl)
+                    : Redirect("/Products");
             }
         }
-
         return View();
     }
 
@@ -79,7 +71,7 @@ public class AuthController : Controller
             {
                 await _userManager.AddToRoleAsync(user, "Customer");
                 await _signInManager.SignInAsync(user, model.RemeberMe);
-                return Redirect("/Products/Index");
+                return Redirect("/Products");
             }
 
             foreach (var error in result.Errors)
@@ -87,7 +79,6 @@ public class AuthController : Controller
                 ModelState.AddModelError("", error.Description);
             }
         }
-
         return View();
     }
 
@@ -95,6 +86,6 @@ public class AuthController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return Redirect("/Products/Index");
+        return Redirect("/Products");
     }
 }

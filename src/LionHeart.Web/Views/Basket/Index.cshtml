@@ -50,7 +50,7 @@
                                         <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice.0</label><span>р</span>
                                     </div>
 
-                                    <input hidden asp-for="Entries[i].ProductsTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
+                                    <input hidden asp-for="Entries[i].ProductTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
                                 </div>
                             </div>
                             @if (i != Model.Entries.Count - 1)
@@ -79,8 +79,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button asp-action="CreateOrder" type="submit" class="btn btn-grad" form="basket">Заказать</button>
-                        <button hidden id="update-basket" asp-action="UpdateBasket" type="submit" class="btn btn-grad" form="basket">Заказать</button>
+                        <button asp-action="CreateOrder" asp-controller="Orders" type="submit" class="btn btn-grad" form="basket">Заказать</button>
                     </div>
                 </div>
             </div>
@@ -125,7 +124,7 @@
         totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
         totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
 
-        updateEntry(basketEntryId, quantityInput.value);
+        updateQuantity(basketEntryId, quantityInput.value);
     };
 
     async function subtract(basketEntryId) {
@@ -150,12 +149,12 @@
             totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
             totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
 
-            updateEntry(basketEntryId, quantityInput.value);
+            updateQuantity(basketEntryId, quantityInput.value);
         }
     };
 
-    async function updateEntry(id, quantity) {
-        await fetch("/Basket/UpdateBasket", {
+    async function updateQuantity(id, quantity) {
+        await fetch("/Basket/UpdateQuantity", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

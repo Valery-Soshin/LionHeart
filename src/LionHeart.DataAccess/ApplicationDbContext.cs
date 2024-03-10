@@ -23,7 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSnakeCaseNamingConvention();
-        optionsBuilder.EnableSensitiveDataLogging(true);
+        optionsBuilder.EnableSensitiveDataLogging(false);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

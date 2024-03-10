@@ -21,20 +21,20 @@
             @{
                 int rowNumber = 1;
             }
-            @foreach (var item in Model.OrderBy(m => m.Product.CreatedAt))
+            @foreach (var product in Model.OrderBy(m => m.CreatedAt))
             {
                 <tr>
-                    <form asp-action="DeleteProduct" asp-route-productId="@item.Product.Id" method="post">
-                        <button hidden id="@item.Product.Id"></button>
+                    <form asp-action="DeleteProduct" asp-route-productId="@product.Id" method="post">
+                        <button hidden id="@product.Id"></button>
                     </form>
                     <th scope="row">@rowNumber</th>
-                    <td>@item.Product.Name</td>
-                    <td>@item.Product.Price</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
                     <td class="d-flex justify-content-center">
-                        <a asp-action="EditProduct" asp-route-productId="@item.Product.Id" class="link-secondary">Изменить</a>
-                        <a href="#" class="ms-5 link-danger" onclick="showModalWindow('@item.Product.Id')">Удалить</a>
+                        <a asp-action="EditProduct" asp-route-productId="@product.Id" class="link-secondary">Изменить</a>
+                        <a href="#" class="ms-5 link-danger" onclick="showModalWindow('@product.Id')">Удалить</a>
                     </td>
                 </tr>
                 rowNumber++;
@@ -58,19 +58,18 @@
                 Вы уверены, что хотите удалить продукт?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-grad" data-bs-toggle="modal" data-bs-target="#exampleModal" >Отменить</button>
+                <button type="button" class="btn btn-grad" data-bs-toggle="modal" data-bs-target="#exampleModal">Отменить</button>
                 <button type="button" class="btn btn-grad" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="deleteProduct()">Удалить</button>
             </div>
         </div>
     </div>
 </div>
 
-
 <script>
-     async function showModalWindow(productId) {
-         var button = document.getElementById("show-modal-button");
-         button.textContent = productId;
-         document.getElementById("show-modal-button").click();
+    async function showModalWindow(productId) {
+        var button = document.getElementById("show-modal-button");
+        button.textContent = productId;
+        document.getElementById("show-modal-button").click();
     }
     async function deleteProduct() {
         var button = document.getElementById("show-modal-button");
