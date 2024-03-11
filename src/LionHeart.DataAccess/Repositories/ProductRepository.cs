@@ -13,6 +13,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Include(p => p.Units)
+            .Include(p => p.Image)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
     public override Task<List<Product>> GetAll()
@@ -20,6 +21,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+            .Include(p => p.Image)
             .ToListAsync();
     }
     public Task<List<Product>> GetProductsByCategoryId(string categoryId)
@@ -27,6 +29,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+            .Include(p => p.Image)
             .Where(p => p.CategoryId == categoryId)
             .ToListAsync();     
     }
@@ -35,6 +38,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+            .Include(p => p.Image)
             .Where(p => p.UserId == userId)
             .ToListAsync();
     }
@@ -47,6 +51,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
 
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
+            .Include(p => p.Image)
             .Where(p => p.Name == productName ||
                         p.Name.StartsWith(productName))
             .ToListAsync();

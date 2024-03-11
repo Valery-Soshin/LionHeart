@@ -7,10 +7,13 @@ namespace LionHeart.BusinessLogic.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _repository;
+    private readonly IImageService _imageService;
 
-	public ProductService(IProductRepository productRepository)
+	public ProductService(IProductRepository productRepository,
+                          IImageService imageService)
     {
         _repository = productRepository;
+        _imageService = imageService;
     }
 
     public Task<Product?> GetById(string id)
@@ -33,9 +36,12 @@ public class ProductService : IProductService
     {
         return _repository.Search(productName);
     }
-    public Task<int> Add(Product product)
+    public async Task Add(Product product)
     {
-        return _repository.Add(product);
+        if (product.Image is null || product.Image.File is null) return;
+
+        await _imageService.Add(product.Image.File);
+        await _repository.Add(product);
     }
     public Task<int> Update(Product product)
     {

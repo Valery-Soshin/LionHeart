@@ -95,6 +95,7 @@ public class ProductsController : Controller
             Name = product.Name,
             Description = product.Description,
             Specifications = product.Specifications,
+            ImageName = product.Image.FileName,
             ShowFeedbacks = showFeedbacks
         };
         return View(model);
@@ -121,7 +122,12 @@ public class ProductsController : Controller
             Price = model.Price,
             Description = model.Description,
             Specifications = model.Specifications,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
+            Image = new ImageModel()
+            {
+                FileName = model.Image.FileName,
+                File = model.Image
+            }
         };
         await _productService.Add(product);
 

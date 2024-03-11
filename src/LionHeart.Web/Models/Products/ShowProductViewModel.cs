@@ -6,5 +6,6 @@ public class ShowProductViewModel
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
+    public string? ImageName { get; set; }
     public bool ShowFeedbacks { get; set; }
 }

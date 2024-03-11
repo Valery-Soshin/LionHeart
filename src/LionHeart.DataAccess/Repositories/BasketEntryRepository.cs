@@ -13,6 +13,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)
+                .ThenInclude(p => p.Image)
             .FirstOrDefaultAsync(e => e.Id == id);
     }
 
@@ -20,6 +21,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)
+                .ThenInclude(p => p.Image)
             .FirstOrDefaultAsync(e => e.UserId == userId &&
                                       e.ProductId == productId);
     }
@@ -27,6 +29,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)
+                .ThenInclude(p => p.Image)
             .Where(e => e.UserId == userId)
             .ToListAsync();
     }
@@ -34,6 +37,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)
+                .ThenInclude(p => p.Image)
             .ToListAsync();
     }
 }

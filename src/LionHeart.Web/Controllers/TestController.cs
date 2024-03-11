@@ -89,7 +89,11 @@ namespace LionHeart.Web.Controllers
                     Price = 1250,
                     Description = "Красивая и удобная футболка.",
                     Specifications = "Размер - XXL",
-                    CreatedAt = DateTimeOffset.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    Image = new ImageModel
+                    {
+                        FileName = "img1.jpg"
+                    }
                 };
                 var product2 = new Product()
                 {
@@ -100,7 +104,11 @@ namespace LionHeart.Web.Controllers
                     Price = 1250,
                     Description = "Футбольный мяч, может быть использован даже во время дождя.",
                     Specifications = "",
-                    CreatedAt = DateTimeOffset.UtcNow
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    Image = new ImageModel
+                    {
+                        FileName = "img2.jpg"
+                    }
                 };
 
                 _applicationDbContext.AddRange(product, product2);

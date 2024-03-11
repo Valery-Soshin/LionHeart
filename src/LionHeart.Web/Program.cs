@@ -35,6 +35,7 @@ builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
 builder.Services.AddScoped<IOrderService, LoggingOrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<OrderService>();
 
 builder.Services.ConfigureApplicationCookie(options =>

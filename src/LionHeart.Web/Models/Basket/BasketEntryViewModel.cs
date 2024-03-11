@@ -9,4 +9,5 @@ public class BasketEntryViewModel
     public decimal ProductPrice { get; set; }
     public int ProductQuantity { get; set; } = 1;
     public decimal ProductTotalPrice { get; set; }
+    public string? ImageName { get; set; } 
 }

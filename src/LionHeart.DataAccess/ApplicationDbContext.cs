@@ -23,7 +23,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSnakeCaseNamingConvention();
-        optionsBuilder.EnableSensitiveDataLogging(false);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -37,6 +36,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderItemConfiguration());
         builder.ApplyConfiguration(new OrderItemDetailConfiguration());
+        builder.ApplyConfiguration(new ImageModelConfiguration());
 
         base.OnModelCreating(builder);
     }

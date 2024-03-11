@@ -10,4 +10,5 @@ public class CreateProductViewModel
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
     public int Quantity { get; set; }
+    public IFormFile Image { get; set; } = null!;
 }
