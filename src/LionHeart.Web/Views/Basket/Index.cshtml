@@ -47,7 +47,7 @@
                                         var productsTotalPrice = (entry.ProductPrice * entry.ProductQuantity).ToString().Replace(",", ".");
                                     }
                                     <div class="main-theme p-2">
-                                        <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice.0</label><span>р</span>
+                                        <label id="label-products-total-price-@entry.Id" class="border-0">@productsTotalPrice</label><span>р</span>
                                     </div>
 
                                     <input hidden asp-for="Entries[i].ProductTotalPrice" id="input-products-total-price-@entry.Id" value="@productsTotalPrice" />
@@ -118,11 +118,11 @@
         quantityLabel.textContent = +quantityInput.value + 1;
         quantityInput.value = +quantityInput.value + 1;
 
-        totalProductsPriceLabel.textContent = (parseFloat(totalProductsPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
-        totalProductsPriceInput.value = (parseFloat(totalProductsPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
+        totalProductsPriceLabel.textContent = (+totalProductsPriceInput.value) + (+basePrice.value);
+        totalProductsPriceInput.value = (+totalProductsPriceInput.value) + (+basePrice.value);
 
-        totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
-        totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) + parseFloat(basePrice.value)).toFixed(1);
+        totalBasketPriceLabel.textContent = (+totalBasketPriceInput.value) + (+basePrice.value);
+        totalBasketPriceInput.value = (+totalBasketPriceInput.value) + (+basePrice.value);
 
         updateQuantity(basketEntryId, quantityInput.value);
     };
@@ -143,11 +143,11 @@
             quantityLabel.textContent = +quantityInput.value - 1;
             quantityInput.value = +quantityInput.value - 1;
 
-            totalProductsPriceLabel.textContent = (parseFloat(totalProductsPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
-            totalProductsPriceInput.value = (parseFloat(totalProductsPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
+            totalProductsPriceLabel.textContent = (+totalProductsPriceInput.value) - (+basePrice.value);
+            totalProductsPriceInput.value = (+totalProductsPriceInput.value) + (+basePrice.value);
 
-            totalBasketPriceLabel.textContent = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
-            totalBasketPriceInput.value = (parseFloat(totalBasketPriceInput.value) - parseFloat(basePrice.value)).toFixed(1);
+            totalBasketPriceLabel.textContent = (+totalBasketPriceInput.value) - (+basePrice.value);
+            totalBasketPriceInput.value = (+totalBasketPriceInput.value) - (+basePrice.value);
 
             updateQuantity(basketEntryId, quantityInput.value);
         }
