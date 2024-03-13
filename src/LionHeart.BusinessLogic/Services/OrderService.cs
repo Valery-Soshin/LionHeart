@@ -41,4 +41,8 @@ public class OrderService : IOrderService
 	{
 		return _repository.Any(userId);
 	}
+    public Task<bool> Exists(string userId, string productId)
+    {
+		return _repository.Exists(userId, productId);
+    }
 }

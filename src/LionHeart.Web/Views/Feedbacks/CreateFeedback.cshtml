@@ -1,0 +1,47 @@
+﻿@using LionHeart.Web.Models.Feedbacks;
+@model CreateFeedbackViewModel
+
+@{
+    ViewData["title"] = $"Отзыв к товару: {ViewData["ProductName"]}";
+}
+
+<div class="site-body-container d-flex justify-content-center">
+    <form method="post" class="mt-5" style="width:800px;">
+        <input hidden asp-for="ProductId" value="@ViewData["ProductId"]" />
+        <div class="mb-4">
+            <h2>Отзыв к товару: @ViewData["ProductName"]</h2>
+        </div>
+        <div class="d-flex justify-content-start">
+            <div>
+                <fieldset class="rating">
+                    <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked=""
+                           aria-label="No rating.">
+
+                    <input asp-for="Rating" type="radio" id="rate1" name="rating" value="1">
+                    <label for="rate1">1 star</label>
+
+                    <input asp-for="Rating" type="radio" id="rate2" name="rating" value="2">
+                    <label for="rate2">2 stars</label>
+
+                    <input asp-for="Rating" type="radio" id="rate3" name="rating" value="3">
+                    <label for="rate3">3 stars</label>
+
+                    <input asp-for="Rating" type="radio" id="rate4" name="rating" value="4">
+                    <label for="rate4">4 stars</label>
+
+                    <input asp-for="Rating" type="radio" id="rate5" name="rating" value="5">
+                    <label for="rate5">5 stars</label>
+
+                    <span class="focus-ring"></span>
+                </fieldset>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Расскажите о товаре</label>
+            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-grad w-25 m-0 p-3">Отправить</button>
+        </div>
+    </form>
+</div>

@@ -54,4 +54,8 @@ public class LoggingOrderService : IOrderService
     {
         return _orderService.Any(userId);
     }
+    public Task<bool> Exists(string userId, string productId)
+    {
+        return _orderService.Exists(userId, productId);
+    }
 }

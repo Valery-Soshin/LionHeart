@@ -38,7 +38,7 @@ public class OrdersController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateOrder(BasketViewModel basket)
     {
-        if (!ModelState.IsValid) return BadRequest($"Значение BasketTotalPrice: {basket.BasketTotalPrice}");
+        if (!ModelState.IsValid) return BadRequest();
 
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();

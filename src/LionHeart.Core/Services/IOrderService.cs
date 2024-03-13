@@ -11,4 +11,5 @@ public interface IOrderService
 	Task<int> Update(Order order);
 	Task<int> Remove(Order order);
 	Task<bool> Any(string userId);
+    Task<bool> Exists(string userId, string productId);
 }

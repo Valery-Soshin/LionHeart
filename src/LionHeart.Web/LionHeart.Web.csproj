@@ -29,4 +29,8 @@
     <Folder Include="Helpers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\rating.css" />
+  </ItemGroup>
+
 </Project>

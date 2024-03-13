@@ -11,24 +11,27 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
+    private readonly IOrderService _orderService;
     private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
     private readonly IFavoriteProductService _favoriteProductService;
-    private readonly ILogger<ProductsController> _logger;
+    private readonly IFeedbackService _feedbackService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
+                              IOrderService orderService,
                               IProductUnitService productUnitService,
                               IBasketEntryService basketEntryService,
                               IFavoriteProductService favoriteProductService,
-                              ILogger<ProductsController> logger,
+                              IFeedbackService feedbackService,
                               UserManager<User> userManager)
     {
         _productService = productService;
+        _orderService = orderService;
         _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
         _favoriteProductService = favoriteProductService;
-        _logger = logger;
+        _feedbackService = feedbackService;
         _userManager = userManager;
     }
 
@@ -86,8 +89,14 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<IActionResult> ShowProduct(string id, bool showFeedbacks = false)
     {
+        var userId = _userManager.GetUserId(User);
+
         var product = await _productService.GetById(id);
         if (product is null) return NotFound();
+
+        bool writeFeedback = userId is not null &&
+                             await _orderService.Exists(userId, product.Id) &&
+                             !await _feedbackService.Exists(userId, product.Id);
 
         var model = new ShowProductViewModel()
         {
@@ -96,7 +105,14 @@ public class ProductsController : Controller
             Description = product.Description,
             Specifications = product.Specifications,
             ImageName = product.Image.FileName,
-            ShowFeedbacks = showFeedbacks
+            Feedbacks = product.Feedbacks.Select(f => new FeedbackViewModel(){
+                FirstName = f.User.FirstName,
+                LastName = f.User.LastName,
+                Rating = f.Rating,
+                Content = f.Content
+            }).ToList(),
+            ShowFeedbacks = showFeedbacks,
+            WriteFeedback = writeFeedback
         };
         return View(model);
     }

@@ -12,6 +12,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+                .ThenInclude(f => f.User)
             .Include(p => p.Units)
             .Include(p => p.Image)
             .FirstOrDefaultAsync(p => p.Id == id);
