@@ -9,5 +9,5 @@ public interface IFeedbackService
     Task Add(Feedback feedback);
     Task Update(Feedback feedback);
     Task Remove(Feedback feedback);
-    Task<bool> Exists(string userId, string productId);
+    Task<bool> HasFeedbackPending(string userId, string productId);
 }

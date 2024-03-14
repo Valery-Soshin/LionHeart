@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class FeedbacksController : Controller
+public class FeedbacksController : Controller   
 {
     private readonly IFeedbackService _feedbackService;
     private readonly IProductService _productService;
@@ -47,7 +47,8 @@ public class FeedbacksController : Controller
             ProductId = model.ProductId,
             UserId = userId,
             Rating = model.Rating,
-            Content = model.Content
+            Content = model.Content,
+            CreatedAt = DateTimeOffset.UtcNow
         };
         await _feedbackService.Add(feedback);
         return Redirect("/Products");

@@ -10,4 +10,5 @@ public class Feedback
     public User User { get; set; } = null!;
     public Rating Rating { get; set; }
     public string Content { get; set; } = null!;
+    public DateTimeOffset CreatedAt { get; set; }
 }

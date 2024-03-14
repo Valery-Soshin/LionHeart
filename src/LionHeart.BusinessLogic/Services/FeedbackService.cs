@@ -7,10 +7,13 @@ namespace LionHeart.BusinessLogic.Services;
 public class FeedbackService : IFeedbackService
 {
     private readonly IFeedbackRepository _repository;
+    private readonly IOrderService _orderService;
 
-    public FeedbackService(IFeedbackRepository repository)
+    public FeedbackService(IFeedbackRepository repository,
+                           IOrderService orderService)
     {
         _repository = repository;
+        _orderService = orderService;
     }
 
     public Task<Feedback?> GetById(string id)
@@ -33,8 +36,9 @@ public class FeedbackService : IFeedbackService
     {
         return _repository.Remove(feedback);
     }
-    public Task<bool> Exists(string userId, string productId)
+    public async Task<bool> HasFeedbackPending(string userId, string productId)
     {
-        return _repository.Exists(userId, productId);
+        return !await _repository.Exists(userId, productId) &&
+            await _orderService.Exists(userId, productId);
     }
 }

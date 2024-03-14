@@ -95,9 +95,8 @@ public class ProductsController : Controller
         if (product is null) return NotFound();
 
         bool writeFeedback = userId is not null &&
-                             await _orderService.Exists(userId, product.Id) &&
-                             !await _feedbackService.Exists(userId, product.Id);
-
+            await _feedbackService.HasFeedbackPending(userId, product.Id);
+        
         var model = new ShowProductViewModel()
         {
             Id = id,
@@ -109,7 +108,8 @@ public class ProductsController : Controller
                 FirstName = f.User.FirstName,
                 LastName = f.User.LastName,
                 Rating = f.Rating,
-                Content = f.Content
+                Content = f.Content,
+                CreatedAt = f.CreatedAt
             }).ToList(),
             ShowFeedbacks = showFeedbacks,
             WriteFeedback = writeFeedback
