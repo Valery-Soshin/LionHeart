@@ -1,10 +1,10 @@
 ﻿using LionHeart.Core.Models;
 using LionHeart.Core.Enums;
-using LionHeart.Core.Services;
-using LionHeart.Web.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using LionHeart.Web.Models.Products;
+using LionHeart.Core.Interfaces.Services;
 
 namespace LionHeart.Web.Controllers;
 

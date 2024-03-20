@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LionHeart.Web.Models.Products;
+﻿namespace LionHeart.Web.Models.Products;
 
 public class CreateProductViewModel
 {

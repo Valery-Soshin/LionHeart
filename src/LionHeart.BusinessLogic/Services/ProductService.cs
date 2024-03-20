@@ -1,6 +1,6 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
-using LionHeart.Core.Services;
+﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Models;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -9,7 +9,7 @@ public class ProductService : IProductService
     private readonly IProductRepository _repository;
     private readonly IImageService _imageService;
 
-	public ProductService(IProductRepository productRepository,
+    public ProductService(IProductRepository productRepository,
                           IImageService imageService)
     {
         _repository = productRepository;

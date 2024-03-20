@@ -1,4 +1,4 @@
-﻿namespace LionHeart.Core.Repositories;
+﻿namespace LionHeart.Core.Interfaces.Repositories;
 
 public interface IRepository<TEntity> : IDisposable where TEntity: class
 {

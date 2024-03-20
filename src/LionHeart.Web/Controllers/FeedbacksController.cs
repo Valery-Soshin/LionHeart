@@ -1,5 +1,5 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Services;
+﻿using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Models;
 using LionHeart.Web.Models.Feedbacks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

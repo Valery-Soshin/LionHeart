@@ -1,5 +1,5 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
+﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Repositories;
@@ -17,7 +17,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
             .FirstOrDefaultAsync(e => e.Id == id);
     }
 
-    public Task<BasketEntry?> GetByUserProduct(string userId, string productId)
+    public Task<BasketEntry?> GetByUserIdProductId(string userId, string productId)
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)

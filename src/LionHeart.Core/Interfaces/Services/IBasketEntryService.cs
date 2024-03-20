@@ -1,11 +1,12 @@
 ﻿using LionHeart.Core.Models;
+using LionHeart.Core.Response;
 
-namespace LionHeart.Core.Services;
+namespace LionHeart.Core.Interfaces.Services;
 
 public interface IBasketEntryService
 {
-    Task<BasketEntry?> GetById(string id);
-    Task<BasketEntry?> GetByUserProduct(string userId, string productId);
+    Task<IBaseResponse<BasketEntry>> GetById(string id);
+    Task<BasketEntry> GetByUserIdProductId(string userId, string productId);
     Task<List<BasketEntry>> GetEntriesByUserId(string userId);
     Task<int> Add(BasketEntry entry);
     Task<int> Update(BasketEntry entry);

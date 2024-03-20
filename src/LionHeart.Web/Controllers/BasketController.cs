@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using LionHeart.Core.Services;
 using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using LionHeart.Web.Models.Basket;
+using LionHeart.Core.Interfaces.Services;
+using LionHeart.Web.Models.Orders;
 
 namespace LionHeart.Web.Controllers;
 
@@ -28,7 +29,7 @@ public class BasketController : Controller
 
         var entries = await _basketEntryService.GetEntriesByUserId(userId);
 
-        var basket = new BasketViewModel()
+        var basket = new CreateOrderViewModel()
         {
             BasketTotalPrice = entries.Sum(e => e.Product.Price * e.Quantity),
         };
@@ -73,7 +74,7 @@ public class BasketController : Controller
 
         if (!ModelState.IsValid) return BadRequest();
 
-        var entry = await _basketEntryService.GetByUserProduct(userId, productId);
+        var entry = await _basketEntryService.GetByUserIdProductId(userId, productId);
         if (entry is null) return NotFound();
 
         await _basketEntryService.Remove(entry);
@@ -88,7 +89,7 @@ public class BasketController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var entry = await _basketEntryService.GetById(model.EntryId);
+        var entry = (await _basketEntryService.GetById(model.EntryId)).Data;
         if (entry is null) return NotFound();
 
         entry.Quantity = model.ProductQuantity;

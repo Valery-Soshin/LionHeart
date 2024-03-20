@@ -1,7 +1,6 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
+﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 namespace LionHeart.DataAccess.Repositories;
 

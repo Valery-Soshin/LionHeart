@@ -1,6 +1,6 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
-using LionHeart.Core.Services;
+﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Models;
 
 namespace LionHeart.BusinessLogic.Services;
 

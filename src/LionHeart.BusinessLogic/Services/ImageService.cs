@@ -1,4 +1,4 @@
-﻿using LionHeart.Core.Services;
+﻿using LionHeart.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -44,7 +44,7 @@ public class ImageService : IImageService
         {
             File.Delete(pathWithFileName);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex.Message);
         }

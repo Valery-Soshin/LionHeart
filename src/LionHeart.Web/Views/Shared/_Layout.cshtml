@@ -1,4 +1,4 @@
-﻿@using LionHeart.Core.Services
+﻿@using LionHeart.Core.Interfaces.Services
 @inject IOrderService orderService;
 
 <!DOCTYPE html>
@@ -51,7 +51,7 @@
             <li class="nav-item">
                 <a asp-action="Index" asp-controller="Profile" class="nav-link site-nav-item">Профиль</a>
             </li>
-            @if (userId is not null && await orderService.Any(userId))
+            @if (userId is not null && (await orderService.Any(userId)).Data)
             {
                 <li class="nav-item">
                     <a asp-action="Index" asp-controller="Orders" class="nav-link site-nav-item">Заказы</a>

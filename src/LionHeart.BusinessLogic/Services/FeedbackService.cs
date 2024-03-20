@@ -1,6 +1,6 @@
-﻿using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
-using LionHeart.Core.Services;
+﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Models;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -38,7 +38,9 @@ public class FeedbackService : IFeedbackService
     }
     public async Task<bool> HasFeedbackPending(string userId, string productId)
     {
-        return !await _repository.Exists(userId, productId) &&
-            await _orderService.Exists(userId, productId);
+        //return !await _repository.Exists(userId, productId) &&
+        //    await _orderService.Exists(userId, productId);
+
+        return true;
     }
 }

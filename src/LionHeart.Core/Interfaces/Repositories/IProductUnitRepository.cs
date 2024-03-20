@@ -1,7 +1,7 @@
 ﻿using LionHeart.Core.Enums;
 using LionHeart.Core.Models;
 
-namespace LionHeart.Core.Repositories;
+namespace LionHeart.Core.Interfaces.Repositories;
 
 public interface IProductUnitRepository : IRepository<ProductUnit>
 {

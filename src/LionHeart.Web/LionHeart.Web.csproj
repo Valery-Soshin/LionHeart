@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <Content Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
 	    <PrivateAssets>all</PrivateAssets>
@@ -23,10 +30,6 @@
     <ProjectReference Include="..\LionHeart.BusinessLogic\LionHeart.BusinessLogic.csproj" />
     <ProjectReference Include="..\LionHeart.Core\LionHeart.Core.csproj" />
     <ProjectReference Include="..\LionHeart.DataAccess\LionHeart.DataAccess.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\" />
   </ItemGroup>
 
   <ItemGroup>

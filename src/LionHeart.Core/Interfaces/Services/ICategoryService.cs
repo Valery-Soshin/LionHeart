@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Models;
 
-namespace LionHeart.Core.Services;
+namespace LionHeart.Core.Interfaces.Services;
 
 public interface ICategoryService
 {

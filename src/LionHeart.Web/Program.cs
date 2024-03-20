@@ -1,7 +1,7 @@
 using LionHeart.BusinessLogic.Services;
+using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Repositories;
-using LionHeart.Core.Services;
 using LionHeart.DataAccess;
 using LionHeart.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -33,12 +33,11 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
 builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
-builder.Services.AddScoped<IOrderService, LoggingOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
-builder.Services.AddScoped<OrderService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

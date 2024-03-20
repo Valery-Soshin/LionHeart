@@ -1,6 +1,13 @@
-﻿namespace LionHeart.Web.Models.Basket;
+﻿namespace LionHeart.Core.Dtos.Orders;
 
-public class BasketEntryViewModel
+public class CreateOrderDto
+{
+    public string UserId { get; set; } = null!;
+    public decimal BasketTotalPrice { get; set; }
+    public List<BasketEntryDto> Entries { get; set; } = [];
+}
+
+public class BasketEntryDto
 {
     public string Id { get; set; } = null!;
     public string UserId { get; set; } = null!;

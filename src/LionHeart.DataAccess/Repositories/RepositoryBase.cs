@@ -1,4 +1,4 @@
-﻿using LionHeart.Core.Repositories;
+﻿using LionHeart.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Repositories;

@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Models;
 
-namespace LionHeart.Core.Repositories;
+namespace LionHeart.Core.Interfaces.Repositories;
 
 public interface IFavoriteProductRepository : IRepository<FavoriteProduct>
 {
