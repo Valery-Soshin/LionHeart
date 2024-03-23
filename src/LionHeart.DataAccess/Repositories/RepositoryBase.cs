@@ -27,9 +27,19 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
         _dbSet.Add(entity);
         return SaveChangesAsync();
     }
+    public virtual Task<int> AddRange(IEnumerable<TEntity> entities)
+    {
+        _dbSet.AddRange(entities);
+        return SaveChangesAsync();
+    }
     public virtual Task<int> Update(TEntity entity)
     {
         _dbSet.Update(entity);
+        return SaveChangesAsync();
+    }
+    public virtual Task<int> UpdateRange(IEnumerable<TEntity> entities)
+    {
+        _dbSet.UpdateRange(entities);
         return SaveChangesAsync();
     }
     public virtual Task<int> Remove(TEntity entity)
@@ -37,13 +47,10 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
         _dbSet.Remove(entity);
         return SaveChangesAsync();
     }
-    public async Task<int> Remove(string id)
+    public virtual Task<int> RemoveRange(IEnumerable<TEntity> entities)
     {
-        var type = _dbSet.EntityType.ClrType;
-        var entry = await _dbContext.FindAsync(type, id);
-        if (entry is null) return -1;
-        _dbContext.Remove(entry);
-        return await SaveChangesAsync();
+        _dbSet.RemoveRange(entities);
+        return SaveChangesAsync();
     }
     protected virtual async Task<int> SaveChangesAsync()
     {

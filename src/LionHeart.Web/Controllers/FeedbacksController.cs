@@ -1,4 +1,5 @@
-﻿using LionHeart.Core.Interfaces.Services;
+﻿using LionHeart.Core.Dtos.Feedback;
+using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Web.Models.Feedbacks;
 using Microsoft.AspNetCore.Identity;
@@ -26,8 +27,11 @@ public class FeedbacksController : Controller
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var product = await _productService.GetById(productId);
-        if (product is null) return NotFound();
+        var result = await _productService.GetById(productId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var product = result.Data;
+        if (product is null) return BadRequest();
 
         ViewData["ProductId"] = product.Id;
         ViewData["ProductName"] = product.Name;
@@ -42,7 +46,7 @@ public class FeedbacksController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var feedback = new Feedback
+        var dto = new AddFeedbackDto
         {
             ProductId = model.ProductId,
             UserId = userId,
@@ -50,7 +54,9 @@ public class FeedbacksController : Controller
             Content = model.Content,
             CreatedAt = DateTimeOffset.UtcNow
         };
-        await _feedbackService.Add(feedback);
+        var result = await _feedbackService.Add(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage); 
+
         return Redirect("/Products");
     }
 }

@@ -1,6 +1,5 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Web.Models.Orders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,33 +23,9 @@ public class OrdersController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var response = await _orderService.GetOrdersByUserId(userId);
-        if (response.IsFaulted)
-        {
-            return BadRequest(response.Description);
-        }
-        return View(response.Data);
-    }
+        var result = await _orderService.GetOrdersByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder(CreateOrderViewModel model)
-    {
-        if (!ModelState.IsValid) return BadRequest();
-
-        var userId = _userManager.GetUserId(User);
-        if (userId is null) return Unauthorized();
-
-        //var createOrderModel = new CreateOrderDto()
-        //{
-        //    BasketTotalPrice = model.BasketTotalPrice,
-        //    Entries = model.Entries,
-        //    UserId = userId
-        //};
-        //var response = await _orderService.Add(model);
-        //if (response.IsFaulted)
-        //{
-        //    return BadRequest(response.Description);
-        //}
-        return Redirect("/Products");
+        return View(result.Data);
     }
 }

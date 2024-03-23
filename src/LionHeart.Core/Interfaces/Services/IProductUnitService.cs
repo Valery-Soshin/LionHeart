@@ -1,15 +1,14 @@
-﻿using LionHeart.Core.Enums;
+﻿using LionHeart.Core.Dtos.ProductUnit;
 using LionHeart.Core.Models;
+using LionHeart.Core.Result;
 
 namespace LionHeart.Core.Interfaces.Services;
 
 public interface IProductUnitService
 {
-    Task<ProductUnit?> GetById(string id);
-    Task<List<ProductUnit>> GetByProductId(string productId, int quantity);
-    Task<List<ProductUnit>> GetAll();
-    Task<int> Add(ProductUnit product);
-    Task<int> Update(ProductUnit product);
-    Task<int> Remove(ProductUnit product);
-    Task<int> CountByProductId(string productId);
+    Task<Result<ProductUnit>> GetById(string id);
+    Task<Result<ProductUnit>> Add(AddProductUnitDto dto);
+    Task<Result<List<ProductUnit>>> AddRange(List<AddProductUnitDto> dtos);
+    Task<Result<ProductUnit>> Remove(RemoveProductUnitDto dto);
+    Task<Result<int>> Count(string productId);
 }

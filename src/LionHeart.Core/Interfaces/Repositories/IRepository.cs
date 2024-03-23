@@ -5,7 +5,9 @@ public interface IRepository<TEntity> : IDisposable where TEntity: class
     Task<TEntity?> GetById(string id);
     Task<List<TEntity>> GetAll();
     Task<int> Add(TEntity entity);
+    Task<int> AddRange(IEnumerable<TEntity> entities);
     Task<int> Update(TEntity entity);
+    Task<int> UpdateRange(IEnumerable<TEntity> entities);
     Task<int> Remove(TEntity entity);
-    Task<int> Remove(string id);
+    Task<int> RemoveRange(IEnumerable<TEntity> entities);
 }

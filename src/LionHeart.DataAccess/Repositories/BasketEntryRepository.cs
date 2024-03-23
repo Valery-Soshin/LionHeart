@@ -40,4 +40,12 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
                 .ThenInclude(p => p.Image)
             .ToListAsync();
     }
+    public Task<List<BasketEntry>> GetAll(List<string> ids)
+    {
+        return _dbContext.BasketEntries.AsNoTracking()
+            .Include(e => e.Product)
+                .ThenInclude(p => p.Image)
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync();
+    }
 }

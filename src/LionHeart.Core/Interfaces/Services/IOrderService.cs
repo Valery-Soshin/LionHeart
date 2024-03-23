@@ -1,15 +1,15 @@
 ﻿using LionHeart.Core.Dtos.Orders;
 using LionHeart.Core.Models;
-using LionHeart.Core.Response;
+using LionHeart.Core.Result;
 
 namespace LionHeart.Core.Interfaces.Services;
 
 public interface IOrderService
 {
-    Task<IBaseResponse<Order>> GetById(string id);
-    Task<IBaseResponse<List<Order>>> GetOrdersByUserId(string userId);
-    Task<IBaseResponse<List<Order>>> GetAll();
-    Task<IBaseResponse<Order>> Add(CreateOrderDto dto);
-    Task<IBaseResponse<bool>> Any(string userId);
-    Task<IBaseResponse<bool>> Exists(string userId, string productId);
+    Task<Result<Order>> GetById(string id);
+    Task<Result<List<Order>>> GetOrdersByUserId(string userId);
+    Task<Result<List<Order>>> GetAll();
+    Task<Result<Order>> Add(AddOrderDto dto);
+    Task<Result<bool>> Any(string userId);
+    Task<Result<bool>> Exists(string userId, string productId);
 }

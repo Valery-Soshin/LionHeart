@@ -21,7 +21,18 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
+            .Include(p => p.Units)
             .Include(p => p.Image)
+            .ToListAsync();
+    }
+    public Task<List<Product>> GetAll(List<string> ids)
+    {
+        return _dbContext.Products.AsNoTrackingWithIdentityResolution()
+            .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
+            .Include(p => p.Units)
+            .Include(p => p.Image)
+            .Where(p => ids.Contains(p.Id))
             .ToListAsync();
     }
     public Task<List<Product>> GetProductsByCategoryId(string categoryId)
@@ -65,5 +76,18 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             product.Units, _dbContext, u => u.ProductId == product.Id);
 
         return await base.Update(product);
+    }
+    public override async Task<int> UpdateRange(IEnumerable<Product> products)
+    {
+        foreach (var product in products)
+        {
+            await EFUpdateHelper.CheckItemsOnDelete(
+            product.Units, _dbContext, u => u.ProductId == product.Id);
+
+            await EFUpdateHelper.CheckItemsOnAdd(
+                product.Units, _dbContext, u => u.ProductId == product.Id);
+        }
+
+        return await base.UpdateRange(products);
     }
 }

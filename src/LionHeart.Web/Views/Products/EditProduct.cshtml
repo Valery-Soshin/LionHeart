@@ -19,7 +19,7 @@
                     <label class="form-label">Категория</label>
                     <select asp-for="CategoryId" class="form-select custom-input">
                         <option value="@Model.CategoryId" selected>@Model.CategoryName</option>
-                        @foreach (var category in await categoryService.GetAll())
+                        @foreach (var category in (await categoryService.GetAll()).Data)
                         {
                             if (category.Name != Model.CategoryName)
                             {

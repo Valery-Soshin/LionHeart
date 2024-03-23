@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Configurations;
 
-public class ImageModelConfiguration : IEntityTypeConfiguration<ImageModel>
+public class ImageConfiguration : IEntityTypeConfiguration<Image>
 {
-    public void Configure(EntityTypeBuilder<ImageModel> builder)
+    public void Configure(EntityTypeBuilder<Image> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
     }

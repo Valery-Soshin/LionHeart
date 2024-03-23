@@ -23,7 +23,7 @@ public class ProductUnitRepository(ApplicationDbContext dbContext) : RepositoryB
 		return _dbContext.ProductUnits.AsNoTracking()
 			.ToListAsync();
 	}
-	public Task<int> CountByProductId(string productId)
+	public Task<int> Count(string productId)
 	{
 		return _dbContext.ProductUnits.AsNoTracking()
 			.CountAsync(pu => pu.ProductId == productId);

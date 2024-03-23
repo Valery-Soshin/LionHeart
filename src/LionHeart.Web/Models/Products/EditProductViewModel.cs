@@ -9,5 +9,6 @@ public class EditProductViewModel
     public decimal Price { get; set; }
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
+    public IFormFile? Image { get; set; }
     public int Quantity { get; set; }
 }

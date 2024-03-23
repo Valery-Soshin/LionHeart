@@ -1,54 +1,295 @@
-﻿using LionHeart.Core.Interfaces.Repositories;
+﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.Core.Dtos.Product;
+using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Core.Result;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class ProductService : IProductService
 {
-    private readonly IProductRepository _repository;
+    private readonly IProductRepository _productRepository;
     private readonly IImageService _imageService;
 
     public ProductService(IProductRepository productRepository,
                           IImageService imageService)
     {
-        _repository = productRepository;
+        _productRepository = productRepository;
         _imageService = imageService;
     }
 
-    public Task<Product?> GetById(string id)
+    public async Task<Result<Product>> GetById(string id)
     {
-        return _repository.GetById(id);
-    }
-    public Task<List<Product>> GetAll()
-    {
-        return _repository.GetAll();
-    }
-    public Task<List<Product>> GetProductsByCategoryId(string categoryId)
-    {
-        return _repository.GetProductsByCategoryId(categoryId);
-    }
-    public Task<List<Product>> GetProductsByUserId(string userId)
-    {
-        return _repository.GetProductsByUserId(userId);
-    }
-    public Task<List<Product>> Search(string productName)
-    {
-        return _repository.Search(productName);
-    }
-    public async Task Add(Product product)
-    {
-        if (product.Image is null || product.Image.File is null) return;
+        try
+        {
+            var product = await _productRepository.GetById(id);
+            if (product is null)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotFound
+                };
+            }
+            return new Result<Product>
+            {
+                IsCompleted = true,
+                Data = product
+            };
+        }
+        catch
+        {
+            return new Result<Product>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
 
-        await _imageService.Add(product.Image.File);
-        await _repository.Add(product);
     }
-    public Task<int> Update(Product product)
+    public async Task<Result<List<Product>>> GetAll()
     {
-        return _repository.Update(product);
+        try
+        {
+            var products = await _productRepository.GetAll();
+            if (products is null)
+            {
+                return new Result<List<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<List<Product>>
+            {
+                IsCompleted = true,
+                Data = products
+            };
+        }
+        catch
+        {
+            return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<int> Remove(Product product)
+    public async Task<Result<List<Product>>> GetProductsByCategoryId(string categoryId)
     {
-        return _repository.Remove(product);
+        try
+        {
+            var products = await _productRepository.GetProductsByCategoryId(categoryId);
+            if (products is null)
+            {
+                return new Result<List<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<List<Product>>
+            {
+                IsCompleted = true,
+                Data = products
+            };
+        }
+        catch
+        {
+            return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<List<Product>>> GetProductsByUserId(string userId)
+    {
+        try
+        {
+            var products = await _productRepository.GetProductsByUserId(userId);
+            if (products is null)
+            {
+                return new Result<List<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<List<Product>>
+            {
+                IsCompleted = true,
+                Data = products
+            };
+        }
+        catch
+        {
+            return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<List<Product>>> Search(string productName)
+    {
+        try
+        {
+            var products = await _productRepository.Search(productName);
+            if (products is null)
+            {
+                return new Result<List<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<List<Product>>
+            {
+                IsCompleted = true,
+                Data = products
+            };
+        }
+        catch
+        {
+            return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<Product>> Add(AddProductDto dto)
+    {
+        try
+        {
+            var product = new Product
+            {
+                CategoryId = dto.CategoryId,
+                UserId = dto.UserId,
+                Name = dto.Name,
+                Price = dto.Price,
+                Description = dto.Description,
+                Specifications = dto.Specifications,
+                CreatedAt = dto.CreatedAt,
+                Image = new Image
+                {
+                    FileName = dto.Image.FileName,
+                    File = dto.Image
+                }
+            };
+            var result = await _productRepository.Add(product);
+            if (result <= 0)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotCreated
+                };
+            }
+            var imageResult = await _imageService.Add(product.Image.File);
+            if (imageResult.IsFaulted)
+            {
+                return new Result<Product>()
+                {
+                    IsCompleted = false,
+                    ErrorMessage = imageResult.ErrorMessage
+                };
+            }
+
+            return new Result<Product>
+            {
+                IsCompleted = true,
+                Data = product
+            };
+        }
+        catch
+        {
+            return new Result<Product>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<Product>> Update(UpdateProductDto dto)
+    {
+        try
+        {
+            var product = await _productRepository.GetById(dto.Id);
+            if (product is null)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotFound
+                };
+            }
+            product.CategoryId = dto.CategoryId;
+            product.Name = dto.Name;
+            product.Price = dto.Price;
+            product.Description = dto.Description;
+            product.Specifications = dto.Specifications;
+            if (product.Image.FileName != dto.Image.FileName)
+            {
+                product.Image = new Image
+                {
+                    FileName = dto.Image.FileName,
+                    File = dto.Image
+                };
+            }
+
+            return new Result<Product>
+            {
+                IsCompleted = true,
+                Data = product
+            };
+        }
+        catch
+        {
+            return new Result<Product>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<Product>> Remove(RemoveProductDto dto)
+    {
+        try
+        {
+            var product = await _productRepository.GetById(dto.Id);
+            if (product is null)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotFound
+                };
+            }
+            var result = await _productRepository.Remove(product);
+            if (result <= 0)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotRemoved
+                };
+            }
+            return new Result<Product>
+            {
+                IsCompleted = true,
+                Data = product
+            };
+        }
+        catch
+        {
+            return new Result<Product>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
 }

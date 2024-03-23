@@ -90,7 +90,7 @@ namespace LionHeart.Web.Controllers
                     Description = "Красивая и удобная футболка.",
                     Specifications = "Размер - XXL",
                     CreatedAt = DateTimeOffset.UtcNow,
-                    Image = new ImageModel
+                    Image = new Image
                     {
                         FileName = "img1.jpg"
                     }
@@ -105,7 +105,7 @@ namespace LionHeart.Web.Controllers
                     Description = "Футбольный мяч, может быть использован даже во время дождя.",
                     Specifications = "",
                     CreatedAt = DateTimeOffset.UtcNow,
-                    Image = new ImageModel
+                    Image = new Image
                     {
                         FileName = "img2.jpg"
                     }

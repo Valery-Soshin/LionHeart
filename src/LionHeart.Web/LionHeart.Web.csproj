@@ -36,4 +36,8 @@
     <None Include="wwwroot\css\rating.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Orders\" />
+  </ItemGroup>
+
 </Project>

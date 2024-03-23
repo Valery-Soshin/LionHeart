@@ -1,4 +1,5 @@
-﻿using LionHeart.Core.Interfaces.Services;
+﻿using LionHeart.Core.Dtos.FavoriteProduct;
+using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,15 +11,12 @@ namespace LionHeart.Web.Controllers;
 public class FavoritesController : Controller
 {
     private readonly IFavoriteProductService _favoriteProductService;
-    private readonly IProductService _productService;
     private readonly UserManager<User> _userManager;
 
     public FavoritesController(IFavoriteProductService favoriteProductService,
-                               IProductService productService,
                                UserManager<User> userManager)
     {
         _favoriteProductService = favoriteProductService;
-        _productService = productService;
         _userManager = userManager;
     }
 
@@ -28,7 +26,12 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var favoriteProducts = await _favoriteProductService.GetAllByUserId(userId);
+        var result = await _favoriteProductService.GetAllByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var favoriteProducts = result.Data;
+        if (favoriteProducts is null) return BadRequest();
+
         return View(favoriteProducts);
     }
     
@@ -38,14 +41,14 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var product = await _productService.GetById(productId);
-        if (product is null) return NotFound(); 
-
-        await _favoriteProductService.Add(new FavoriteProduct()
+        var dto = new AddFavoriteProductDto
         {
-            ProductId = productId,
-            UserId = userId
-        });
+            UserId = userId,
+            ProductId = productId
+        };
+        var result = await _favoriteProductService.Add(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
         return Ok();
     }
 
@@ -55,13 +58,14 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var product = await _productService.GetById(productId);
-        if (product is null) return NotFound(); 
+        var dto = new RemoveFavoriteProductDto
+        {
+            UserId = userId,
+            ProductId = productId
+        };
+        var result = await _favoriteProductService.Remove(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        var favoriteProduct = await _favoriteProductService.GetByUserIdProductId(userId, productId);
-        if (favoriteProduct is null) return NotFound(); 
-
-        await _favoriteProductService.Remove(favoriteProduct);
         return Ok();
     }
 }

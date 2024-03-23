@@ -1,13 +1,13 @@
-﻿using LionHeart.Core.Models;
+﻿using LionHeart.Core.Dtos.Feedback;
+using LionHeart.Core.Models;
+using LionHeart.Core.Result;
 
 namespace LionHeart.Core.Interfaces.Services;
 
 public interface IFeedbackService
 {
-    Task<Feedback?> GetById(string id);
-    Task<List<Feedback>> GetAll();
-    Task Add(Feedback feedback);
-    Task Update(Feedback feedback);
-    Task Remove(Feedback feedback);
-    Task<bool> HasFeedbackPending(string userId, string productId);
+    Task<Result<Feedback>> GetById(string id);
+    Task<Result<Feedback>> Add(AddFeedbackDto dto);
+    Task<Result<Feedback>> Remove(RemoveFeedbackDto dto);
+    Task<Result<bool>> HasFeedbackPending(string userId, string productId);
 }

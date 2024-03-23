@@ -1,52 +1,214 @@
-﻿using LionHeart.Core.Interfaces.Repositories;
+﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.Core.Dtos.FavoriteProduct;
+using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Core.Result;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class FavoriteProductService : IFavoriteProductService
 {
-    private readonly IFavoriteProductRepository _repository;
+    private readonly IFavoriteProductRepository _favoriteRepository;
 
-    public FavoriteProductService(IFavoriteProductRepository repository)
+    public FavoriteProductService(IFavoriteProductRepository favoriteRepository)
     {
-        _repository = repository;
+        _favoriteRepository = favoriteRepository;
     }
 
-    public Task<FavoriteProduct?> GetById(string id)
+    public async Task<Result<FavoriteProduct>> GetById(string id)
     {
-        return _repository.GetById(id);
+        try
+        {
+            var favoriteProduct = await _favoriteRepository.GetById(id);
+            if (favoriteProduct is null)
+            {
+                return new Result<FavoriteProduct>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
+                };
+            }
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = true,
+                Data = favoriteProduct
+            };
+        }
+        catch
+        {
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<FavoriteProduct?> GetByUserIdProductId(string userId, string productId)
+    public async Task<Result<FavoriteProduct>> GetByUserIdProductId(string userId, string productId)
     {
-        return _repository.GetByUserIdProductId(userId, productId);
+        try
+        {
+            var favoriteProduct = await _favoriteRepository.GetByUserIdProductId(userId, productId);
+            if (favoriteProduct is null)
+            {
+                return new Result<FavoriteProduct>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
+                };
+            }
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = true,
+                Data = favoriteProduct
+            };
+        }
+        catch
+        {
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<List<FavoriteProduct>> GetAll()
+    public async Task<Result<List<FavoriteProduct>>> GetAllByUserId(string userId)
     {
-        return _repository.GetAll();
+        try
+        {
+            var favoriteProducts = await _favoriteRepository.GetAllByUserId(userId);
+            if (favoriteProducts is null)
+            {
+                return new Result<List<FavoriteProduct>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductsNotFound
+                };
+            }
+            return new Result<List<FavoriteProduct>>
+            {
+                IsCompleted = true,
+                Data = favoriteProducts
+            };
+        }
+        catch
+        {
+            return new Result<List<FavoriteProduct>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<List<FavoriteProduct>> GetAllByUserId(string userId)
+    public async Task<Result<FavoriteProduct>> Add(AddFavoriteProductDto dto)
     {
-        return _repository.GetAllByUserId(userId);
+        try
+        {
+            var favoriteProduct = new FavoriteProduct
+            {
+                UserId = dto.UserId,
+                ProductId = dto.ProductId
+            };
+
+            var result = await _favoriteRepository.Add(favoriteProduct);
+            if (result <= 0)
+            {
+                return new Result<FavoriteProduct>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductNotCreated
+                };
+            }
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = true,
+                Data = favoriteProduct
+            };
+        }
+        catch
+        {
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task Add(FavoriteProduct favoriteProduct)
+    public async Task<Result<FavoriteProduct>> Remove(RemoveFavoriteProductDto dto)
     {
-        return _repository.Add(favoriteProduct);
+        try
+        {
+            var favoriteProduct = await _favoriteRepository
+                .GetByUserIdProductId(dto.UserId, dto.ProductId);
+
+            if (favoriteProduct is null)
+            {
+                return new Result<FavoriteProduct>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
+                };
+            }
+            var result = await _favoriteRepository.Remove(favoriteProduct);
+            if (result <= 0)
+            {
+                return new Result<FavoriteProduct>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FavoriteProductNotCreated
+                };
+            }
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = true,
+                Data = favoriteProduct
+            };
+        }
+        catch
+        {
+            return new Result<FavoriteProduct>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task Update(FavoriteProduct favoriteProduct)
+    public async Task<Result<bool>> Any(string userId)
     {
-        return _repository.Update(favoriteProduct);
+        try
+        {
+            return new Result<bool>
+            {
+                IsCompleted = true,
+                Data = await _favoriteRepository.Any(userId)
+            };
+        }
+        catch
+        {
+            return new Result<bool>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task Remove(FavoriteProduct favoriteProduct)
+    public async Task<Result<bool>> Exists(string userId, string productId)
     {
-        return _repository.Remove(favoriteProduct);
-    }
-    public Task<bool> Any(string userId)
-    {
-        return _repository.Any(userId);
-    }
-    public Task<bool> Any(string userId, string productId)
-    {
-        return _repository.Any(userId, productId);
+        try
+        {
+            return new Result<bool>
+            {
+                IsCompleted = true,
+                Data = await _favoriteRepository.Exists(userId, productId)
+            };
+        }
+        catch
+        {
+            return new Result<bool>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
 }

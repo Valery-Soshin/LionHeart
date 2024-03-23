@@ -4,7 +4,8 @@ using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using LionHeart.Web.Models.Basket;
 using LionHeart.Core.Interfaces.Services;
-using LionHeart.Web.Models.Orders;
+using LionHeart.Core.Dtos.Orders;
+using LionHeart.Core.Dtos.BasketEntry;
 
 namespace LionHeart.Web.Controllers;
 
@@ -12,12 +13,15 @@ namespace LionHeart.Web.Controllers;
 public class BasketController : Controller
 {
     private readonly IBasketEntryService _basketEntryService;
+    private readonly IOrderService _orderService;
     private readonly UserManager<User> _userManager;
     
     public BasketController(IBasketEntryService basketEntryService,
+                            IOrderService orderService,
                             UserManager<User> userManager)
     {
         _basketEntryService = basketEntryService;
+        _orderService = orderService;
         _userManager = userManager;
     }
 
@@ -27,10 +31,15 @@ public class BasketController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var entries = await _basketEntryService.GetEntriesByUserId(userId);
+        var result = await _basketEntryService.GetEntriesByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        var basket = new CreateOrderViewModel()
+        var entries = result.Data;
+        if (entries is null) return BadRequest();
+
+        var basket = new BasketViewModel()
         {
+            UserId = userId,
             BasketTotalPrice = entries.Sum(e => e.Product.Price * e.Quantity),
         };
         foreach (var entry in entries)
@@ -51,33 +60,69 @@ public class BasketController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddToBasket([FromBody] string productId)
+    public async Task<IActionResult> CreateOrder(BasketViewModel model)
     {
+        if (!ModelState.IsValid) return BadRequest();
+
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
+        var addOrderDto = new AddOrderDto()
+        {
+            UserId = model.UserId,
+            BasketTotalPrice = model.BasketTotalPrice,
+            Products = model.Entries.Select(e => new AddOrderProductDto
+            {
+                ProductId = e.ProductId,
+                ProductQuantity = e.ProductQuantity,
+                ProductTotalPrice = e.ProductTotalPrice
+            }).ToList(),
+            CreateAt = DateTimeOffset.UtcNow
+        };
+        var orderResult = await _orderService.Add(addOrderDto);
+        if (orderResult.IsFaulted) return BadRequest(orderResult.ErrorMessage);
+
+        var removeOrderDtos = model.Entries.Select(e => new RemoveBasketEntryDto { Id = e.Id }).ToList();
+        var basketEntryResult = await _basketEntryService.RemoveRange(removeOrderDtos);
+
+        return Redirect("/Products");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddToBasket([FromBody] string productId)
+    {
         if (!ModelState.IsValid) return BadRequest();
 
-        await _basketEntryService.Add(new BasketEntry()
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
+
+        var dto = new AddBasketEntryDto()
         {
             UserId = userId,
             ProductId = productId,
-        });
+        };
+        await _basketEntryService.Add(dto);
         return Ok();
     }
 
     [HttpPost]
     public async Task<IActionResult> RemoveFromBasket([FromBody] string productId)
     {
+        if (!ModelState.IsValid) return BadRequest();
+
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        if (!ModelState.IsValid) return BadRequest();
+        var result = await _basketEntryService.GetByUserIdProductId(userId, productId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        var entry = await _basketEntryService.GetByUserIdProductId(userId, productId);
-        if (entry is null) return NotFound();
+        var dto = new RemoveBasketEntryDto()
+        {
+            Id = result!.Data!.Id
+        };
+        result = await _basketEntryService.Remove(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        await _basketEntryService.Remove(entry);
         return Ok();
     }
 
@@ -89,11 +134,14 @@ public class BasketController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var entry = (await _basketEntryService.GetById(model.EntryId)).Data;
-        if (entry is null) return NotFound();
+        var dto = new UpdateBasketEntryDto
+        {
+            Id = model.EntryId,
+            Quantity = model.ProductQuantity
+        };
+        var result = await _basketEntryService.Update(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        entry.Quantity = model.ProductQuantity;
-        await _basketEntryService.Update(entry);
         return Ok();
     }
 }

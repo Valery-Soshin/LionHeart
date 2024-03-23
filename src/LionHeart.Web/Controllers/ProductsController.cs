@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using LionHeart.Web.Models.Products;
 using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Dtos.Product;
+using LionHeart.Core.Dtos.ProductUnit;
 
 namespace LionHeart.Web.Controllers;
 
@@ -43,13 +45,16 @@ public class ProductsController : Controller
 
         if (ids is null)
         {
-            products = await _productService.GetAll();
+            var result = await _productService.GetAll();
+            if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+            products = result.Data ?? [];
         }
         else
         {
             foreach (var id in ids)
             {
-                var product = await _productService.GetById(id);
+                var product = (await _productService.GetById(id)).Data;
                 if (product is not null)
                 {
                     products.Add(product);
@@ -58,30 +63,31 @@ public class ProductsController : Controller
         }
 
         var models = new List<IndexViewModel>();
-
         if (userId is not null)
         {
-            var entries = await _basketEntryService.GetEntriesByUserId(userId);
-            foreach (var product in products)
+            var result = await _basketEntryService.GetEntriesByUserId(userId);
+            if (result.IsCompleted)
             {
-                models.Add(new IndexViewModel()
+                var entries = result.Data;
+                if (entries is null) return BadRequest();
+                foreach (var product in products)
                 {
-                    Product = product,
-                    IsInBasket = entries.Exists(e => e.ProductId == product.Id),
-                    IsInFavorites = await _favoriteProductService.Any(userId, product.Id)
-                });
+                    models.Add(new IndexViewModel()
+                    {
+                        Product = product,
+                        IsInBasket = entries.Exists(e => e.ProductId == product.Id),
+                        IsInFavorites = (await _favoriteProductService.Exists(userId, product.Id)).Data
+                    });
+                }
             }
         }
         else
         {
-            foreach (var product in products)
+            models.AddRange(products.Select(product => new IndexViewModel()
             {
-                models.Add(new IndexViewModel()
-                {
-                    Product = product,
-                    IsInBasket = false
-                });
-            }
+                Product = product,
+                IsInBasket = false
+            }));
         }
         return View(models);
     }
@@ -91,12 +97,19 @@ public class ProductsController : Controller
     {
         var userId = _userManager.GetUserId(User);
 
-        var product = await _productService.GetById(id);
-        if (product is null) return NotFound();
+        var productResult = await _productService.GetById(id);
+        if (productResult.IsFaulted) return BadRequest(productResult.ErrorMessage);
 
-        bool writeFeedback = userId is not null &&
-            await _feedbackService.HasFeedbackPending(userId, product.Id);
-        
+        var product = productResult.Data;
+        if (product is null) return BadRequest();
+
+        bool writeFeedback = false;
+        if (userId is not null)
+        {
+            var feedbackResult = await _feedbackService.HasFeedbackPending(userId, product.Id);
+            if (feedbackResult.IsFaulted) return BadRequest(feedbackResult.ErrorMessage);
+            writeFeedback = feedbackResult.Data;
+        }
         var model = new ShowProductViewModel()
         {
             Id = id,
@@ -123,6 +136,7 @@ public class ProductsController : Controller
     {
         return View();
     }
+
     [HttpPost]
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> CreateProduct(CreateProductViewModel model)
@@ -130,7 +144,7 @@ public class ProductsController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var product = new Product
+        var dto = new AddProductDto
         {
             Name = model.Name,
             CategoryId = model.CategoryId,
@@ -139,25 +153,27 @@ public class ProductsController : Controller
             Description = model.Description,
             Specifications = model.Specifications,
             CreatedAt = DateTimeOffset.UtcNow,
-            Image = new ImageModel()
-            {
-                FileName = model.Image.FileName,
-                File = model.Image
-            }
+            Image = model.Image
         };
-        await _productService.Add(product);
+        var productResult = await _productService.Add(dto);
+        if (productResult.IsFaulted) return BadRequest(productResult.ErrorMessage);
 
-        var createdAt = DateTimeOffset.UtcNow;
+        var product = productResult.Data;
+        if (product is null) return BadRequest();
+
+        var productUnits = new List<AddProductUnitDto>();
         for (int i = 0; i < model.Quantity; i++)
         {
-            product.Units.Add(new ProductUnit
+            productUnits.Add(new AddProductUnitDto
             {
                 ProductId = product.Id,
-                CreatedAt = createdAt,
+                CreatedAt = product.CreatedAt,
                 SaleStatus = SaleStatus.Available
             });
         }
-        await _productService.Update(product);
+        var productUnitResult = await _productUnitService.AddRange(productUnits);
+        if (productUnitResult.IsFaulted) return BadRequest(productUnitResult.ErrorMessage);
+
         return Redirect("/SupplierPanel");
     }
 
@@ -167,8 +183,11 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var product = await _productService.GetById(productId);
-        if (product is null) return NotFound(); 
+        var result = await _productService.GetById(productId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var product = result.Data;
+        if (product is null) return BadRequest();
 
         var model = new EditProductViewModel()
         {
@@ -179,26 +198,29 @@ public class ProductsController : Controller
             Price = product.Price,
             Description = product.Description,
             Specifications = product.Specifications,
-            Quantity = await _productUnitService.CountByProductId(product.Id)
+            Quantity = (await _productUnitService.Count(product.Id)).Data
         };
         return View(model);
     }
+
     [HttpPost]
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> EditProduct(EditProductViewModel model)
     {
         if (ModelState.IsValid)
         {
-            var product = await _productService.GetById(model.Id);
-            if (product is null) return NotFound();
+            var dto = new UpdateProductDto
+            {
+                CategoryId = model.CategoryId,
+                Name = model.Name,
+                Price = model.Price,
+                Description = model.Description,
+                Specifications = model.Specifications,
+                Image = model.Image,
+            };
+            var result = await _productService.Update(dto);
+            if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-            product.Name = model.Name;
-            product.Price = model.Price;
-            product.CategoryId = model.CategoryId;
-            product.Description = model.Description;
-            product.Specifications = model.Specifications;
-
-            await _productService.Update(product);
             return RedirectToAction("ListSupplierProducts");
         }
         return RedirectToAction("EditProduct", "Products", model.Id);
@@ -208,10 +230,15 @@ public class ProductsController : Controller
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> DeleteProduct(string productId)
     {
-        var product = await _productService.GetById(productId);
-        if (product is null) return NotFound(); 
+        if (!ModelState.IsValid) return BadRequest();
 
-        await _productService.Remove(product);
+        var dto = new RemoveProductDto()
+        {
+            Id = productId
+        };
+        var result = await _productService.Remove(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
         return RedirectToAction("ListSupplierProducts");
     }
 
@@ -225,7 +252,12 @@ public class ProductsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var products = await _productService.Search(model.Name);
+            var result = await _productService.Search(model.Name);
+            if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+            var products = result.Data;
+            if (products is null) return BadRequest();
+
             if (products.Count != 0)
             {
                 return RedirectToAction("Index", new { ids = products.Select(p => p.Id).ToList() });
@@ -241,7 +273,12 @@ public class ProductsController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var products = await _productService.GetProductsByUserId(userId);
+        var result = await _productService.GetProductsByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var products = result.Data;
+        if (products is null) return BadRequest();
+
         var models = new List<SupplierProductViewModel>();
         foreach (var product in products)
         {
@@ -255,7 +292,7 @@ public class ProductsController : Controller
                 Description = product.Description,
                 Specifications = product.Specifications,
                 CreatedAt = product.CreatedAt,
-                Quantity = await _productUnitService.CountByProductId(product.Id)
+                Quantity = (await _productUnitService.Count(product.Id)).Data
             });
         }
         return View(models);

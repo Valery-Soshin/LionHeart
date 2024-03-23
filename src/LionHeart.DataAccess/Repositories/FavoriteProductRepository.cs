@@ -41,7 +41,7 @@ public class FavoriteProductRepository(ApplicationDbContext dbContext) : Reposit
         return _dbContext.FavoriteProducts.AsNoTracking()
             .AnyAsync(f => f.UserId == userId);
     }
-    public Task<bool> Any(string userId, string productId)
+    public Task<bool> Exists(string userId, string productId)
     {
         return _dbContext.FavoriteProducts.AsNoTracking()
             .AnyAsync(f => f.UserId == userId &&

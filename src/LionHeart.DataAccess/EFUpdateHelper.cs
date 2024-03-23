@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess;
 
+// Temporary
 public class EFUpdateHelper
 {
     public static async Task CheckItemsOnDelete<TEntity>(List<TEntity> itemsFromModel, ApplicationDbContext db, Expression<Func<TEntity, bool>> itemsFromDbFilter) where TEntity : class

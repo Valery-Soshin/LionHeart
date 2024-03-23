@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<OrderItemDetail> OrderItemDetails { get; set; }
+    public DbSet<Image> Images { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
@@ -25,7 +26,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSnakeCaseNamingConvention();
-        optionsBuilder.LogTo(Console.WriteLine,
+        optionsBuilder.LogTo(
+                            Console.WriteLine,
                             new EventId[] { RelationalEventId.CommandExecuted });
     }
 
@@ -40,7 +42,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderItemConfiguration());
         builder.ApplyConfiguration(new OrderItemDetailConfiguration());
-        builder.ApplyConfiguration(new ImageModelConfiguration());
+        builder.ApplyConfiguration(new ImageConfiguration());
 
         base.OnModelCreating(builder);
     }

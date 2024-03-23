@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LionHeart.Core.Models;
 
-public class ImageModel
+public class Image
 {
     public string Id { get; set; } = null!;
     public string FileName { get; set; } = null!;

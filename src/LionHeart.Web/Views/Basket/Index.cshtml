@@ -5,6 +5,7 @@
     @if (Model.Entries.Any())
     {
         <form class="row" id="basket" method="post">
+            <input hidden asp-for="UserId" value="@Model.UserId" />
             <div class="col-8">
                 <div class="card">
                     <div class="card-header main-theme">
@@ -79,7 +80,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button asp-action="CreateOrder" asp-controller="Orders" type="submit" class="btn btn-grad" form="basket">Заказать</button>
+                        <button asp-action="CreateOrder" type="submit" class="btn btn-grad" form="basket">Заказать</button>
                     </div>
                 </div>
             </div>

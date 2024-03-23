@@ -1,153 +1,151 @@
-﻿using LionHeart.Core.Dtos.Orders;
+﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.Core.Dtos.Orders;
 using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Response;
-using Microsoft.Extensions.Logging;
+using LionHeart.Core.Result;
+using System.Xml;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IProductService _productService;
-    private readonly IBasketEntryService _basketEntryService;
-    private readonly ILogger<OrderService> _logger;
+    private readonly IProductRepository _productRepository;
 
     public OrderService(IOrderRepository orderRepository,
-                        IProductService productService,
-                        IBasketEntryService basketEntryService,
-                        ILogger<OrderService> logger)
+                        IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
-        _productService = productService;
-        _basketEntryService = basketEntryService;
-        _logger = logger;
+        _productRepository = productRepository;
     }
 
-    public async Task<IBaseResponse<Order>> GetById(string id)
+    public async Task<Result<Order>> GetById(string id)
     {
         try
         {
             var order = await _orderRepository.GetById(id);
             if (order is null)
             {
-                return new BaseResponse<Order>()
+                return new Result<Order>()
                 {
                     IsCompleted = false,
-                    Description = $"The order with ID '{id}' has not been received"
+                    ErrorMessage = ErrorMessage.OrderNotFound
                 };
             }
-
-            _logger.LogInformation("The order with ID '{id}' has been received", id);
-            return new BaseResponse<Order>()
+            return new Result<Order>()
             {
                 IsCompleted = true,
-                Description = $"The order with ID '{id}' has been received",
                 Data = order
             };
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "The order with ID '{id}' has not been: {ex}", id, ex.Message);
-            return new BaseResponse<Order>()
+            return new Result<Order>()
             {
                 IsCompleted = false,
-                Description = $"The order with ID '{id}' has been received: {ex.Message}"
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<IBaseResponse<List<Order>>> GetOrdersByUserId(string userId)
+    public async Task<Result<List<Order>>> GetOrdersByUserId(string userId)
     {
         try
         {
             var orders = await _orderRepository.GetOrdersByUserId(userId);
             if (orders is null)
             {
-                return new BaseResponse<List<Order>>()
+                return new Result<List<Order>>()
                 {
                     IsCompleted = false,
-                    Description = $"Orders by user ID '{userId}' have not been received"
+                    ErrorMessage = ErrorMessage.OrdersNotFound
                 };
             }
-
-            _logger.LogInformation("Orders by user ID '{userId}' have been received", userId);
-            return new BaseResponse<List<Order>>()
+            return new Result<List<Order>>()
             {
                 IsCompleted = true,
-                Description = $"Orders by user ID '{userId}' have been received",
                 Data = orders
             };
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "Orders by user ID '{userId}' have not been: {ex}", userId, ex.Message);
-            return new BaseResponse<List<Order>>()
+            return new Result<List<Order>>()
             {
                 IsCompleted = false,
-                Description = $"Orders by user ID '{userId}' have not been received: {ex.Message}"
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<IBaseResponse<List<Order>>> GetAll()
+    public async Task<Result<List<Order>>> GetAll()
     {
         try
         {
             var orders = await _orderRepository.GetAll();
             if (orders is null)
             {
-                return new BaseResponse<List<Order>>()
+                return new Result<List<Order>>()
                 {
                     IsCompleted = false,
-                    Description = $"All orders have not been received"
+                    ErrorMessage = ErrorMessage.OrdersNotFound
                 };
             }
-
-            _logger.LogInformation("All orders have been received");
-            return new BaseResponse<List<Order>>()
+            return new Result<List<Order>>()
             {
                 IsCompleted = true,
-                Description = $"All orders have been received",
                 Data = orders
             };
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "All orders have not been received: {ex}", ex.Message);
-            return new BaseResponse<List<Order>>()
+            return new Result<List<Order>>()
             {
                 IsCompleted = false,
-                Description = $"All orders have not been received: {ex.Message}"
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<IBaseResponse<Order>> Add(CreateOrderDto model)
+    public async Task<Result<Order>> Add(AddOrderDto dto)
     {
         try
         {
             var order = new Order
             {
-                UserId = model.UserId,
-                TotalPrice = model.BasketTotalPrice,
-                CreateAt = DateTimeOffset.UtcNow
+                UserId = dto.UserId,
+                TotalPrice = dto.BasketTotalPrice,
+                CreateAt = dto.CreateAt
             };
 
-            foreach (var entry in model.Entries)
-            {
-                var product = await _productService.GetById(entry.ProductId);
-                if (product is null) continue;
-                if (product.Units.Count < entry.ProductQuantity) continue;
+            var products = await _productRepository.GetAll(
+                dto.Products.Select(p => p.ProductId).ToList());
 
+            if (products is null)
+            {
+                return new Result<Order>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            if (products.Exists(p => p.Units.Count < dto.Products.Single(d => d.ProductId == p.Id).ProductQuantity))
+            {
+                return new Result<Order>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotEnough
+                };
+            }
+            foreach (var productDto in dto.Products)
+            {
+                var product = products.Single(p => p.Id == productDto.ProductId);
                 var orderItem = new OrderItem
                 {
                     OrderId = order.Id,
                     ProductId = product.Id,
                     ProductPrice = product.Price,
-                    ProductQuantity = entry.ProductQuantity
+                    ProductQuantity = productDto.ProductQuantity,
                 };
-
-                for (int i = 0; i < entry.ProductQuantity; i++)
+                for (int i = 0; i < productDto.ProductQuantity; i++)
                 {
                     var unit = product.Units[i];
                     orderItem.Details.Add(new OrderItemDetail
@@ -158,61 +156,59 @@ public class OrderService : IOrderService
                     unit.SaleStatus = SaleStatus.Sold;
                 }
                 order.Items.Add(orderItem);
-                await _productService.Update(product);
-                await _basketEntryService.Remove(entry.Id);
             }
+            await _productRepository.UpdateRange(products);
             await _orderRepository.Add(order);
-            return new BaseResponse<Order>()
+            return new Result<Order>()
             {
                 IsCompleted = true,
-                Description = "The order has been created",
                 Data = order
             };
         }
-        catch (Exception ex)
+        catch
         {
-            return new BaseResponse<Order>()
+            return new Result<Order>()
             {
                 IsCompleted = false,
-                Description = $"The order has not been created: {ex.Message}"
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<IBaseResponse<bool>> Any(string userId)
+    public async Task<Result<bool>> Any(string userId)
     {
         try
         {
-            return new BaseResponse<bool>()
+            return new Result<bool>()
             {
                 IsCompleted = true,
                 Data = await _orderRepository.Any(userId)
             };
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "[OrderService.Any]: {message}", ex.Message);
-            return new BaseResponse<bool>()
+            return new Result<bool>()
             {
                 IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<IBaseResponse<bool>> Exists(string userId, string productId)
+    public async Task<Result<bool>> Exists(string userId, string productId)
     {
         try
         {
-            return new BaseResponse<bool>()
+            return new Result<bool>()
             {
                 IsCompleted = true,
                 Data = await _orderRepository.Exists(userId, productId)
             };
         }
-        catch (Exception ex)
+        catch
         {
-            _logger.LogError(ex, "[OrderService.Exists]: {message}", ex.Message);
-            return new BaseResponse<bool>()
+            return new Result<bool>()
             {
                 IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }

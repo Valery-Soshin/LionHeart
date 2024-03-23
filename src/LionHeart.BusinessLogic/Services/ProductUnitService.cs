@@ -1,44 +1,171 @@
-﻿using LionHeart.Core.Interfaces.Repositories;
+﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.Core.Dtos.ProductUnit;
+using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Core.Result;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class ProductUnitService : IProductUnitService
 {
-    private readonly IProductUnitRepository _repository;
+    private readonly IProductUnitRepository _productUnitRepository;
 
     public ProductUnitService(IProductUnitRepository repository)
     {
-        _repository = repository;
+        _productUnitRepository = repository;
     }
 
-    public Task<ProductUnit?> GetById(string id)
+    public async Task<Result<ProductUnit>> GetById(string id)
     {
-        return _repository.GetById(id);
+        try
+        {
+            var productUnit = await _productUnitRepository.GetById(id);
+            if (productUnit is null)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitNotFound
+                };
+            }
+            return new Result<ProductUnit>
+            {
+                IsCompleted = true,
+                Data = productUnit
+            };
+        }
+        catch
+        {
+            return new Result<ProductUnit>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<List<ProductUnit>> GetByProductId(string productId, int quantity)
+    public async Task<Result<ProductUnit>> Add(AddProductUnitDto dto)
     {
-        return _repository.GetByProductId(productId, quantity);
+        try
+        {
+            var productUnit = new ProductUnit
+            {
+                ProductId = dto.ProductId,
+                SaleStatus = dto.SaleStatus,
+                CreatedAt = dto.CreatedAt
+            };
+            var result = await _productUnitRepository.Add(productUnit);
+            if (result <= 0)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitNotCreated
+                };
+            }
+            return new Result<ProductUnit>
+            {
+                IsCompleted = true,
+                Data = productUnit
+            };
+        }
+        catch
+        {
+            return new Result<ProductUnit>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<List<ProductUnit>> GetAll()
+    public async Task<Result<List<ProductUnit>>> AddRange(List<AddProductUnitDto> dtos)
     {
-        return _repository.GetAll();
+        try
+        {
+            var productUnits = dtos.Select(d => new ProductUnit
+            {
+                ProductId = d.ProductId,
+                SaleStatus = d.SaleStatus,
+                CreatedAt = d.CreatedAt
+            }).ToList();
+            var result = await _productUnitRepository.AddRange(productUnits);
+            if (result <= 0)
+            {
+                return new Result<List<ProductUnit>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitsNotCreated
+                };
+            }
+            return new Result<List<ProductUnit>>
+            {
+                IsCompleted = true,
+                Data = productUnits
+            };
+        }
+        catch
+        {
+            return new Result<List<ProductUnit>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<int> Add(ProductUnit product)
+    public async Task<Result<ProductUnit>> Remove(RemoveProductUnitDto dto)
     {
-        return _repository.Add(product);
+        try
+        {
+            var productUnit = await _productUnitRepository.GetById(dto.Id);
+            if (productUnit is null)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitNotFound
+                };
+            }
+            var result = await _productUnitRepository.Remove(productUnit);
+            if (result <= 0)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitNotRemoved
+                };
+            }
+            return new Result<ProductUnit>
+            {
+                IsCompleted = true,
+                Data = productUnit
+            };
+        }
+        catch
+        {
+            return new Result<ProductUnit>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
-    public Task<int> Update(ProductUnit product)
+    public async Task<Result<int>> Count(string productId)
     {
-        return _repository.Update(product);
-    }
-    public Task<int> Remove(ProductUnit product)
-    {
-        return _repository.Remove(product);
-    }
-    public Task<int> CountByProductId(string productId)
-    {
-        return _repository.CountByProductId(productId);
+        try
+        {
+            return new Result<int>
+            {
+                IsCompleted = true,
+                Data = await _productUnitRepository.Count(productId)
+            };
+        }
+        catch
+        {
+            return new Result<int>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
     }
 }
