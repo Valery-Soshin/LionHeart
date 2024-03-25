@@ -1,6 +1,9 @@
 ﻿@using LionHeart.Web.Models.Products
-@model List<IndexViewModel>
+@model IndexViewModel
 
+@{
+    ViewData["Title"] = "Список продуктов";
+}
 <style>
     .site-body-container {
         margin-left: 130px;
@@ -18,30 +21,42 @@
 </style>
 
 <div class="site-body-container">
+    <div class="mb-2 d-flex justify-content-end">
+        <div>
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" class="btn bg-info">Назад</a>
+            }
+            @if (Model.HasNextPage)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" class="btn bg-info">Вперед</a>
+            }
+        </div>
+    </div>
     <div class="row row-cols-sm-auto justify-content-center">
-        @foreach (var product in Model)
+        @foreach (var product in Model.Products)
         {
             <div>
                 <div class="card border-0 favorites-button">
                     <form class="col-3">
-                        <a asp-action="ShowProduct" asp-controller="Products" asp-route-id="@product.Product.Id" class="order-0 bg-white text-center" style="text-decoration:none; color:black;">
+                        <a asp-action="ShowProduct" asp-controller="Products" asp-route-id="@product.Id" class="order-0 bg-white text-center" style="text-decoration:none; color:black;">
                             <div class="card" style="width: 16rem;">
                                 <div class="card text-bg-dark index-img-box">
-                                    <img src="/images/@product.Product.Image.FileName" class="card-img-top index-img">
+                                    <img src="/images/@product.FileName" class="card-img-top index-img">
                                     <div class="card-img-overlay m-0 p-0 text-end">
                                         @if(product.IsInFavorites)
                                         {
-                                            <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Product.Id')">❤</button>
+                                            <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Id')">❤</button>
                                         }
                                          else
                                         {
-                                            <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Product.Id')">⁠🤍</button>
+                                            <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Id')">⁠🤍</button>
                                         }
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <h5 class="card-title text-truncate">@product.Product.Name</h5>
-                                    <p class="card-text text-truncate">@product.Product.Description</p>
+                                    <h5 class="card-title text-truncate">@product.Name</h5>
+                                    <p class="card-text text-truncate">@product.Description</p>
                                 </div>
                             </div>
                         </a>
@@ -50,11 +65,11 @@
                 <div class="card border-0">
                     @if (product.IsInBasket)
                     {
-                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Product.Id')">Убрать из корзины</button>
+                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Id')">Убрать из корзины</button>
                     }
                     else
                     {
-                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Product.Id')">В корзину</button>
+                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Id')">В корзину</button>
                     }
                 </div>
                 <br />

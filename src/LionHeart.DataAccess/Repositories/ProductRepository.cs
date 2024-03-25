@@ -42,7 +42,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => p.CategoryId == categoryId)
-            .ToListAsync();     
+            .ToListAsync();
     }
     public Task<List<Product>> GetProductsByUserId(string userId)
     {
@@ -52,6 +52,21 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Image)
             .Where(p => p.UserId == userId)
             .ToListAsync();
+    }
+    public async Task<PagedResponse> GetProductsWithPagination(int pageNumber, int pageSize)
+    {
+        var totalRecords = await _dbContext.Products.AsNoTracking()
+            .CountAsync();
+
+        var products = await _dbContext.Products.AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
+            .Include(p => p.Image)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse(products, totalRecords, pageNumber, pageSize);
     }
     public Task<List<Product>> Search(string productName)
     {

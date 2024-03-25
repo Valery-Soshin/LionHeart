@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -126,6 +127,35 @@ public class ProductService : IProductService
         catch
         {
             return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse>> GetProductsWithPagination(int pageNumber)
+    {
+        try
+        {
+            const int pageSize = 10;
+            var pagedResponse = await _productRepository.GetProductsWithPagination(pageNumber, pageSize);
+            if (pagedResponse is null)
+            {
+                return new Result<PagedResponse>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<PagedResponse>
+            {
+                IsCompleted = true,
+                Data = pagedResponse
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse>
             {
                 IsCompleted = false,
                 ErrorMessage = ErrorMessage.InternalServerError

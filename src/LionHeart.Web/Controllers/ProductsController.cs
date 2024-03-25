@@ -13,7 +13,6 @@ namespace LionHeart.Web.Controllers;
 public class ProductsController : Controller
 {
     private readonly IProductService _productService;
-    private readonly IOrderService _orderService;
     private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
     private readonly IFavoriteProductService _favoriteProductService;
@@ -21,7 +20,6 @@ public class ProductsController : Controller
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
-                              IOrderService orderService,
                               IProductUnitService productUnitService,
                               IBasketEntryService basketEntryService,
                               IFavoriteProductService favoriteProductService,
@@ -29,7 +27,6 @@ public class ProductsController : Controller
                               UserManager<User> userManager)
     {
         _productService = productService;
-        _orderService = orderService;
         _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
         _favoriteProductService = favoriteProductService;
@@ -38,58 +35,41 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(List<string>? ids = null)
+    public async Task<IActionResult> Index(int page = 1)
     {
         var userId = _userManager.GetUserId(User);
-        var products = new List<Product>();
 
-        if (ids is null)
-        {
-            var result = await _productService.GetAll();
-            if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var result = await _productService.GetProductsWithPagination(page);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var pagedResponse = result.Data;
+        if (pagedResponse is null) return BadRequest();
 
-            products = result.Data ?? [];
-        }
-        else
+        var model = new IndexViewModel
         {
-            foreach (var id in ids)
-            {
-                var product = (await _productService.GetById(id)).Data;
-                if (product is not null)
-                {
-                    products.Add(product);
-                }
-            }
-        }
+            PageNumber = pagedResponse.PageNumber,
+            HasPreviousPage = pagedResponse.HasPreviousPage,
+            HasNextPage = pagedResponse.HasNextPage
+        };
+        var products = pagedResponse.Products;
+        foreach (var product in products)
+        {
+            bool isInBasket = userId is not null &&
+                (await _basketEntryService.Exists(userId, product.Id)).Data;
 
-        var models = new List<IndexViewModel>();
-        if (userId is not null)
-        {
-            var result = await _basketEntryService.GetEntriesByUserId(userId);
-            if (result.IsCompleted)
+            bool isInFavorites = userId is not null &&
+                (await _favoriteProductService.Exists(userId, product.Id)).Data;
+
+            model.Products.Add(new IndexProductViewModel()
             {
-                var entries = result.Data;
-                if (entries is null) return BadRequest();
-                foreach (var product in products)
-                {
-                    models.Add(new IndexViewModel()
-                    {
-                        Product = product,
-                        IsInBasket = entries.Exists(e => e.ProductId == product.Id),
-                        IsInFavorites = (await _favoriteProductService.Exists(userId, product.Id)).Data
-                    });
-                }
-            }
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                FileName = product.Image.FileName,
+                IsInBasket = isInBasket,
+                IsInFavorites = isInFavorites
+            });
         }
-        else
-        {
-            models.AddRange(products.Select(product => new IndexViewModel()
-            {
-                Product = product,
-                IsInBasket = false
-            }));
-        }
-        return View(models);
+        return View(model);
     }
 
     [HttpGet]

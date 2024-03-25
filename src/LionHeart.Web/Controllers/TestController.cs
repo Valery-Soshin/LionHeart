@@ -78,7 +78,7 @@ namespace LionHeart.Web.Controllers
 
             _applicationDbContext.Categories.Add(category);
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 30; i++)
             {
                 var product = new Product()
                 {

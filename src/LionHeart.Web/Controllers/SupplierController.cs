@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-[Authorize]
 public class SupplierController : Controller
 {
     private readonly UserManager<User> _userManager;

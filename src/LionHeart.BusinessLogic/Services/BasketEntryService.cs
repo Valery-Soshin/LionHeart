@@ -248,4 +248,23 @@ public class BasketEntryService : IBasketEntryService
             };
         }
     }
+    public async Task<Result<bool>> Exists(string userId, string productId)
+    {
+        try
+        {
+            return new Result<bool>
+            {
+                IsCompleted = true,
+                Data = await _basketEntryRepository.Exists(userId, productId)
+            };
+        }
+        catch
+        {
+            return new Result<bool>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
 }

@@ -48,4 +48,10 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
             .Where(e => ids.Contains(e.Id))
             .ToListAsync();
     }
+    public Task<bool> Exists(string userId, string productId)
+    {
+        return _dbContext.BasketEntries.AsNoTracking()
+            .AnyAsync(f => f.UserId == userId &&
+                           f.ProductId == productId);
+    }
 }
