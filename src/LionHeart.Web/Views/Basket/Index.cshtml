@@ -1,6 +1,10 @@
 ﻿@using LionHeart.Web.Models.Basket
 @model BasketViewModel
 
+@{
+    ViewBag.Title = "Корзина товаров";
+}
+
 <div class="site-body-container">
     @if (Model.Entries.Any())
     {

@@ -1,6 +1,10 @@
 ﻿@using LionHeart.Web.Models.Profile;
 @model IndexViewModel
 
+@{
+    ViewBag.Title = $"Профиль: {Model.LastName} {Model.FirstName}";
+}
+
 <div class="site-body-container" style="color:#930667">
     <div class="card">
         <div class="card-header" style="background-color:#930667">

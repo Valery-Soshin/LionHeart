@@ -41,10 +41,7 @@ public class BasketController : Controller
         {
             UserId = userId,
             BasketTotalPrice = entries.Sum(e => e.Product.Price * e.Quantity),
-        };
-        foreach (var entry in entries)
-        {
-            basket.Entries.Add(new BasketEntryViewModel
+            Entries = entries.Select(entry => new BasketEntryViewModel
             {
                 Id = entry.Id,
                 UserId = entry.UserId,
@@ -54,8 +51,8 @@ public class BasketController : Controller
                 ProductQuantity = entry.Quantity,
                 ProductTotalPrice = entry.Product.Price * entry.Quantity,
                 ImageName = entry.Product.Image.FileName
-            });
-        }
+            }).ToList()
+        };
         return View(basket);
     }
 
@@ -82,8 +79,9 @@ public class BasketController : Controller
         var orderResult = await _orderService.Add(addOrderDto);
         if (orderResult.IsFaulted) return BadRequest(orderResult.ErrorMessage);
 
-        var removeOrderDtos = model.Entries.Select(e => new RemoveBasketEntryDto { Id = e.Id }).ToList();
-        var basketEntryResult = await _basketEntryService.RemoveRange(removeOrderDtos);
+        var removeBasketEntryDtos = model.Entries.Select(e => new RemoveBasketEntryDto { Id = e.Id }).ToList();
+        var basketEntryResult = await _basketEntryService.RemoveRange(removeBasketEntryDtos);
+        if (basketEntryResult.IsFaulted) return BadRequest(basketEntryResult.ErrorMessage);
 
         return Redirect("/Products");
     }
@@ -101,7 +99,9 @@ public class BasketController : Controller
             UserId = userId,
             ProductId = productId,
         };
-        await _basketEntryService.Add(dto);
+        var result = await _basketEntryService.Add(dto);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
         return Ok();
     }
 

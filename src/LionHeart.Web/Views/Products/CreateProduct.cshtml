@@ -3,6 +3,10 @@
 @model CreateProductViewModel
 @inject ICategoryService categoryService 
 
+@{
+    ViewBag.Title = "Добавление товара";
+}
+
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
     <div class="m-5 w-50 main-color">
         <form asp-action="CreateProduct" method="post" class="card" enctype="multipart/form-data">

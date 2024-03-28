@@ -1,6 +1,10 @@
 ﻿@using LionHeart.Web.Models.Products
 @model ShowProductViewModel
 
+@{
+    ViewBag.Title = $"Товар: {Model.Name}";
+}
+
 <style>
     .show-product-img {
         border-radius: 25px;
