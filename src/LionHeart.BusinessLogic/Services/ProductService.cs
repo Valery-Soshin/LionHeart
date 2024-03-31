@@ -261,12 +261,25 @@ public class ProductService : IProductService
             product.Price = dto.Price;
             product.Description = dto.Description;
             product.Specifications = dto.Specifications;
-            if (product.Image.FileName != dto.Image.FileName)
+            if (dto.Image is not null && dto.Image.FileName is not null)
             {
-                product.Image = new Image
+                if (product.Image.FileName != dto.Image.FileName)
                 {
-                    FileName = dto.Image.FileName,
-                    File = dto.Image
+                    product.Image = new Image
+                    {
+                        FileName = dto.Image.FileName,
+                        File = dto.Image
+                    };
+                }
+            }
+
+            var result = await _productRepository.Update(product);
+            if (result <= 0)
+            {
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotUpdated
                 };
             }
 

@@ -191,6 +191,7 @@ public class ProductsController : Controller
         {
             var dto = new UpdateProductDto
             {
+                Id = model.Id,
                 CategoryId = model.CategoryId,
                 Name = model.Name,
                 Price = model.Price,
