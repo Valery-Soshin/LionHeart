@@ -5,6 +5,7 @@
 
 @{
     ViewBag.Title = "Добавление товара";
+    var categories = (await categoryService.GetParentCategories()).Data ?? [];
 }
 
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
@@ -21,10 +22,13 @@
                 <div class="mb-3">
                     <label class="form-label">Категория</label>
                     <select asp-for="CategoryId" class="form-select custom-input" aria-label="Default select example">
-                        <option selected>Выберите категорию товара</option>
-                        @foreach (var category in (await categoryService.GetAll()).Data)
+                        <option selected oninput="">Выберите категорию товара</option>
+                        @if(categoryService is not null)
                         {
-                            <option value="@category.Id">@category.Name</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
                         }
                     </select>
                 </div>

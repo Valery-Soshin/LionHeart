@@ -9,5 +9,9 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
+
+        builder.HasMany(c => c.SubCategories)
+            .WithOne()
+            .HasForeignKey(c => c.ParentCategoryId);
     }
 }

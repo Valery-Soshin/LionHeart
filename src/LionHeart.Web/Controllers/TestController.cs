@@ -51,13 +51,32 @@ namespace LionHeart.Web.Controllers
 
         public async Task<IActionResult> AddCategories()
         {
-            _applicationDbContext.Categories.AddRange(
-                new Category() { Name = "Ноутбуки"},
-                new Category() { Name = "Обувь"},
-                new Category() { Name = "Мебель"},
-                new Category() { Name = "Ювелирные изделия"}
-                );
 
+            var products = new Category()
+            {
+                Name = "Продукты",
+                SubCategories =
+                [
+                    new Category() { Name = "Мясная продукция"},
+                    new Category() { Name = "Десткое питание"},
+                    new Category() { Name = "Чай и кофе"},
+                    new Category() { Name = "Здоровое питание"},
+                    new Category() { Name = "Молочные продукты"}
+                ]
+            };
+
+            var electronics = new Category()
+            {
+                Name = "Электроника",
+                SubCategories = 
+                [
+                    new Category() { Name = "Ноутбуки"},
+                    new Category() { Name = "ПК"},
+                    new Category() { Name = "Игровые консоли"},
+                    new Category() { Name = "Наушники"},
+                ]
+            };
+            _applicationDbContext.Categories.AddRange(products, electronics);
             await _applicationDbContext.SaveChangesAsync();
 
             return Ok();

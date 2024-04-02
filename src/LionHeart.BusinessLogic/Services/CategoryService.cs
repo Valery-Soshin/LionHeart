@@ -181,4 +181,32 @@ public class CategoryService : ICategoryService
             };
         }
     }
+    public async Task<Result<List<Category>>> GetParentCategories()
+    {
+        try
+        {
+            var categories = await _categoryRepository.GetParentCategories();
+            if (categories is null)
+            {
+                return new Result<List<Category>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.CategoriesNotFound
+                };
+            }
+            return new Result<List<Category>>
+            {
+                IsCompleted = true,
+                Data = categories
+            };
+        }
+        catch
+        {
+            return new Result<List<Category>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
 }

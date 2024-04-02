@@ -4,4 +4,5 @@ namespace LionHeart.Core.Interfaces.Repositories;
 
 public interface ICategoryRepository : IRepository<Category>
 {
+    Task<List<Category>> GetParentCategories();
 }

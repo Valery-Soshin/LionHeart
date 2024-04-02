@@ -9,11 +9,18 @@ public class CategoryRepository(ApplicationDbContext dbContext) : RepositoryBase
     public override Task<Category?> GetById(string id)
     {
         return _dbContext.Categories.AsNoTracking()
+            .Include(c => c.SubCategories)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
     public override Task<List<Category>> GetAll()
     {
         return _dbContext.Categories.AsNoTracking()
+            .ToListAsync();
+    }
+    public Task<List<Category>> GetParentCategories()
+    {
+        return _dbContext.Categories
+            .Where(c => c.ParentCategoryId == null)
             .ToListAsync();
     }
 }
