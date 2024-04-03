@@ -1,6 +1,5 @@
 ﻿using LionHeart.Core.Models;
 using LionHeart.Web.Models.Supplier;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,12 +8,15 @@ namespace LionHeart.Web.Controllers;
 public class SupplierController : Controller
 {
     private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
     private readonly ILogger<SupplierController> _logger;
 
     public SupplierController(UserManager<User> userManager,
+                              SignInManager<User> signInManager,
                               ILogger<SupplierController> logger)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _logger = logger;
     }
 
@@ -34,6 +36,8 @@ public class SupplierController : Controller
 
         var result = await _userManager.AddToRoleAsync(user, "Supplier");
         if (!result.Succeeded) return RedirectToAction("Register");
+
+        await _signInManager.RefreshSignInAsync(user);
 
         _logger.LogInformation("User '{email}' has been assigned role 'Customer'", user.Email);
         return Redirect("/Products");
