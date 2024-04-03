@@ -4,7 +4,7 @@ using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using LionHeart.Web.Models.Basket;
 using LionHeart.Core.Interfaces.Services;
-using LionHeart.Core.Dtos.Orders;
+using LionHeart.Core.Dtos.Order;
 using LionHeart.Core.Dtos.BasketEntry;
 
 namespace LionHeart.Web.Controllers;

@@ -1,5 +1,5 @@
 ﻿using LionHeart.BusinessLogic.Resources;
-using LionHeart.Core.Dtos.Orders;
+using LionHeart.Core.Dtos.Order;
 using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;

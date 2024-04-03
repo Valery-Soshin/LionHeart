@@ -1,6 +1,6 @@
 ﻿namespace LionHeart.Web.Models.Profile;
 
-public class IndexViewModel
+public class ShowProfileViewModel
 {
     public string Id { get; set; } = null!;
     public string? Email { get; set; } = null!;

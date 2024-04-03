@@ -1,4 +1,5 @@
-﻿using LionHeart.Core.Models;
+﻿using LionHeart.Core.Interfaces.Services;
+using LionHeart.Core.Models;
 using LionHeart.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -9,20 +10,44 @@ namespace LionHeart.Web.Controllers;
 [Authorize]
 public class ProfileController : Controller
 {
+    private readonly IFavoriteProductService _favoriteProductService;
     private readonly UserManager<User> _userManager;
 
-    public ProfileController(UserManager<User> userManager)
+    public ProfileController(IFavoriteProductService favoriteProductService,
+                             UserManager<User> userManager)
     {
+        _favoriteProductService = favoriteProductService;
         _userManager = userManager;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> ShowNotifications()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ShowFavorites()
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
+
+        var result = await _favoriteProductService.GetAllByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var favoriteProducts = result.Data;
+        if (favoriteProducts is null) return BadRequest();
+
+        return View(favoriteProducts);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ShowProfile()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
-        var model = new IndexViewModel()
+        var model = new ShowProfileViewModel()
         {
             Id = user.Id,
             Email = user.Email,
@@ -35,12 +60,12 @@ public class ProfileController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> EditUser()
+    public async Task<IActionResult> EditProfile()
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
-        var model = new EditUserViewModel
+        var model = new EditProfileViewModel
         {
             Id = user.Id,
             Email = user.Email,
@@ -52,7 +77,7 @@ public class ProfileController : Controller
         return View(model);
     }
     [HttpPost]
-    public async Task<IActionResult> EditUser(EditUserViewModel model)
+    public async Task<IActionResult> EditProfile(EditProfileViewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
@@ -72,12 +97,12 @@ public class ProfileController : Controller
 
                 if (!result.Succeeded)
                 {
-                    return Redirect("/Profile/EditUser");
+                    return Redirect("/Profile/EditProfile");
                 }
             }
             await _userManager.UpdateAsync(user);
-            return Redirect("/Profile");
+            return Redirect("/Profile/ShowProfile");
         }
-        return Redirect("/Profile/EditUser");
+        return Redirect("/Profile/EditProfile");
     }
 }

@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]   </title>
+    <title>@ViewData["Title"] - LionHeart</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/supplier-panel.css" asp-append-version="true" />
@@ -49,7 +49,7 @@
                 <a asp-action="SearchProducts" asp-controller="Products" class="nav-link site-nav-item">Поиск</a>
             </li>
             <li class="nav-item">
-                <a asp-action="Index" asp-controller="Profile" class="nav-link site-nav-item">Профиль</a>
+                <a asp-action="ShowProfile" asp-controller="Profile" class="nav-link site-nav-item">Профиль</a>
             </li>
             @if (userId is not null && (await orderService.Any(userId)).Data)
             {

@@ -1,4 +1,4 @@
-﻿namespace LionHeart.Core.Dtos.Orders;
+﻿namespace LionHeart.Core.Dtos.Order;
 
 public class AddOrderDto
 {

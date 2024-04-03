@@ -19,21 +19,6 @@ public class FavoritesController : Controller
         _favoriteProductService = favoriteProductService;
         _userManager = userManager;
     }
-
-    [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var userId = _userManager.GetUserId(User);
-        if (userId is null) return Unauthorized(); 
-
-        var result = await _favoriteProductService.GetAllByUserId(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-
-        var favoriteProducts = result.Data;
-        if (favoriteProducts is null) return BadRequest();
-
-        return View(favoriteProducts);
-    }
     
     [HttpPost]
     public async Task<IActionResult> AddToFavorites([FromBody]string productId)

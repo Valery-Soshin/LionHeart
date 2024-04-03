@@ -1,0 +1,42 @@
+﻿@model ShowProfileViewModel
+
+@{
+    ViewData["Title"] = $"Профиль: {Model.LastName} {Model.FirstName}";
+}
+
+<form class="m-3">
+    <div class="mb-3 row">
+        <div class="col-2 text-center">
+            <img src="https://ui-avatars.com/api/?size=128&background=930667&color=CCCCFF&name=@Model.FirstName + @Model.LastName" class="img-thumbnail" style="border-radius: 25px;">
+        </div>
+        <div class="col-10 d-flex align-items-center">
+            <div class="w-100">
+                <label for="inputEmail" class="form-label">Почта</label>
+                <input type="email" readonly class="form-control custom-input" id="inputEmail" value="@Model.Email">
+            </div>
+        </div>
+    </div>
+    <div class="mb-3 row text-center align-items-center">
+        <label for="inputFirstName" class="col-sm-2 col-form-label">Имя</label>
+        <div class="col-sm-10">
+            <input type="text" readonly class="form-control custom-input" id="inputFirstName" value="@Model.FirstName">
+        </div>
+    </div>
+    <div class="mb-3 row text-center align-items-center">
+        <label for="inputLastName" class="col-sm-2 col-form-label">Фамилия</label>
+        <div class="col-sm-10">
+            <input type="text" readonly class="form-control custom-input" id="inputLastName" value="@Model.LastName">
+        </div>
+    </div>
+    <div class="mb-3 row text-center align-items-center">
+        <label for="inputPhoneNumber" class="col-sm-2 col-form-label">Телефон</label>
+        <div class="col-sm-10">
+            <input type="text" readonly class="form-control custom-input" id="inputPhoneNumber" value="@Model.PhoneNumber">
+        </div>
+    </div>
+    <div class="m-5 row">
+        <div class="d-flex justify-content-end text-end">
+            <a asp-action="EditProfile" class="btn btn-grad w-25">Изменить</a>
+        </div>
+    </div>
+</form>

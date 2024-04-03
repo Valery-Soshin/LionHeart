@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="site-body-container" style="color:#930667">
+    <div class="card">
+        <div class="card-header" style="background-color:#930667">
+            <div class="d-flex justify-content-start gap-3">
+                <a asp-action="ShowProfile" class="nav-link site-nav-item">Профиль</a>
+                <a asp-action="ShowFavorites" class="nav-link site-nav-item">Избранное</a>
+                <a asp-action="ShowNotifications" class="nav-link site-nav-item">Уведомления</a>
+            </div>
+            <div class="d-flex justify-content-end align-items-center" style="color: white;">
+                @* <label>Ваша скидка составляет: @Model.PersonalDiscount %</label> *@
+            </div>
+        </div>
+        <div class="card-body bg-light">
+            <div class="card p-3 border-0 bg-light">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div> 

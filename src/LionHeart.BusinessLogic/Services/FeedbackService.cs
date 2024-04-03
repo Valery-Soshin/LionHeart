@@ -126,7 +126,7 @@ public class FeedbackService : IFeedbackService
         try
         {
             var hasFeedbackPending = !await _feedbackRepository.Exists(userId, productId) &&
-                    await _orderRepository.Exists(userId, productId);
+                await _orderRepository.Exists(userId, productId);
 
             return new Result<bool>
             {

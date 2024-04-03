@@ -2,7 +2,7 @@
 
 namespace LionHeart.Web.Models.Profile;
 
-public class EditUserViewModel
+public class EditProfileViewModel
 {
     public string Id { get; set; } = null!;
 

@@ -1,4 +1,4 @@
-﻿using LionHeart.Core.Dtos.Orders;
+﻿using LionHeart.Core.Dtos.Order;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
 
