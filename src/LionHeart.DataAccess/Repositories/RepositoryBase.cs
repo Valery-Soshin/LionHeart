@@ -54,7 +54,13 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
     }
     protected virtual async Task<int> SaveChangesAsync()
     {
-        var result = await _dbContext.SaveChangesAsync();
+        int result = -1;
+        try
+        {
+            result = await _dbContext.SaveChangesAsync();
+        }
+        catch { }
+
         _dbContext.ChangeTracker.Clear();
         return result;
     }
