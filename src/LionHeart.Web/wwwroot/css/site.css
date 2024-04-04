@@ -50,6 +50,14 @@ body {
    color: #930667;
 }
 
+.custom-btn-link {
+    background-color: #930667;
+    color: white;
+}
+.custom-btn-link:hover{
+    color:aqua;
+}
+
 .custom-btn:hover {
     background-color: darkslategray;
 }

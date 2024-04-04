@@ -295,6 +295,42 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомление не было создано.
+        /// </summary>
+        internal static string NotificationNotCreated {
+            get {
+                return ResourceManager.GetString("NotificationNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомление не было найдено.
+        /// </summary>
+        internal static string NotificationNotFound {
+            get {
+                return ResourceManager.GetString("NotificationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомление не было удалено.
+        /// </summary>
+        internal static string NotificationNotRemoved {
+            get {
+                return ResourceManager.GetString("NotificationNotRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомления не найдены.
+        /// </summary>
+        internal static string NotificationsNotFound {
+            get {
+                return ResourceManager.GetString("NotificationsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Заказ был создан.
         /// </summary>
         internal static string OrderCreated {

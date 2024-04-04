@@ -13,12 +13,15 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly INotificationRepository _notificationRepository;
 
     public OrderService(IOrderRepository orderRepository,
-                        IProductRepository productRepository)
+                        IProductRepository productRepository,
+                        INotificationRepository notificationRepository)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _notificationRepository = notificationRepository;
     }
 
     public async Task<Result<Order>> GetById(string id)
@@ -159,6 +162,11 @@ public class OrderService : IOrderService
             }
             await _productRepository.UpdateRange(products);
             await _orderRepository.Add(order);
+            await _notificationRepository.Add(new Notification()
+            {
+                UserId = dto.UserId,
+                Content = NotificationMessage.OrderCreated
+            });
             return new Result<Order>()
             {
                 IsCompleted = true,

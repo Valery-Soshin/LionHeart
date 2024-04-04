@@ -195,6 +195,18 @@
   <data name="InternalServerError" xml:space="preserve">
     <value>Внутренняя проблема сервера</value>
   </data>
+  <data name="NotificationNotCreated" xml:space="preserve">
+    <value>Уведомление не было создано</value>
+  </data>
+  <data name="NotificationNotFound" xml:space="preserve">
+    <value>Уведомление не было найдено</value>
+  </data>
+  <data name="NotificationNotRemoved" xml:space="preserve">
+    <value>Уведомление не было удалено</value>
+  </data>
+  <data name="NotificationsNotFound" xml:space="preserve">
+    <value>Уведомления не найдены</value>
+  </data>
   <data name="OrderCreated" xml:space="preserve">
     <value>Заказ был создан</value>
   </data>

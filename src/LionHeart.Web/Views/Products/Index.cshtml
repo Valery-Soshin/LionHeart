@@ -23,14 +23,14 @@
 
 <div class="site-body-container">
     <div class="mb-2 d-flex justify-content-end">
-        <div>
+        <div class="">
             @if (Model.HasPreviousPage)
             {
-                <a asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" class="btn bg-info">Назад</a>
+                <a asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
             }
             @if (Model.HasNextPage)
             {
-                <a asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" class="btn bg-info">Вперед</a>
+                <a asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
             }
         </div>
     </div>

@@ -11,19 +11,38 @@ namespace LionHeart.Web.Controllers;
 public class ProfileController : Controller
 {
     private readonly IFavoriteProductService _favoriteProductService;
+    private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;
 
     public ProfileController(IFavoriteProductService favoriteProductService,
+                             INotificationService notificationService,
                              UserManager<User> userManager)
     {
         _favoriteProductService = favoriteProductService;
+        _notificationService = notificationService;
         _userManager = userManager;
     }
 
     [HttpGet]
     public async Task<IActionResult> ShowNotifications()
     {
-        return View();
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
+
+        var result = await _notificationService.GetNotificationsByUserId(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var notifications = result.Data!;
+
+        var model = new ShowNotificationsViewModel
+        {
+            Notifications = notifications.Select(n => new ShowNotificationItemViewModel
+            {
+                Id = n.Id,
+                UserId = n.UserId,
+                Content = n.Content
+            }).ToList()
+        };
+        return View(model);
     }
 
     [HttpGet]
