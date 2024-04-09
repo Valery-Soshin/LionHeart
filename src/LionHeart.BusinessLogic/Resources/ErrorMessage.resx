@@ -253,7 +253,16 @@
   <data name="ProductUnitNotRemoved" xml:space="preserve">
     <value>Единица продукта не была удалена</value>
   </data>
+  <data name="ProductUnitNotUpdated" xml:space="preserve">
+    <value>Единица продукта не была обновлена</value>
+  </data>
   <data name="ProductUnitsNotCreated" xml:space="preserve">
     <value>Единицы продукта не были добавлены</value>
+  </data>
+  <data name="ProductUnitsNotFound" xml:space="preserve">
+    <value>Единицы продукта не были найдены</value>
+  </data>
+  <data name="ProductUnitsNotUpdated" xml:space="preserve">
+    <value>Единицы продукта не были обновлены</value>
   </data>
 </root>

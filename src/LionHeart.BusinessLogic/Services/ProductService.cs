@@ -4,7 +4,6 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -54,6 +53,34 @@ public class ProductService : IProductService
         try
         {
             var products = await _productRepository.GetAll();
+            if (products is null)
+            {
+                return new Result<List<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<List<Product>>
+            {
+                IsCompleted = true,
+                Data = products
+            };
+        }
+        catch
+        {
+            return new Result<List<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<List<Product>>> GetAll(List<string> ids)
+    {
+        try
+        {
+            var products = await _productRepository.GetAll(ids);
             if (products is null)
             {
                 return new Result<List<Product>>

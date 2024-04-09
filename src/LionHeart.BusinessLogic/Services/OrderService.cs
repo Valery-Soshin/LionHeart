@@ -1,27 +1,37 @@
 ﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.Core.Dtos.Notification;
 using LionHeart.Core.Dtos.Order;
+using LionHeart.Core.Dtos.ProductUnit;
 using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
-using System.Xml;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class OrderService : IOrderService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
-    private readonly IProductRepository _productRepository;
-    private readonly INotificationRepository _notificationRepository;
+    private readonly IProductService _productService;
+    private readonly IProductUnitService _productUnitService;
+    private readonly IBasketEntryService _basketEntryService;
+    private readonly INotificationService _notificationService;
 
-    public OrderService(IOrderRepository orderRepository,
-                        IProductRepository productRepository,
-                        INotificationRepository notificationRepository)
+    public OrderService(IUnitOfWork unitOfWork,
+                        IOrderRepository orderRepository,
+                        IProductService productService,
+                        IProductUnitService productUnitService,
+                        IBasketEntryService basketEntryService,
+                        INotificationService notificationService)
     {
+        _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
-        _productRepository = productRepository;
-        _notificationRepository = notificationRepository;
+        _productService = productService;
+        _productUnitService = productUnitService;
+        _basketEntryService = basketEntryService;
+        _notificationService = notificationService;
     }
 
     public async Task<Result<Order>> GetById(string id)
@@ -112,17 +122,12 @@ public class OrderService : IOrderService
     {
         try
         {
-            var order = new Order
-            {
-                UserId = dto.UserId,
-                TotalPrice = dto.BasketTotalPrice,
-                CreateAt = dto.CreateAt
-            };
+            await _unitOfWork.BeginTransaction();
 
-            var products = await _productRepository.GetAll(
+            var productServiceResult = await _productService.GetAll(
                 dto.Products.Select(p => p.ProductId).ToList());
 
-            if (products is null)
+            if (productServiceResult.IsFaulted || productServiceResult.Data is null)
             {
                 return new Result<Order>
                 {
@@ -130,7 +135,13 @@ public class OrderService : IOrderService
                     ErrorMessage = ErrorMessage.ProductsNotFound
                 };
             }
-            if (products.Exists(p => p.Units.Count < dto.Products.Single(d => d.ProductId == p.Id).ProductQuantity))
+
+            var products = productServiceResult.Data;
+
+            bool areEnoughProducts = products.Exists(
+                p => p.Units.Count < dto.Products.Single(d => d.ProductId == p.Id).ProductQuantity);
+
+            if (areEnoughProducts)
             {
                 return new Result<Order>
                 {
@@ -138,35 +149,74 @@ public class OrderService : IOrderService
                     ErrorMessage = ErrorMessage.ProductsNotEnough
                 };
             }
-            foreach (var productDto in dto.Products)
+
+            var order = new Order
             {
-                var product = products.Single(p => p.Id == productDto.ProductId);
+                UserId = dto.UserId,
+                TotalPrice = dto.BasketTotalPrice,
+                CreateAt = dto.CreateAt
+            };
+            var productUnits = new List<ProductUnit>();
+            foreach (var product in products)
+            {
+                var productQuantity = dto.Products
+                    .Single(p => p.ProductId == product.Id)
+                    .ProductQuantity;
+
                 var orderItem = new OrderItem
                 {
                     OrderId = order.Id,
                     ProductId = product.Id,
                     ProductPrice = product.Price,
-                    ProductQuantity = productDto.ProductQuantity,
+                    ProductQuantity = productQuantity,
                 };
-                for (int i = 0; i < productDto.ProductQuantity; i++)
+                for (int i = 0; i < productQuantity; i++)
                 {
-                    var unit = product.Units[i];
+                    var productUnit = product.Units[i];
+                    productUnit.SaleStatus = SaleStatus.Sold;
+                    productUnits.Add(productUnit);
+
                     orderItem.Details.Add(new OrderItemDetail
                     {
                         OrderItemId = order.Id,
-                        ProductUnitId = unit.Id
+                        ProductUnitId = productUnit.Id
                     });
-                    unit.SaleStatus = SaleStatus.Sold;
                 }
                 order.Items.Add(orderItem);
             }
-            await _productRepository.UpdateRange(products);
             await _orderRepository.Add(order);
-            await _notificationRepository.Add(new Notification()
+
+            var productUnitDtos = productUnits.Select(p => new UpdateProductUnitDto
             {
+                Id = p.Id,
+                SaleStatus = p.SaleStatus
+            }).ToList();
+            var productUnitServiceResult = await _productUnitService.UpdateRange(productUnitDtos);
+
+            var entriesIds = dto.Products.Select(p => p.EntryId)
+                .ToList();
+            var basketEntryServiceResult = await _basketEntryService.RemoveRange(entriesIds);
+
+            var notificationDto = new AddNotificationDto()
+            { 
                 UserId = dto.UserId,
                 Content = NotificationMessage.OrderCreated
-            });
+            };
+            var notificationServiceResult = await _notificationService.Add(notificationDto);
+
+            if (productUnitServiceResult.IsFaulted ||
+                basketEntryServiceResult.IsFaulted ||
+                notificationServiceResult.IsFaulted)
+            {
+                await _unitOfWork.Rollback();
+                return new Result<Order>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.InternalServerError
+                };
+            }
+
+            await _unitOfWork.Commit();
             return new Result<Order>()
             {
                 IsCompleted = true,
@@ -175,6 +225,7 @@ public class OrderService : IOrderService
         }
         catch
         {
+            await _unitOfWork.Rollback();
             return new Result<Order>()
             {
                 IsCompleted = false,

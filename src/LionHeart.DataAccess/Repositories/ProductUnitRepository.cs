@@ -18,12 +18,18 @@ public class ProductUnitRepository(ApplicationDbContext dbContext) : RepositoryB
 			.Take(quantity)
 			.ToListAsync();
 	}
-	public override Task<List<ProductUnit>> GetAll()
+    public Task<List<ProductUnit>> GetProductsByIds(List<string> ids)
+    {
+        return _dbContext.ProductUnits.AsNoTracking()
+            .Where(pu => ids.Contains(pu.Id))
+            .ToListAsync();
+    }
+    public override Task<List<ProductUnit>> GetAll()
 	{
 		return _dbContext.ProductUnits.AsNoTracking()
 			.ToListAsync();
 	}
-	public Task<int> Count(string productId)
+    public Task<int> Count(string productId)
 	{
 		return _dbContext.ProductUnits.AsNoTracking()
 			.CountAsync(pu => pu.ProductId == productId);

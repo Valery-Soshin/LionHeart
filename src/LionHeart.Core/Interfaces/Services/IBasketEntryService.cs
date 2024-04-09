@@ -11,7 +11,7 @@ public interface IBasketEntryService
     Task<Result<List<BasketEntry>>> GetEntriesByUserId(string userId);
     Task<Result<BasketEntry>> Add(AddBasketEntryDto dto);
     Task<Result<BasketEntry>> Update(UpdateBasketEntryDto dto);
-    Task<Result<BasketEntry>> Remove(RemoveBasketEntryDto dto);
-    Task<Result<List<BasketEntry>>> RemoveRange(List<RemoveBasketEntryDto> dtos);
+    Task<Result<BasketEntry>> Remove(string id);
+    Task<Result<List<BasketEntry>>> RemoveRange(List<string> ids);
     Task<Result<bool>> Exists(string userId, string productId);
 }

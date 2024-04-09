@@ -8,6 +8,7 @@ public interface IProductService
 {
     Task<Result<Product>> GetById(string id);
     Task<Result<List<Product>>> GetAll();
+    Task<Result<List<Product>>> GetAll(List<string> ids);
     Task<Result<List<Product>>> GetProductsByCategoryId(string categoryId);
     Task<Result<List<Product>>> GetProductsByUserId(string userId);
     Task<Result<PagedResponse>> GetProductsWithPagination(int pageNumber);

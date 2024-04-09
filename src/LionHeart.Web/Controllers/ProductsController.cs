@@ -77,18 +77,18 @@ public class ProductsController : Controller
     {
         var userId = _userManager.GetUserId(User);
 
-        var productResult = await _productService.GetById(id);
-        if (productResult.IsFaulted) return BadRequest(productResult.ErrorMessage);
+        var productServiceResult = await _productService.GetById(id);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
 
-        var product = productResult.Data;
+        var product = productServiceResult.Data;
         if (product is null) return BadRequest();
 
         bool writeFeedback = false;
         if (userId is not null)
         {
-            var feedbackResult = await _feedbackService.HasFeedbackPending(userId, product.Id);
-            if (feedbackResult.IsFaulted) return BadRequest(feedbackResult.ErrorMessage);
-            writeFeedback = feedbackResult.Data;
+            var feedbackServiceResult = await _feedbackService.HasFeedbackPending(userId, product.Id);
+            if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
+            writeFeedback = feedbackServiceResult.Data;
         }
         var model = new ShowProductViewModel()
         {

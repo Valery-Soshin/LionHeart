@@ -10,6 +10,7 @@ public class AddOrderDto
 
 public class AddOrderProductDto
 {
+    public string EntryId { get; set; } = null!;
     public string ProductId { get; set; } = null!;
     public int ProductQuantity { get; set; } = 1;
     public decimal ProductTotalPrice { get; set; }

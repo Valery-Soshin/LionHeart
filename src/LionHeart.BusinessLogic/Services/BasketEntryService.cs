@@ -181,11 +181,11 @@ public class BasketEntryService : IBasketEntryService
             };
         }
     }
-    public async Task<Result<BasketEntry>> Remove(RemoveBasketEntryDto dto)
+    public async Task<Result<BasketEntry>> Remove(string id)
     {
         try
         {
-            var entry = await _basketEntryRepository.GetById(dto.Id);
+            var entry = await _basketEntryRepository.GetById(id);
             if (entry is null)
             {
                 return new Result<BasketEntry>
@@ -219,11 +219,11 @@ public class BasketEntryService : IBasketEntryService
             };
         }
     }
-    public async Task<Result<List<BasketEntry>>> RemoveRange(List<RemoveBasketEntryDto> dtos)
+    public async Task<Result<List<BasketEntry>>> RemoveRange(List<string> ids)
     {
         try
         {
-            var entries = await _basketEntryRepository.GetAll(dtos.Select(d => d.Id).ToList());
+            var entries = await _basketEntryRepository.GetAll(ids);
             var result = await _basketEntryRepository.RemoveRange(entries);
             if (result <= 0)
             {

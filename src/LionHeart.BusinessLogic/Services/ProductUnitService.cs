@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -95,6 +96,87 @@ public class ProductUnitService : IProductUnitService
                 {
                     IsCompleted = false,
                     ErrorMessage = ErrorMessage.ProductUnitsNotCreated
+                };
+            }
+            return new Result<List<ProductUnit>>
+            {
+                IsCompleted = true,
+                Data = productUnits
+            };
+        }
+        catch
+        {
+            return new Result<List<ProductUnit>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<ProductUnit>> Update(UpdateProductUnitDto dto)
+    {
+        try
+        {
+            var productUnit = await _productUnitRepository.GetById(dto.Id);
+            if (productUnit is null)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitNotFound
+                };
+            }
+            productUnit.SaleStatus = dto.SaleStatus;
+            var result = await _productUnitRepository.Update(productUnit);
+            if (result <= 0)
+            {
+                return new Result<ProductUnit>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotUpdated
+                };
+            }
+            return new Result<ProductUnit>
+            {
+                IsCompleted = true,
+                Data = productUnit
+            };
+        }
+        catch
+        {
+            return new Result<ProductUnit>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<List<ProductUnit>>> UpdateRange(List<UpdateProductUnitDto> dtos)
+    {
+        try
+        {
+            var productUnits = await _productUnitRepository.GetProductsByIds(dtos.Select(d => d.Id).ToList());
+            if (productUnits is null)
+            {
+                return new Result<List<ProductUnit>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductUnitsNotFound
+                };
+            }
+            foreach (var productUnit in productUnits)
+            {
+                var productUnitDto = dtos.Single(d => d.Id == productUnit.Id);
+                productUnit.SaleStatus = productUnitDto.SaleStatus;
+            }
+
+            var result = await _productUnitRepository.UpdateRange(productUnits);
+            if (result <= 0)
+            {
+                return new Result<List<ProductUnit>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductNotUpdated
                 };
             }
             return new Result<List<ProductUnit>>

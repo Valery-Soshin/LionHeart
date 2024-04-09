@@ -466,11 +466,38 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Единица продукта не была обновлена.
+        /// </summary>
+        internal static string ProductUnitNotUpdated {
+            get {
+                return ResourceManager.GetString("ProductUnitNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Единицы продукта не были добавлены.
         /// </summary>
         internal static string ProductUnitsNotCreated {
             get {
                 return ResourceManager.GetString("ProductUnitsNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Единицы продукта не были найдены.
+        /// </summary>
+        internal static string ProductUnitsNotFound {
+            get {
+                return ResourceManager.GetString("ProductUnitsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Единицы продукта не были обновлены.
+        /// </summary>
+        internal static string ProductUnitsNotUpdated {
+            get {
+                return ResourceManager.GetString("ProductUnitsNotUpdated", resourceCulture);
             }
         }
     }

@@ -70,18 +70,15 @@ public class BasketController : Controller
             BasketTotalPrice = model.BasketTotalPrice,
             Products = model.Entries.Select(e => new AddOrderProductDto
             {
+                EntryId = e.Id,
                 ProductId = e.ProductId,
                 ProductQuantity = e.ProductQuantity,
-                ProductTotalPrice = e.ProductTotalPrice
+                ProductTotalPrice = e.ProductTotalPrice,
             }).ToList(),
             CreateAt = DateTimeOffset.UtcNow
         };
         var orderResult = await _orderService.Add(addOrderDto);
         if (orderResult.IsFaulted) return BadRequest(orderResult.ErrorMessage);
-
-        var removeBasketEntryDtos = model.Entries.Select(e => new RemoveBasketEntryDto { Id = e.Id }).ToList();
-        var basketEntryResult = await _basketEntryService.RemoveRange(removeBasketEntryDtos);
-        if (basketEntryResult.IsFaulted) return BadRequest(basketEntryResult.ErrorMessage);
 
         return Redirect("/Products");
     }
@@ -116,11 +113,10 @@ public class BasketController : Controller
         var result = await _basketEntryService.GetByUserIdProductId(userId, productId);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
-        var dto = new RemoveBasketEntryDto()
-        {
-            Id = result!.Data!.Id
-        };
-        result = await _basketEntryService.Remove(dto);
+        var entry = result.Data;
+        if (entry is null) return BadRequest();
+
+        result = await _basketEntryService.Remove(entry.Id);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
         return Ok();
