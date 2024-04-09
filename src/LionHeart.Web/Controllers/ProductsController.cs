@@ -213,11 +213,7 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var dto = new RemoveProductDto()
-        {
-            Id = productId
-        };
-        var result = await _productService.Remove(dto);
+        var result = await _productService.Remove(productId);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
         return RedirectToAction("ListSupplierProducts");

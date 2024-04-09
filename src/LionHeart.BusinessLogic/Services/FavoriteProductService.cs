@@ -100,16 +100,15 @@ public class FavoriteProductService : IFavoriteProductService
             };
         }
     }
-    public async Task<Result<FavoriteProduct>> Add(AddFavoriteProductDto dto)
+    public async Task<Result<FavoriteProduct>> Add(string userId, string productId)
     {
         try
         {
             var favoriteProduct = new FavoriteProduct
             {
-                UserId = dto.UserId,
-                ProductId = dto.ProductId
+                UserId = userId,
+                ProductId = productId
             };
-
             var result = await _favoriteRepository.Add(favoriteProduct);
             if (result <= 0)
             {
@@ -134,12 +133,12 @@ public class FavoriteProductService : IFavoriteProductService
             };
         }
     }
-    public async Task<Result<FavoriteProduct>> Remove(RemoveFavoriteProductDto dto)
+    public async Task<Result<FavoriteProduct>> Remove(string userId, string productId)
     {
         try
         {
             var favoriteProduct = await _favoriteRepository
-                .GetByUserIdProductId(dto.UserId, dto.ProductId);
+                .GetByUserIdProductId(userId, productId);
 
             if (favoriteProduct is null)
             {

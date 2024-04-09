@@ -15,5 +15,5 @@ public interface IProductService
     Task<Result<List<Product>>> Search(string productName);
     Task<Result<Product>> Add(AddProductDto dto);
     Task<Result<Product>> Update(UpdateProductDto dto);
-    Task<Result<Product>> Remove(RemoveProductDto dto);
+    Task<Result<Product>> Remove(string id);
 }

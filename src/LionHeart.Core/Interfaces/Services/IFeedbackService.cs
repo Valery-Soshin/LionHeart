@@ -8,6 +8,6 @@ public interface IFeedbackService
 {
     Task<Result<Feedback>> GetById(string id);
     Task<Result<Feedback>> Add(AddFeedbackDto dto);
-    Task<Result<Feedback>> Remove(RemoveFeedbackDto dto);
+    Task<Result<Feedback>> Remove(string id);
     Task<Result<bool>> HasFeedbackPending(string userId, string productId);
 }

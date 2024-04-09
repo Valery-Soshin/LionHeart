@@ -10,13 +10,13 @@ namespace LionHeart.BusinessLogic.Services;
 public class FeedbackService : IFeedbackService
 {
     private readonly IFeedbackRepository _feedbackRepository;
-    private readonly IOrderRepository _orderRepository;
+    private readonly IOrderService _orderService;
 
     public FeedbackService(IFeedbackRepository feedbackRepository,
-                           IOrderRepository orderRepository)
+                           IOrderService orderService)
     {
         _feedbackRepository = feedbackRepository;
-        _orderRepository = orderRepository;
+        _orderService = orderService;
     }
 
     public async Task<Result<Feedback>> GetById(string id)
@@ -83,11 +83,11 @@ public class FeedbackService : IFeedbackService
             };
         }
     }
-    public async Task<Result<Feedback>> Remove(RemoveFeedbackDto dto)
+    public async Task<Result<Feedback>> Remove(string id)
     {
         try
         {
-            var feedback = await _feedbackRepository.GetById(dto.Id);
+            var feedback = await _feedbackRepository.GetById(id);
             if (feedback is null)
             {
                 return new Result<Feedback>
@@ -125,8 +125,18 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
+            var orderServiceResult = await _orderService.Exists(userId, productId);
+            if (orderServiceResult.IsFaulted)
+            {
+                return new Result<bool>()
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.OrderNotFound
+                };
+            }
+
             var hasFeedbackPending = !await _feedbackRepository.Exists(userId, productId) &&
-                await _orderRepository.Exists(userId, productId);
+                orderServiceResult.Data;
 
             return new Result<bool>
             {

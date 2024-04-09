@@ -26,12 +26,7 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var dto = new AddFavoriteProductDto
-        {
-            UserId = userId,
-            ProductId = productId
-        };
-        var result = await _favoriteProductService.Add(dto);
+        var result = await _favoriteProductService.Add(userId, productId);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
         return Ok();
@@ -43,12 +38,7 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var dto = new RemoveFavoriteProductDto
-        {
-            UserId = userId,
-            ProductId = productId
-        };
-        var result = await _favoriteProductService.Remove(dto);
+        var result = await _favoriteProductService.Remove(userId, productId);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
         return Ok();

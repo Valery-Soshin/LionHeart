@@ -144,11 +144,11 @@ public class CategoryService : ICategoryService
             };
         }
     }
-    public async Task<Result<Category>> Remove(RemoveCategoryDto dto)
+    public async Task<Result<Category>> Remove(string id)
     {
         try
         {
-            var category = await _categoryRepository.GetById(dto.Id);
+            var category = await _categoryRepository.GetById(id);
             if (category is null)
             {
                 return new Result<Category>

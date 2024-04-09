@@ -4,7 +4,6 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -194,11 +193,11 @@ public class ProductUnitService : IProductUnitService
             };
         }
     }
-    public async Task<Result<ProductUnit>> Remove(RemoveProductUnitDto dto)
+    public async Task<Result<ProductUnit>> Remove(string id)
     {
         try
         {
-            var productUnit = await _productUnitRepository.GetById(dto.Id);
+            var productUnit = await _productUnitRepository.GetById(id);
             if (productUnit is null)
             {
                 return new Result<ProductUnit>

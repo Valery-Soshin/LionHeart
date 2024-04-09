@@ -325,11 +325,11 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<Product>> Remove(RemoveProductDto dto)
+    public async Task<Result<Product>> Remove(string id)
     {
         try
         {
-            var product = await _productRepository.GetById(dto.Id);
+            var product = await _productRepository.GetById(id);
             if (product is null)
             {
                 return new Result<Product>

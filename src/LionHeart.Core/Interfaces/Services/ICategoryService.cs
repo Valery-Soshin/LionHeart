@@ -11,5 +11,5 @@ public interface ICategoryService
     Task<Result<List<Category>>> GetParentCategories();
     Task<Result<Category>> Add(AddCategoryDto dto);
     Task<Result<Category>> Update(UpdateCategoryDto dto);
-    Task<Result<Category>> Remove(RemoveCategoryDto dto);
+    Task<Result<Category>> Remove(string id);
 }
