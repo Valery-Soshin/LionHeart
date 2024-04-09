@@ -338,15 +338,8 @@ public class ProductService : IProductService
                     ErrorMessage = ErrorMessage.ProductNotFound
                 };
             }
-            var result = await _productRepository.Remove(product);
-            if (result <= 0)
-            {
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotRemoved
-                };
-            }
+            product.IsActive = false;
+            await _productRepository.Update(product);
             return new Result<Product>
             {
                 IsCompleted = true,
