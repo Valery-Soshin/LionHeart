@@ -16,7 +16,6 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
     public Task<List<Order>> GetOrdersByUserId(string userId)
     {
         return _dbContext.Orders.AsNoTracking()
-            .IgnoreQueryFilters()
             .Include(o => o.Items)
                 .ThenInclude(i => i.Product)
             .Where(o => o.UserId == userId)

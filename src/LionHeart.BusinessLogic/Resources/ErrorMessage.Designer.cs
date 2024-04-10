@@ -322,6 +322,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомления не были созданы.
+        /// </summary>
+        internal static string NotificationsNotCreated {
+            get {
+                return ResourceManager.GetString("NotificationsNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Уведомления не найдены.
         /// </summary>
         internal static string NotificationsNotFound {
@@ -345,15 +354,6 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string OrderFound {
             get {
                 return ResourceManager.GetString("OrderFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Заказ с ID &apos;{orderId}&apos;.
-        /// </summary>
-        internal static string OrderId {
-            get {
-                return ResourceManager.GetString("OrderId", resourceCulture);
             }
         }
         

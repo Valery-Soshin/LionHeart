@@ -28,9 +28,10 @@ public class FavoriteProductRepository(ApplicationDbContext dbContext) : Reposit
                 .ThenInclude(p => p.Image)
             .ToListAsync();
     }
-    public Task<List<FavoriteProduct>> GetAllByUserId(string userId)
+    public Task<List<FavoriteProduct>> GetFavoritesByUserIdWithoutQueryFilter(string userId)
     {
         return _dbContext.FavoriteProducts.AsNoTracking()
+            .IgnoreQueryFilters()
             .Include(f => f.Product)
                 .ThenInclude(p => p.Image)
             .Where(f => f.UserId == userId)

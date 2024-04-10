@@ -63,9 +63,9 @@ namespace LionHeart.BusinessLogic.Resources {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Спасибо за покупку! Теперь у вас есть отличная возможность поделиться своим мнением о приобретенном товаре. Оставьте отзыв и помогите нам стать лучше!.
         /// </summary>
-        internal static string OrderCreated {
+        internal static string ProductPurchased {
             get {
-                return ResourceManager.GetString("OrderCreated", resourceCulture);
+                return ResourceManager.GetString("ProductPurchased", resourceCulture);
             }
         }
         

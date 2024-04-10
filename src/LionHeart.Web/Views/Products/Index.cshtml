@@ -64,13 +64,20 @@
                     </form>
                 </div>
                 <div class="card border-0">
-                    @if (product.IsInBasket)
+                    @if (!product.IsDeleted)
                     {
-                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Id')">Убрать из корзины</button>
+                        @if (product.IsInBasket)
+                        {
+                            <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Id')">Убрать из корзины</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Id')">В корзину</button>
+                        }
                     }
                     else
                     {
-                        <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Id')">В корзину</button>
+                        <button disabled class="btn btn-grad" style="width:100%; margin:0px;">Удален</button>
                     }
                 </div>
                 <br />

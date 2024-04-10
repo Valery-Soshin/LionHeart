@@ -23,7 +23,9 @@ public class NotificationService : INotificationService
             var notification = new Notification
             {
                 UserId = dto.UserId,
-                Content = dto.Content
+                Content = dto.Content,
+                LinkToAction = dto.LinkToAction,
+                CreatedAt = dto.CreatedAt
             };
             var result = await _notificationRepository.Add(notification);
             if (result <= 0)
@@ -43,6 +45,41 @@ public class NotificationService : INotificationService
         catch
         {
             return new Result<Notification>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<List<Notification>>> AddRange(List<AddNotificationDto> dtos)
+    {
+        try
+        {
+            var notifications = dtos.Select(d => new Notification()
+            {
+                UserId = d.UserId,
+                Content = d.Content,
+                LinkToAction = d.LinkToAction,
+                CreatedAt = d.CreatedAt
+            }).ToList();
+            var result = await _notificationRepository.AddRange(notifications);
+            if (result <= 0)
+            {
+                return new Result<List<Notification>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.NotificationsNotCreated
+                };
+            }
+            return new Result<List<Notification>>
+            {
+                IsCompleted = true,
+                Data = notifications
+            };
+        }
+        catch
+        {
+            return new Result<List<Notification>>
             {
                 IsCompleted = false,
                 ErrorMessage = ErrorMessage.InternalServerError

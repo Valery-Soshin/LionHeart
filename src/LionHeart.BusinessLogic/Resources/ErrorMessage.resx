@@ -204,6 +204,9 @@
   <data name="NotificationNotRemoved" xml:space="preserve">
     <value>Уведомление не было удалено</value>
   </data>
+  <data name="NotificationsNotCreated" xml:space="preserve">
+    <value>Уведомления не были созданы</value>
+  </data>
   <data name="NotificationsNotFound" xml:space="preserve">
     <value>Уведомления не найдены</value>
   </data>
@@ -212,10 +215,6 @@
   </data>
   <data name="OrderFound" xml:space="preserve">
     <value>Заказ был найден</value>
-  </data>
-  <data name="OrderId" xml:space="preserve">
-    <value>Заказ с ID '{orderId}'</value>
-    <comment>Необходимо передать OrderId</comment>
   </data>
   <data name="OrderNotFound" xml:space="preserve">
     <value>Заказ не был найден</value>

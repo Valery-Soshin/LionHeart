@@ -9,4 +9,6 @@ public class ShowNotificationItemViewModel
     public string Id { get; set; } = null!;
     public string UserId { get; set; } = null!;
     public string Content { get; set; } = null!;
+    public string? LinkToAction { get; set; } = null!;
+    public DateTimeOffset CreatedAt { get; set; }
 }

@@ -72,11 +72,11 @@ public class FavoriteProductService : IFavoriteProductService
             };
         }
     }
-    public async Task<Result<List<FavoriteProduct>>> GetAllByUserId(string userId)
+    public async Task<Result<List<FavoriteProduct>>> GetFavoritesByUserIdWithoutQueryFilter(string userId)
     {
         try
         {
-            var favoriteProducts = await _favoriteRepository.GetAllByUserId(userId);
+            var favoriteProducts = await _favoriteRepository.GetFavoritesByUserIdWithoutQueryFilter(userId);
             if (favoriteProducts is null)
             {
                 return new Result<List<FavoriteProduct>>

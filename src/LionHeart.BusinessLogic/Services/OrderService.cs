@@ -124,9 +124,8 @@ public class OrderService : IOrderService
         {
             await _unitOfWork.BeginTransaction();
 
-            var productServiceResult = await _productService.GetAll(
+            var productServiceResult = await _productService.GetProductsByIds(
                 dto.Products.Select(p => p.ProductId).ToList());
-
             if (productServiceResult.IsFaulted || productServiceResult.Data is null)
             {
                 return new Result<Order>
@@ -135,13 +134,13 @@ public class OrderService : IOrderService
                     ErrorMessage = ErrorMessage.ProductsNotFound
                 };
             }
-
             var products = productServiceResult.Data;
 
+            bool allProductsFound = products.Count == dto.Products.Count;
             bool areEnoughProducts = products.Exists(
                 p => p.Units.Count < dto.Products.Single(d => d.ProductId == p.Id).ProductQuantity);
 
-            if (areEnoughProducts)
+            if (areEnoughProducts && allProductsFound)
             {
                 return new Result<Order>
                 {
@@ -156,7 +155,8 @@ public class OrderService : IOrderService
                 TotalPrice = dto.BasketTotalPrice,
                 CreateAt = dto.CreateAt
             };
-            var productUnits = new List<ProductUnit>();
+            var productUnitDtos = new List<UpdateProductUnitDto>();
+            var notificationDtos = new List<AddNotificationDto>();
             foreach (var product in products)
             {
                 var productQuantity = dto.Products
@@ -174,8 +174,11 @@ public class OrderService : IOrderService
                 {
                     var productUnit = product.Units[i];
                     productUnit.SaleStatus = SaleStatus.Sold;
-                    productUnits.Add(productUnit);
-
+                    productUnitDtos.Add(new UpdateProductUnitDto
+                    {
+                        Id = productUnit.Id,
+                        SaleStatus = productUnit.SaleStatus
+                    });
                     orderItem.Details.Add(new OrderItemDetail
                     {
                         OrderItemId = order.Id,
@@ -183,30 +186,25 @@ public class OrderService : IOrderService
                     });
                 }
                 order.Items.Add(orderItem);
+                notificationDtos.Add(new AddNotificationDto()
+                {
+                    UserId = dto.UserId,
+                    ProductId = product.Id,
+                    Content = NotificationMessage.ProductPurchased,
+                    LinkToAction = $"/Feedbacks/CreateFeedback/?productId={product.Id}",
+                    CreatedAt = DateTimeOffset.UtcNow
+                });
             }
-            await _orderRepository.Add(order);
-
-            var productUnitDtos = productUnits.Select(p => new UpdateProductUnitDto
-            {
-                Id = p.Id,
-                SaleStatus = p.SaleStatus
-            }).ToList();
+            var basketEntryServiceResult = await _basketEntryService.RemoveRange(
+                dto.Products.Select(p => p.EntryId).ToList());
             var productUnitServiceResult = await _productUnitService.UpdateRange(productUnitDtos);
+            var notificationServiceResult = await _notificationService.AddRange(notificationDtos);
+            var orderRepositoryResult = await _orderRepository.Add(order);
 
-            var entriesIds = dto.Products.Select(p => p.EntryId)
-                .ToList();
-            var basketEntryServiceResult = await _basketEntryService.RemoveRange(entriesIds);
-
-            var notificationDto = new AddNotificationDto()
-            { 
-                UserId = dto.UserId,
-                Content = NotificationMessage.OrderCreated
-            };
-            var notificationServiceResult = await _notificationService.Add(notificationDto);
-
-            if (productUnitServiceResult.IsFaulted ||
-                basketEntryServiceResult.IsFaulted ||
-                notificationServiceResult.IsFaulted)
+            if (basketEntryServiceResult.IsFaulted || 
+                productUnitServiceResult.IsFaulted ||
+                notificationServiceResult.IsFaulted || 
+                orderRepositoryResult <= 0)
             {
                 await _unitOfWork.Rollback();
                 return new Result<Order>
@@ -215,7 +213,6 @@ public class OrderService : IOrderService
                     ErrorMessage = ErrorMessage.InternalServerError
                 };
             }
-
             await _unitOfWork.Commit();
             return new Result<Order>()
             {

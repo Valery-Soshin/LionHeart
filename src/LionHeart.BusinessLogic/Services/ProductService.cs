@@ -46,41 +46,12 @@ public class ProductService : IProductService
                 ErrorMessage = ErrorMessage.InternalServerError
             };
         }
-
     }
-    public async Task<Result<List<Product>>> GetAll()
+    public async Task<Result<List<Product>>> GetProductsByIds(List<string> ids)
     {
         try
         {
-            var products = await _productRepository.GetAll();
-            if (products is null)
-            {
-                return new Result<List<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<List<Product>>
-            {
-                IsCompleted = true,
-                Data = products
-            };
-        }
-        catch
-        {
-            return new Result<List<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
-        }
-    }
-    public async Task<Result<List<Product>>> GetAll(List<string> ids)
-    {
-        try
-        {
-            var products = await _productRepository.GetAll(ids);
+            var products = await _productRepository.GetProductsByIds(ids);
             if (products is null)
             {
                 return new Result<List<Product>>
@@ -338,7 +309,7 @@ public class ProductService : IProductService
                     ErrorMessage = ErrorMessage.ProductNotFound
                 };
             }
-            product.IsActive = false;
+            product.IsDeleted = true;
             await _productRepository.Update(product);
             return new Result<Product>
             {

@@ -9,7 +9,5 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.Property(p => p.Id).ValueGeneratedOnAdd();
-
-        builder.HasQueryFilter(p => p.IsActive);
     }
 }

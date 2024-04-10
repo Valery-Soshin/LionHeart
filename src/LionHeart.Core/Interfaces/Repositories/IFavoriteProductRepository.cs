@@ -5,7 +5,7 @@ namespace LionHeart.Core.Interfaces.Repositories;
 public interface IFavoriteProductRepository : IRepository<FavoriteProduct>
 {
     Task<FavoriteProduct?> GetByUserIdProductId(string userId, string productId);
-    Task<List<FavoriteProduct>> GetAllByUserId(string userId);
+    Task<List<FavoriteProduct>> GetFavoritesByUserIdWithoutQueryFilter(string userId);
     Task<bool> Any(string userId);
     Task<bool> Exists(string userId, string productId);
 }

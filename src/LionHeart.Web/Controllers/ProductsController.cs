@@ -105,7 +105,8 @@ public class ProductsController : Controller
                 CreatedAt = f.CreatedAt
             }).ToList(),
             ShowFeedbacks = showFeedbacks,
-            WriteFeedback = writeFeedback
+            WriteFeedback = writeFeedback,
+            IsDeleted = product.IsDeleted
         };
         return View(model);
     }

@@ -39,7 +39,9 @@ public class ProfileController : Controller
             {
                 Id = n.Id,
                 UserId = n.UserId,
-                Content = n.Content
+                Content = n.Content,
+                LinkToAction = n.LinkToAction,
+                CreatedAt = n.CreatedAt
             }).ToList()
         };
         return View(model);
@@ -51,7 +53,7 @@ public class ProfileController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var result = await _favoriteProductService.GetAllByUserId(userId);
+        var result = await _favoriteProductService.GetFavoritesByUserIdWithoutQueryFilter(userId);
         if (result.IsFaulted) return BadRequest(result.ErrorMessage);
 
         var favoriteProducts = result.Data;

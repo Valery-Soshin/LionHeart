@@ -16,22 +16,14 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Image)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
-    public override Task<List<Product>> GetAll()
-    {
-        return _dbContext.Products.AsNoTracking()
-            .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
-            .Include(p => p.Units)
-            .Include(p => p.Image)
-            .ToListAsync();
-    }
-    public Task<List<Product>> GetAll(List<string> ids)
+    public Task<List<Product>> GetProductsByIds(List<string> ids)
     {
         return _dbContext.Products.AsNoTrackingWithIdentityResolution()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Include(p => p.Units)
             .Include(p => p.Image)
+            .Where(p => !p.IsDeleted)
             .Where(p => ids.Contains(p.Id))
             .ToListAsync();
     }
@@ -41,6 +33,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Include(p => p.Image)
+            .Where(p => !p.IsDeleted)
             .Where(p => p.CategoryId == categoryId)
             .ToListAsync();
     }
@@ -50,18 +43,21 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Include(p => p.Image)
+            .Where(p => !p.IsDeleted)
             .Where(p => p.UserId == userId)
             .ToListAsync();
     }
     public async Task<PagedResponse> GetProductsWithPagination(int pageNumber, int pageSize)
     {
         var totalRecords = await _dbContext.Products.AsNoTracking()
+            .Where(p => !p.IsDeleted)
             .CountAsync();
 
         var products = await _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
             .Include(p => p.Image)
+            .Where(p => !p.IsDeleted)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -78,6 +74,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Image)
+            .Where(p => !p.IsDeleted)
             .Where(p => p.Name == productName ||
                         p.Name.StartsWith(productName))
             .ToListAsync();

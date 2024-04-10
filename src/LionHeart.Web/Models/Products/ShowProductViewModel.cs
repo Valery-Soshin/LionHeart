@@ -12,6 +12,7 @@ public class ShowProductViewModel
     public List<FeedbackViewModel> Feedbacks { get; set; } = [];
     public bool ShowFeedbacks { get; set; }
     public bool WriteFeedback { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 

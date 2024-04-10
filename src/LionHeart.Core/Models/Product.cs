@@ -13,7 +13,7 @@ public class Product
     public string Specifications { get; set; } = null!;
     public DateTimeOffset CreatedAt { get; set; }
     public Image Image { get; set; } = null!;
-    public bool IsActive { get; set; } = true;
+    public bool IsDeleted { get; set; }
 
     public List<ProductUnit> Units { get; set; } = [];
     public List<Feedback> Feedbacks { get; set; } = [];

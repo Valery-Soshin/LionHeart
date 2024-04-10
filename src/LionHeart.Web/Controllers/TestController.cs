@@ -20,11 +20,25 @@ namespace LionHeart.Web.Controllers
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<IActionResult> AddUsersAndProducts()
+        public IActionResult Test()
         {
-            _applicationDbContext.Database.EnsureDeleted();
-            _applicationDbContext.Database.EnsureCreated();
+            return View();
+        }
 
+        public async Task<IActionResult> RecreateDatabase()
+        {
+            await _applicationDbContext.Database.EnsureDeletedAsync();
+            await _applicationDbContext.Database.EnsureCreatedAsync();
+
+            var supplier = await CreateUsersAndReturnSupplier();
+            await CreateProducts(supplier);
+            await CreateCategories();
+
+            return Redirect("/Home/Index");
+        }
+
+        private async Task<User> CreateUsersAndReturnSupplier()
+        {
             await _roleManager.CreateAsync(new IdentityRole("Supplier"));
             await _roleManager.CreateAsync(new IdentityRole("Customer"));
 
@@ -36,7 +50,6 @@ namespace LionHeart.Web.Controllers
             await _userManager.CreateAsync(supplier, "Supplier2024-");
             await _userManager.AddToRoleAsync(supplier, "Customer");
             await _userManager.AddToRoleAsync(supplier, "Supplier");
-            await CreateProducts(supplier);
 
             var user = new User
             {
@@ -45,13 +58,10 @@ namespace LionHeart.Web.Controllers
             };
             await _userManager.CreateAsync(user, "Customer2024-");
             await _userManager.AddToRoleAsync(user, "Customer");
-
-            return Redirect("/Home/Index");
+            return supplier;
         }
-
-        public async Task<IActionResult> AddCategories()
+        private Task CreateCategories()
         {
-
             var products = new Category()
             {
                 Name = "Продукты",
@@ -77,25 +87,16 @@ namespace LionHeart.Web.Controllers
                 ]
             };
             _applicationDbContext.Categories.AddRange(products, electronics);
-            await _applicationDbContext.SaveChangesAsync();
-
-            return Ok();
+            return _applicationDbContext.SaveChangesAsync();
         }
-
-        public IActionResult TestEventInView()
-        {
-            return View();
-        }
-
-        private Task CreateProducts(User supplier)
+        private async Task CreateProducts(User supplier)
         {
             var category = new Category()
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "Одежда"
             };
-
-            _applicationDbContext.Categories.Add(category);
+            await _applicationDbContext.Categories.AddAsync(category);
 
             for (int i = 0; i < 30; i++)
             {
@@ -130,7 +131,7 @@ namespace LionHeart.Web.Controllers
                     }
                 };
 
-                _applicationDbContext.AddRange(product, product2);
+                await _applicationDbContext.AddRangeAsync(product, product2);
 
                 for (int k = 0; k < 50; k++)
                 {
@@ -150,11 +151,11 @@ namespace LionHeart.Web.Controllers
                         CreatedAt = DateTimeOffset.UtcNow
                     };
 
-                    _applicationDbContext.ProductUnits.AddRange(productUnit, productUnit2);
+                    await _applicationDbContext.ProductUnits.AddRangeAsync(productUnit, productUnit2);
                 }
             }
 
-            return _applicationDbContext.SaveChangesAsync();
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }
