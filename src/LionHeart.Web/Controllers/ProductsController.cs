@@ -106,7 +106,8 @@ public class ProductsController : Controller
             }).ToList(),
             ShowFeedbacks = showFeedbacks,
             WriteFeedback = writeFeedback,
-            IsDeleted = product.IsDeleted
+            IsDeleted = product.IsDeleted,
+            IsInStock = product.Units.Count > 0
         };
         return View(model);
     }

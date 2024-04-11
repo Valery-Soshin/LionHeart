@@ -13,6 +13,7 @@ public class ShowProductViewModel
     public bool ShowFeedbacks { get; set; }
     public bool WriteFeedback { get; set; }
     public bool IsDeleted { get; set; }
+    public bool IsInStock { get; set; }
 }
 
 

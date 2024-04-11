@@ -12,15 +12,13 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
                 .ThenInclude(f => f.User)
-            .Include(p => p.Units)
             .Include(p => p.Image)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .SingleOrDefaultAsync(p => p.Id == id);
     }
     public Task<List<Product>> GetProductsByIds(List<string> ids)
     {
         return _dbContext.Products.AsNoTrackingWithIdentityResolution()
             .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
             .Include(p => p.Units)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
@@ -31,7 +29,6 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
     {
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
             .Where(p => p.CategoryId == categoryId)
@@ -41,7 +38,6 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
     {
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
             .Where(p => p.UserId == userId)
@@ -55,7 +51,6 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
 
         var products = await _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
             .Skip((pageNumber - 1) * pageSize)

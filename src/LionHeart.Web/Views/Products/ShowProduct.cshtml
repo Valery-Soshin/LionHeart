@@ -50,13 +50,17 @@
                             <p class="card-text pt-3"><small class="text-body-secondary">@Model.Specifications</small></p>
                         </div>
                         <div class="d-flex justify-content-end bg-light">
-                            @if (!Model.IsDeleted)
+                            @if (Model.IsDeleted)
                             {
-                                <button onclick="buyProduct('@Model.Id')" class="btn w-25 btn-grad">В корзину</button>
+                                <button disabled class="btn w-25 btn-grad">Удален</button>
+                            }
+                            else if (!Model.IsInStock)
+                            {
+                                <button disabled class="btn w-25 btn-grad">Нет в наличии</button>
                             }
                             else
                             {
-                                <button disabled class="btn w-25 btn-grad">Удален</button>
+                                <button onclick="buyProduct('@Model.Id')" class="btn w-25 btn-grad">В корзину</button>
                             }
                             @if (Model.WriteFeedback)
                             {

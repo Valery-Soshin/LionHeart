@@ -122,7 +122,6 @@ public class BasketEntryService : IBasketEntryService
                     ErrorMessage = ErrorMessage.BasketEntryNotCreated,
                 };
             }
-
             return new Result<BasketEntry>
             {
                 IsCompleted = true,
