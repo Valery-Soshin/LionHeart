@@ -12,6 +12,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
                 .ThenInclude(f => f.User)
+            .Include(p => p.Units)
             .Include(p => p.Image)
             .SingleOrDefaultAsync(p => p.Id == id);
     }

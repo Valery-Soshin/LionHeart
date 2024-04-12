@@ -39,9 +39,9 @@ public class ProductsController : Controller
     {
         var userId = _userManager.GetUserId(User);
 
-        var result = await _productService.GetProductsWithPagination(page);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-        var pagedResponse = result.Data;
+        var productServiceResult = await _productService.GetProductsWithPagination(page);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
+        var pagedResponse = productServiceResult.Data;
         if (pagedResponse is null) return BadRequest();
 
         var model = new IndexViewModel
