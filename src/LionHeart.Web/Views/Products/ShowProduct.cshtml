@@ -76,7 +76,7 @@
                 {
                     <div class="card-footer">
                         <div class="d-flex justify-content-center">
-                            <button id="load-feedbacks" class="btn btn-grad w-50">Посмотреть отзывы</button>
+                            <button id="load-feedbacks" class="btn btn-grad w-50 p-4">Посмотреть отзывы</button>
                         </div>
                     </div>
                    <div id="feedbacks-content"></div>
@@ -124,7 +124,6 @@
             });
             window.location.pathname = "/Basket/Index";
         };
-
         $("#load-feedbacks").click(function (event) {
             $("#load-feedbacks").hide();
             $.ajax({

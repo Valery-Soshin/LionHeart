@@ -1,0 +1,49 @@
+﻿@model ShowMyFeedbacksViewModel
+
+@{
+    ViewData["Title"] = "Мои отзывы";
+}
+
+<style>
+
+</style>
+
+<div>
+    <h2>Отзывы</h2>
+    <br />
+    @foreach (var feedback in Model.Feedbacks)
+    {
+        <div class="card show-my-feedback text-start">
+            <div class="p-5 row">
+                <div class="col-1">
+                    <img src="/images/@feedback.ImageName"/>
+                </div>
+                <div class="col-10 ms-2">
+                    <div>@feedback.ProductName</div>
+                    <div class="row">
+                        <div class="col-1" style="width: 150px;">
+                            @for (int i = 0; i < feedback.Rating; i++)
+                            {
+                                <label>★</label>
+                            }
+                        </div>
+                        <div class="col">@feedback.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</div>
+                    </div>
+                    <br />
+                    <div>@feedback.Content</div>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    <div>
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+        }
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+        }
+    </div>
+</div>

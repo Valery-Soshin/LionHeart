@@ -4,13 +4,13 @@
 @{
     var userId = userManager.GetUserId(User);
     if (userId is not null)
-{
-    var count = (await notificationService.Count(userId)).Data;
-    if (count > 0)
     {
-        <span class="position-absolute top-5 start-100 translate-middle badge rounded-pill bg-danger">
-            @count
-        </span>
+        var count = (await notificationService.Count(userId)).Data;
+        if (count > 0)
+        {
+            <span class="position-absolute top-5 start-100 translate-middle badge rounded-pill bg-danger">
+                @count
+            </span>
+        }
     }
-}
 }

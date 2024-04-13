@@ -47,12 +47,41 @@ public class FeedbackService : IFeedbackService
             };
         }
     }
-    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksWithPagination(string productId, int pageNumber)
+    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByUserIdWithPagination(string userId, int pageNumber)
     {
         try
         {
             const int pageSize = 10;
-            var pagedResponse = await _feedbackRepository.GetFeedbacksWithPagination(productId, pageNumber, pageSize);
+            var pagedResponse = await _feedbackRepository.GetFeedbacksByUserIdWithPagination(userId, pageNumber, pageSize);
+            if (pagedResponse is null)
+            {
+                return new Result<PagedResponse<Feedback>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FeedbacksNotFound
+                };
+            }
+            return new Result<PagedResponse<Feedback>>
+            {
+                IsCompleted = true,
+                Data = pagedResponse
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse<Feedback>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByProductIdWithPagination(string productId, int pageNumber)
+    {
+        try
+        {
+            const int pageSize = 10;
+            var pagedResponse = await _feedbackRepository.GetFeedbacksByProductIdWithPagination(productId, pageNumber, pageSize);
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Feedback>>

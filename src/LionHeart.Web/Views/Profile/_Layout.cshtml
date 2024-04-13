@@ -5,16 +5,16 @@
 <div class="site-body-container" style="color:#930667">
     <div class="card">
         <div class="card-header" style="background-color:#930667">
-            <div class="d-flex justify-content-start gap-3">
-                <a asp-action="ShowProfile" class="nav-link site-nav-item">Профиль</a>
-                <a asp-action="ShowFavorites" class="nav-link site-nav-item">Избранное</a>
-                <a asp-action="ShowNotifications" class="nav-link site-nav-item position-relative">
+            <div class="d-flex justify-content-start gap-2">
+                <a asp-action="ShowProfile" class="nav-link custom-btn-link">Профиль</a>
+                <a asp-action="ShowFavorites" class="nav-link custom-btn-link">Избранное</a>
+                <a asp-action="ShowMyFeedbacks" class="nav-link custom-btn-link">Мои отзывы</a>
+                <a asp-action="ShowNotifications" class="nav-link custom-btn-link position-relative">
                     Уведомления
                     @await Html.PartialAsync("Notifications")
                 </a>
             </div>
             <div class="d-flex justify-content-end align-items-center" style="color: white;">
-                
             </div>
         </div>
         <div class="card-body bg-light">

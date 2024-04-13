@@ -11,16 +11,87 @@ namespace LionHeart.Web.Controllers;
 public class ProfileController : Controller
 {
     private readonly IFavoriteProductService _favoriteProductService;
+    private readonly IFeedbackService _feedbackService;
     private readonly INotificationService _notificationService;
+    private readonly IProductService _productService;
     private readonly UserManager<User> _userManager;
 
     public ProfileController(IFavoriteProductService favoriteProductService,
+                             IFeedbackService feedbackService,
                              INotificationService notificationService,
+                             IProductService productService,
                              UserManager<User> userManager)
     {
         _favoriteProductService = favoriteProductService;
+        _feedbackService = feedbackService;
         _notificationService = notificationService;
+        _productService = productService;
         _userManager = userManager;
+    }
+    [HttpGet]
+    public async Task<IActionResult> ShowProfile()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null) return Unauthorized();
+
+        var model = new ShowProfileViewModel()
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = user.PhoneNumber,
+            PersonalDiscount = user.PersonalDiscount
+        };
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ShowFavorites()
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
+
+        var result = await _favoriteProductService.GetFavoritesByUserIdWithoutQueryFilter(userId);
+        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+
+        var favoriteProducts = result.Data;
+        if (favoriteProducts is null) return BadRequest();
+
+        return View(favoriteProducts);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ShowMyFeedbacks(int pageNumber = 1)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null) return Unauthorized();
+
+        var feedbackServiceResult = await _feedbackService.GetFeedbacksByUserIdWithPagination(userId, pageNumber);
+        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
+        var pagedResponse = feedbackServiceResult.Data;
+        if (pagedResponse is null) return BadRequest();
+
+        bool hasNullObjects = pagedResponse.Entities.Exists(
+            e => e.Product is null || e .Product.Image is null);
+        if (hasNullObjects) return BadRequest();
+
+        var model = new ShowMyFeedbacksViewModel()
+        {
+            PageNumber = pagedResponse.PageNumber,
+            HasPreviousPage = pagedResponse.HasPreviousPage,
+            HasNextPage = pagedResponse.HasNextPage,
+            Feedbacks = pagedResponse.Entities.Select(e => new ShowMyFeedbacksItemViewModel
+            {
+                Id = e.Id,
+                ProductName = e.Product!.Name,
+                ImageName = e.Product.Image.FileName,
+                Content = e.Content,
+                Rating = (int)e.Rating,
+                CreatedAt = e.CreatedAt
+            }).ToList()
+        };
+        return View(model);
     }
 
     [HttpGet]
@@ -43,39 +114,6 @@ public class ProfileController : Controller
                 LinkToAction = n.LinkToAction,
                 CreatedAt = n.CreatedAt
             }).ToList()
-        };
-        return View(model);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ShowFavorites()
-    {
-        var userId = _userManager.GetUserId(User);
-        if (userId is null) return Unauthorized();
-
-        var result = await _favoriteProductService.GetFavoritesByUserIdWithoutQueryFilter(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-
-        var favoriteProducts = result.Data;
-        if (favoriteProducts is null) return BadRequest();
-
-        return View(favoriteProducts);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ShowProfile()
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null) return Unauthorized();
-
-        var model = new ShowProfileViewModel()
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            PhoneNumber = user.PhoneNumber,
-            PersonalDiscount = user.PersonalDiscount
         };
         return View(model);
     }

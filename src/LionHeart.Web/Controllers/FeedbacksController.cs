@@ -22,6 +22,17 @@ public class FeedbacksController : Controller
         _userManager = userManager;
     }
 
+    public async Task<IActionResult> ShowFeedback(string id)
+    {
+        var feedbackServiceResult = await _feedbackService.GetById(id);
+        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
+        var feedback = feedbackServiceResult.Data;
+        if (feedback is null) return BadRequest();
+
+        return null;
+
+    }
+
     [HttpGet]
     public async Task<IActionResult> CreateFeedback(string productId)
     {
@@ -65,7 +76,7 @@ public class FeedbacksController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var feedbackServiceResult = await _feedbackService.GetFeedbacksWithPagination(productId, pageNumber);
+        var feedbackServiceResult = await _feedbackService.GetFeedbacksByProductIdWithPagination(productId, pageNumber);
         if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
 
         var pagedResponse = feedbackServiceResult.Data;

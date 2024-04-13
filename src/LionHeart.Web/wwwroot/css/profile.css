@@ -2,6 +2,13 @@
     color: white;
 }
 
-.profile-nav-link:hover {
-    color: #3a0227;
+    .profile-nav-link:hover {
+        color: #3a0227;
+    }
+
+.show-my-feedback img {
+    height: 100px;
+    width: 100px;
+    object-fit:cover;
 }
+

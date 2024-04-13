@@ -12,20 +12,36 @@ public class FeedbackRepository(ApplicationDbContext dbContext) : RepositoryBase
             .Include(f => f.User)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
-    public async Task<PagedResponse<Feedback>> GetFeedbacksWithPagination(string productId, int pageNumber, int pageSize)
+    public async Task<PagedResponse<Feedback>> GetFeedbacksByUserIdWithPagination(string userId, int pageNumber, int pageSize)
+    {
+        var totalRecords = await _dbContext.Feedbacks.AsNoTracking()
+            .Where(f => f.UserId == userId)
+            .CountAsync();
+
+        var feedbacks = await _dbContext.Feedbacks.AsNoTracking()
+            .Include(f => f.Product)
+                .ThenInclude(p => p.Image)
+            .Where(f => f.UserId == userId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse<Feedback>(feedbacks, totalRecords, pageNumber, pageSize);
+    }
+    public async Task<PagedResponse<Feedback>> GetFeedbacksByProductIdWithPagination(string productId, int pageNumber, int pageSize)
     {
         var totalRecords = await _dbContext.Feedbacks.AsNoTracking()
             .Where(f => f.ProductId == productId)
             .CountAsync();
 
-        var products = await _dbContext.Feedbacks.AsNoTracking()
+        var feedbacks = await _dbContext.Feedbacks.AsNoTracking()
             .Include(f => f.User)
             .Where(f => f.ProductId == productId)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResponse<Feedback>(products, totalRecords, pageNumber, pageSize);
+        return new PagedResponse<Feedback>(feedbacks, totalRecords, pageNumber, pageSize);
     }
     public Task<bool> Exists(string userId, string productId)
     {

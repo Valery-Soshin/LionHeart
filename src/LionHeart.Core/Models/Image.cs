@@ -8,5 +8,5 @@ public class Image
     public string Id { get; set; } = null!;
     public string FileName { get; set; } = null!;
     [NotMapped]
-    public IFormFile? File { get; set; }
+    public IFormFile File { get; set; } = null!;
 }
