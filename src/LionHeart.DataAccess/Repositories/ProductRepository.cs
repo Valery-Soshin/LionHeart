@@ -11,7 +11,6 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Feedbacks)
-                .ThenInclude(f => f.User)
             .Include(p => p.Units)
             .Include(p => p.Image)
             .SingleOrDefaultAsync(p => p.Id == id);
@@ -44,7 +43,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Where(p => p.UserId == userId)
             .ToListAsync();
     }
-    public async Task<PagedResponse> GetProductsWithPagination(int pageNumber, int pageSize)
+    public async Task<PagedResponse<Product>> GetProductsWithPagination(int pageNumber, int pageSize)
     {
         var totalRecords = await _dbContext.Products.AsNoTracking()
             .Where(p => !p.IsDeleted)
@@ -58,7 +57,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResponse(products, totalRecords, pageNumber, pageSize);
+        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
     }
     public Task<List<Product>> Search(string productName)
     {

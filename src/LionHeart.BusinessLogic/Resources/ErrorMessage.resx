@@ -189,6 +189,9 @@
   <data name="FeedbackNotRemoved" xml:space="preserve">
     <value>Отзыв не был удален</value>
   </data>
+  <data name="FeedbacksNotFound" xml:space="preserve">
+    <value>Отзывы не были найдены</value>
+  </data>
   <data name="ImageNotCreated" xml:space="preserve">
     <value>Картинка не была добавлена</value>
   </data>

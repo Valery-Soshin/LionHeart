@@ -12,11 +12,20 @@ public class FeedbackRepository(ApplicationDbContext dbContext) : RepositoryBase
             .Include(f => f.User)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
-    public override Task<List<Feedback>> GetAll()
+    public async Task<PagedResponse<Feedback>> GetFeedbacksWithPagination(string productId, int pageNumber, int pageSize)
     {
-        return _dbContext.Feedbacks.AsNoTracking()
+        var totalRecords = await _dbContext.Feedbacks.AsNoTracking()
+            .Where(f => f.ProductId == productId)
+            .CountAsync();
+
+        var products = await _dbContext.Feedbacks.AsNoTracking()
             .Include(f => f.User)
+            .Where(f => f.ProductId == productId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResponse<Feedback>(products, totalRecords, pageNumber, pageSize);
     }
     public Task<bool> Exists(string userId, string productId)
     {

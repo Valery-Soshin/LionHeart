@@ -1,4 +1,5 @@
-﻿using LionHeart.Core.Models;
+﻿using LionHeart.Core.Enums;
+using LionHeart.Core.Models;
 using LionHeart.DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +79,7 @@ namespace LionHeart.Web.Controllers
             var electronics = new Category()
             {
                 Name = "Электроника",
-                SubCategories = 
+                SubCategories =
                 [
                     new Category() { Name = "Ноутбуки"},
                     new Category() { Name = "ПК"},
@@ -89,18 +90,18 @@ namespace LionHeart.Web.Controllers
             _applicationDbContext.Categories.AddRange(products, electronics);
             return _applicationDbContext.SaveChangesAsync();
         }
-        private async Task CreateProducts(User supplier)
+        private Task CreateProducts(User supplier)
         {
             var category = new Category()
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "Одежда"
             };
-            await _applicationDbContext.Categories.AddAsync(category);
+            _applicationDbContext.Categories.Add(category);
 
             for (int i = 0; i < 30; i++)
             {
-                var product = new Product()
+                var product1 = new Product()
                 {
                     Id = Guid.NewGuid().ToString(),
                     UserId = supplier.Id,
@@ -115,6 +116,7 @@ namespace LionHeart.Web.Controllers
                         FileName = "img1.jpg"
                     }
                 };
+                CreateFeedbacks(supplier.Id,product1.Id);
                 var product2 = new Product()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -131,14 +133,14 @@ namespace LionHeart.Web.Controllers
                     }
                 };
 
-                await _applicationDbContext.AddRangeAsync(product, product2);
+                _applicationDbContext.AddRange(product1, product2);
 
                 for (int k = 0; k < 50; k++)
                 {
                     var productUnit = new ProductUnit
                     {
                         Id = Guid.NewGuid().ToString(),
-                        ProductId = product.Id,
+                        ProductId = product1.Id,
                         SaleStatus = Core.Enums.SaleStatus.Available,
                         CreatedAt = DateTimeOffset.UtcNow
                     };
@@ -150,12 +152,23 @@ namespace LionHeart.Web.Controllers
                         SaleStatus = Core.Enums.SaleStatus.Available,
                         CreatedAt = DateTimeOffset.UtcNow
                     };
-
-                    await _applicationDbContext.ProductUnits.AddRangeAsync(productUnit, productUnit2);
+                    _applicationDbContext.ProductUnits.AddRange(productUnit, productUnit2);
                 }
             }
-
-            await _applicationDbContext.SaveChangesAsync();
+            return _applicationDbContext.SaveChangesAsync();
+        }
+        private Task CreateFeedbacks(string userId, string productId)
+        {
+            var feedbacks = Enumerable.Range(0, 25).Select(i => new Feedback()
+            {
+                UserId = userId,
+                ProductId = productId,
+                Content = Guid.NewGuid().ToString(),
+                CreatedAt = DateTimeOffset.UtcNow,
+                Rating = (Rating)new Random().Next(1, 5)
+            });
+            _applicationDbContext.AddRange(feedbacks);
+            return _applicationDbContext.SaveChangesAsync();
         }
     }
 }

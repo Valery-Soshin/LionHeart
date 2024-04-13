@@ -59,4 +59,32 @@ public class FeedbacksController : Controller
 
         return Redirect("/Products");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> ListFeedbacks(string productId, int pageNumber = 1)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var feedbackServiceResult = await _feedbackService.GetFeedbacksWithPagination(productId, pageNumber);
+        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
+
+        var pagedResponse = feedbackServiceResult.Data;
+        if (pagedResponse is null) return BadRequest();
+
+        var model = new ListFeedbacksViewModel
+        {
+            ProductId = productId,
+            PageNumber = pagedResponse.PageNumber,
+            HasNextPage = pagedResponse.HasNextPage,
+            HasPreviousPage = pagedResponse.HasPreviousPage,
+            Feedbacks = pagedResponse.Entities.Select(e => new ListFeedbacksItemViewModel()
+            {
+                FirstName = e.User.FirstName!,
+                Rating = (int)e.Rating,
+                Content = e.Content,
+                CreatedAt = e.CreatedAt
+            }).ToList()
+        };
+        return PartialView(model);
+    }
 }

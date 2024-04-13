@@ -7,6 +7,7 @@ namespace LionHeart.Core.Interfaces.Services;
 public interface IFeedbackService
 {
     Task<Result<Feedback>> GetById(string id);
+    Task<Result<PagedResponse<Feedback>>> GetFeedbacksWithPagination(string productId, int pageNumber);
     Task<Result<Feedback>> Add(AddFeedbackDto dto);
     Task<Result<Feedback>> Remove(string id);
     Task<Result<bool>> HasFeedbackPending(string userId, string productId);

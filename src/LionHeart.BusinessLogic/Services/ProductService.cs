@@ -131,7 +131,7 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<PagedResponse>> GetProductsWithPagination(int pageNumber)
+    public async Task<Result<PagedResponse<Product>>> GetProductsWithPagination(int pageNumber)
     {
         try
         {
@@ -139,13 +139,13 @@ public class ProductService : IProductService
             var pagedResponse = await _productRepository.GetProductsWithPagination(pageNumber, pageSize);
             if (pagedResponse is null)
             {
-                return new Result<PagedResponse>
+                return new Result<PagedResponse<Product>>
                 {
                     IsCompleted = false,
                     ErrorMessage = ErrorMessage.ProductsNotFound
                 };
             }
-            return new Result<PagedResponse>
+            return new Result<PagedResponse<Product>>
             {
                 IsCompleted = true,
                 Data = pagedResponse
@@ -153,7 +153,7 @@ public class ProductService : IProductService
         }
         catch
         {
-            return new Result<PagedResponse>
+            return new Result<PagedResponse<Product>>
             {
                 IsCompleted = false,
                 ErrorMessage = ErrorMessage.InternalServerError

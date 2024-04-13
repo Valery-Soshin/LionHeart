@@ -50,7 +50,7 @@ public class ProductsController : Controller
             HasPreviousPage = pagedResponse.HasPreviousPage,
             HasNextPage = pagedResponse.HasNextPage
         };
-        var products = pagedResponse.Products;
+        var products = pagedResponse.Entities;
         foreach (var product in products)
         {
             bool isInBasket = userId is not null &&
@@ -97,17 +97,11 @@ public class ProductsController : Controller
             Description = product.Description,
             Specifications = product.Specifications,
             ImageName = product.Image.FileName,
-            Feedbacks = product.Feedbacks.Select(f => new FeedbackViewModel(){
-                FirstName = f.User.FirstName,
-                LastName = f.User.LastName,
-                Rating = f.Rating,
-                Content = f.Content,
-                CreatedAt = f.CreatedAt
-            }).ToList(),
             ShowFeedbacks = showFeedbacks,
             WriteFeedback = writeFeedback,
             IsDeleted = product.IsDeleted,
-            IsInStock = product.Units.Count > 0
+            IsInStock = product.Units.Count > 0,
+            HasFeedbacks = product.Feedbacks.Count > 0
         };
         return View(model);
     }

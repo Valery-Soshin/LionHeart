@@ -9,19 +9,9 @@ public class ShowProductViewModel
     public string Description { get; set; } = null!;
     public string Specifications { get; set; } = null!;
     public string? ImageName { get; set; }
-    public List<FeedbackViewModel> Feedbacks { get; set; } = [];
     public bool ShowFeedbacks { get; set; }
     public bool WriteFeedback { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsInStock { get; set; }
-}
-
-
-public class FeedbackViewModel
-{
-    public string? FirstName { get; set; } = null!;
-    public string? LastName { get; set; } = null!;
-    public Rating Rating { get; set; }
-    public string Content { get; set; } = null!;
-    public DateTimeOffset CreatedAt { get; set; }
+    public bool HasFeedbacks { get; set; }
 }

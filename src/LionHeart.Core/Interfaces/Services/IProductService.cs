@@ -10,7 +10,7 @@ public interface IProductService
     Task<Result<List<Product>>> GetProductsByIds(List<string> ids);
     Task<Result<List<Product>>> GetProductsByCategoryId(string categoryId);
     Task<Result<List<Product>>> GetProductsByUserId(string userId);
-    Task<Result<PagedResponse>> GetProductsWithPagination(int pageNumber);
+    Task<Result<PagedResponse<Product>>> GetProductsWithPagination(int pageNumber);
     Task<Result<List<Product>>> Search(string productName);
     Task<Result<Product>> Add(AddProductDto dto);
     Task<Result<Product>> Update(UpdateProductDto dto);

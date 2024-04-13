@@ -277,6 +277,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Отзывы не были найдены.
+        /// </summary>
+        internal static string FeedbacksNotFound {
+            get {
+                return ResourceManager.GetString("FeedbacksNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Картинка не была добавлена.
         /// </summary>
         internal static string ImageNotCreated {
