@@ -96,10 +96,13 @@ public class ProductsController : Controller
         var model = new ShowProductViewModel()
         {
             Id = id,
+            Price = product.Price,
             Name = product.Name,
             Description = product.Description,
             Specifications = product.Specifications,
             ImageName = product.Image.FileName,
+            FeedbackQuantity = product.Feedbacks.Count,
+            TotalRating = product.Feedbacks.Count > 0 ? product.Feedbacks.Average(f => (int)f.Rating) : -1,
             ShowFeedbacks = showFeedbacks,
             WriteFeedback = writeFeedback,
             IsDeleted = product.IsDeleted,

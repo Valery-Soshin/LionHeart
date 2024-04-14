@@ -11,9 +11,9 @@
 <div>
     <h2>Отзывы</h2>
     <br />
-    @foreach (var feedback in Model.Feedbacks)
+    @foreach (var feedback in Model.Feedbacks.OrderByDescending(f => f.CreatedAt))
     {
-        <div class=" show-my-feedback text-start">
+        <div class="show-my-feedback text-start">
             <div class="p-5 row">
                 <div class="col-1">
                     <img src="/images/@feedback.ImageName"/>

@@ -8,8 +8,17 @@
     transition: 0.5s;
 }
 
-.favorites-button #toFavorites:hover {  
+.favorites-button #toFavorites:hover {
     background-color: #a56c93;
     border-radius: 5px;
 }
 
+.show-product {
+    width: 600px;
+    height: 700px;
+}
+
+    .show-product img {
+        border-radius: 25px;
+        object-fit: contain;
+    }

@@ -1,88 +1,78 @@
-﻿@using LionHeart.Web.Models.Products
+﻿@using LionHeart.Web.Models
+@using LionHeart.Web.Models.Products
 @model ShowProductViewModel
 
 @{
     ViewBag.Title = $"Товар: {Model.Name}";
 }
 
-<style>
-    .show-product-img {
-        border-radius: 25px;
-        width: 500px;
-        min-width: 300px;
-        height: 400px;
-        object-fit: contain;
-    }
-</style>
-
 <div class="site-body-container">
-    <div class="card">
-        <div class="card bg-light">
-            <div class="row g-0 bg-light">
-                <div class="col-md-4">
-                    <div id="carouselExample" class="carousel slide m-3">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="/images/@Model.ImageName" class="img-thumbnail show-product-img">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="/images/@Model.ImageName" class="img-thumbnail show-product-img">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="/images/@Model.ImageName" class="img-thumbnail show-product-img">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+    <div class="row">
+        <div class="col-5 mt-5">
+            <div id="carouselExample" class="carousel slide show-product">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/images/@Model.ImageName" class="img-thumbnail show-product border-0">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/@Model.ImageName" class="img-thumbnail show-product border-0">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/@Model.ImageName" class="img-thumbnail show-product border-0">
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="card m-5 bg-light">
-                        <div class="card-body" style="background-color:#930667; color:white;">
-                            <h3 class="card-title">@Model.Name</h3>
-                            <p class="card-text pt-3">@Model.Description</p>
-                            <p class="card-text pt-3"><small class="text-body-secondary">@Model.Specifications</small></p>
-                        </div>
-                        <div class="d-flex justify-content-end bg-light">
-                            @if (Model.IsDeleted)
-                            {
-                                <button disabled class="btn w-25 btn-grad">Удален</button>
-                            }
-                            else if (!Model.IsInStock)
-                            {
-                                <button disabled class="btn w-25 btn-grad">Нет в наличии</button>
-                            }
-                            else
-                            {
-                                <button onclick="buyProduct('@Model.Id')" class="btn w-25 btn-grad">В корзину</button>
-                            }
-                            @if (Model.WriteFeedback)
-                            {
-                                <a asp-action="CreateFeedback" asp-controller="Feedbacks" asp-route-productId="@Model.Id" class="btn btn-grad w-50">Написать отзыв</a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br />
-            <div class="row g-0">
-                @if (Model.HasFeedbacks)
-                {
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-center">
-                            <button id="load-feedbacks" class="btn btn-grad w-50 p-4">Посмотреть отзывы</button>
-                        </div>
-                    </div>
-                   <div id="feedbacks-content"></div>
-                }
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
+        <div class="col-4 mt-5">
+            <div class="p-4">
+                <h3>@Model.Name</h3>
+                <p>
+                    @await Html.PartialAsync("/Views/Feedbacks/ShowFeedbackCounter.cshtml",
+                             new ShowFeedbackCounterViewModel { TotalRating = Model.TotalRating, FeedbackQuantity = Model.FeedbackQuantity })
+                </p>
+                <p>@Model.Description</p>
+                <p>@Model.Specifications</p>
+            </div>
+        </div>
+        <div class="col-3 mt-5">
+            <p class="main-color fw-bold fs-4">@Model.Price ₽</p>
+            @if (Model.IsDeleted)
+            {
+                <button disabled class="btn btn-grad w-75 m-0">Удален</button>
+            }
+            else if (!Model.IsInStock)
+            {
+                <button disabled class="btn btn-grad w-75 m-0">Нет в наличии</button>
+            }
+            else
+            {
+                <button onclick="buyProduct('@Model.Id')" class="btn btn-grad w-75 m-0">В корзину</button>
+            }
+            @if (Model.WriteFeedback)
+            {
+                <br />
+                <a asp-action="CreateFeedback" asp-controller="Feedbacks" asp-route-productId="@Model.Id" class="btn btn-grad w-75 m-0">Написать отзыв</a>
+            }
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        @if (Model.HasFeedbacks)
+        {
+            <div class="d-flex justify-content-center">
+                <button id="load-feedbacks" class="btn btn-grad w-50 p-4">Посмотреть отзывы</button>
+            </div>
+            <div id="feedbacks-content"></div>
+        }
     </div>
 </div>
 

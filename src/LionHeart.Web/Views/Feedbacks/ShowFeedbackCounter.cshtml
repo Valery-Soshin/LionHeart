@@ -1,0 +1,17 @@
+﻿@using LionHeart.Web.Models
+@model ShowFeedbackCounterViewModel
+
+@if (Model.FeedbackQuantity > 0)
+{
+    <div>
+        <span style="color:orange;">★</span>
+        <span style="font-size: 16px;">@Model.TotalRating.ToString("#.#")</span>
+        <span style="font-size: 16px;">(@Model.FeedbackQuantity оценок)</span>
+    </div>
+}
+else
+{
+    <div>
+        <span style="font-size: 16px;">Нет оценок</span>
+    </div>
+}
