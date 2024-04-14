@@ -14,7 +14,7 @@
             <div class="text-end">
                 <button class="custom-btn-link btn" style="width: 40px;" onclick="deleteNotification('@notification.Id')">✕</button>
             </div>
-            <label class="ps-5 text-start text-decoration-underline">@notification.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</label>
+            <label class="ps-5 text-start text-decoration-underline">@notification.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")</label>
 
             <p class="p-5">@notification.Content</p>
             @if (notification.LinkToAction is not null)
