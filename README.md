@@ -8,4 +8,5 @@ Technologies:
 - PostgreSQL
 - Layered architecture
 - Repository Pattern
+- Result Pattern
 - NLog
