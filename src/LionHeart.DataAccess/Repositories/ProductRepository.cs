@@ -51,6 +51,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
 
         var products = await _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
             .Skip((pageNumber - 1) * pageSize)

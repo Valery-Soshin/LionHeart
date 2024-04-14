@@ -11,13 +11,14 @@
         margin-right: 120px;
     }
 
-    .index-img-box{
+    .index-img-box {
         height: 250px;
     }
 
-    .index-img{
+    .index-img {
         height: 250px;
-        object-fit:contain;
+        object-fit: cover;
+        border-radius: 20px;
     }
 </style>
 
@@ -38,32 +39,53 @@
         @foreach (var product in Model.Products)
         {
             <div>
-                <div class="card border-0 favorites-button">
+                <div class="favorites-button">
                     <form class="col-3">
                         <a asp-action="ShowProduct" asp-controller="Products" asp-route-id="@product.Id" class="order-0 bg-white text-center" style="text-decoration:none; color:black;">
-                            <div class="card" style="width: 16rem;">
-                                <div class="card text-bg-dark index-img-box">
-                                    <img src="/images/@product.FileName" class="card-img-top index-img">
-                                    <div class="card-img-overlay m-0 p-0 text-end">
-                                        @if(product.IsInFavorites)
-                                        {
-                                            <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Id')">❤</button>
-                                        }
-                                         else
-                                        {
-                                            <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Id')">⁠🤍</button>
-                                        }
-                                    </div>
+                            <div class="card border-0" style="width: 14rem;">
+                                <img src="/images/@product.ImageName" class="card-img-top index-img">
+                                <div class="card-img-overlay m-0 p-0 text-end">
+                                    @if (product.IsInFavorites)
+                                    {
+                                        <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Id')">❤</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Id')">⁠🤍</button>
+                                    }
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title text-truncate">@product.Name</h5>
-                                    <p class="card-text text-truncate">@product.Description</p>
+                                <div class="text-start mt-2 mb-2">
+                                    <div class="main-color fw-bold">
+                                        @product.Price ₽
+                                    </div>
+                                    <div>
+                                        <div class="card-title text-truncate" style="color:teal; font-size: 16px;">
+                                            @product.Name
+                                        </div>
+                                        <div class="card-text text-truncate" style="color:#9d9da5; font-size: 16px;">
+                                            @product.Description
+                                        </div>
+                                    </div>
+                                    @if (product.FeedbackQuantity > 0)
+                                    {
+                                        <div>
+                                            <span style="color:orange;">★</span>
+                                            <span style="font-size: 16px;">@product.TotalRating.ToString("#.#")</span>
+                                            <span style="font-size: 16px;">(@product.FeedbackQuantity оценок)</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <span style="font-size: 16px;">0 отзывов</span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </a>
                     </form>
                 </div>
-                <div class="card border-0">
+                <div style="width: 14rem;">
                     @if (!product.IsDeleted)
                     {
                         @if (product.IsInBasket)
@@ -77,7 +99,7 @@
                     }
                     else
                     {
-                        <button disabled class="btn btn-grad" style="width:100%; margin:0px;">Удален</button>
+                        <button disabled class="btn btn-grad" style="width:100%; margin:0px; padding: 0;">Удален</button>
                     }
                 </div>
                 <br />

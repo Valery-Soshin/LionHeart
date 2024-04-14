@@ -64,7 +64,10 @@ public class ProductsController : Controller
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                FileName = product.Image.FileName,
+                Price = product.Price,
+                FeedbackQuantity = product.Feedbacks.Count,
+                TotalRating = product.Feedbacks.Count > 0 ? product.Feedbacks.Average(f => (int)f.Rating) : -1,
+                ImageName = product.Image.FileName,
                 IsInBasket = isInBasket,
                 IsInFavorites = isInFavorites
             });

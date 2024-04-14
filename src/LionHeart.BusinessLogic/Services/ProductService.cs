@@ -135,7 +135,7 @@ public class ProductService : IProductService
     {
         try
         {
-            const int pageSize = 10;
+            const int pageSize = 12;
             var pagedResponse = await _productRepository.GetProductsWithPagination(pageNumber, pageSize);
             if (pagedResponse is null)
             {
