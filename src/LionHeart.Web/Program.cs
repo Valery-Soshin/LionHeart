@@ -48,6 +48,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Auth/Login";
     options.AccessDeniedPath = "/Home/Error";
 });
+builder.WebHost.UseKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 1500000;
+});
 
 var app = builder.Build();
 
