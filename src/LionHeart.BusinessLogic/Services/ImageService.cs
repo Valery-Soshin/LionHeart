@@ -19,49 +19,43 @@ public class ImageService : IImageService
         }
     }
 
-    public async Task<Result<IFormFile>> Add(IFormFile file)
+    public async Task<Result<string>> Add(IFormFile image)
     {
         try
         {
-            var pathWithFileName = Path.Combine(_folderPath, file.FileName);
-            using var stream = new FileStream(pathWithFileName, FileMode.Create);
-            await file.CopyToAsync(stream);
+            var extension = image.ContentType.Split("/")[1];
+            if (!ValidateExtension(extension))
+            {
+                return new Result<string>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.FileNotImage
+                };
+            }
+            var separator = ".";
+            var imageName = Path.GetRandomFileName() + separator + extension;
+            var fullPath = Path.Combine(_folderPath, imageName);
 
-            return new Result<IFormFile>
+            using var stream = new FileStream(fullPath, FileMode.Create);
+            await image.CopyToAsync(stream);
+
+            return new Result<string>
             {
                 IsCompleted = true,
-                Data = file
+                Data = imageName
             };
         }
         catch
         {
-            return new Result<IFormFile>
+            return new Result<string>
             {
-                IsCompleted = true,
+                IsCompleted = false,
                 ErrorMessage = ErrorMessage.InternalServerError
             };
         }
     }
-    public async Task<Result<IFormFile>> Remove(IFormFile file)
+    public static bool ValidateExtension(string extension)
     {
-        try
-        {
-            var pathWithFileName = Path.Combine(_folderPath, file.FileName);
-            File.Delete(pathWithFileName);
-            
-            return new Result<IFormFile>
-            {
-                IsCompleted = true,
-                Data = file
-            };
-        }
-        catch
-        {
-            return new Result<IFormFile>
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
-        }
+        return extension is "png" or "jpeg";
     }
 }

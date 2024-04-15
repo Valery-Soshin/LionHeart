@@ -200,12 +200,22 @@ public class ProductService : IProductService
                 Price = dto.Price,
                 Description = dto.Description,
                 Specifications = dto.Specifications,
-                CreatedAt = dto.CreatedAt,
-                Image = new Image
+                CreatedAt = dto.CreatedAt
+            };
+            var imageResult = await _imageService.Add(dto.Image);
+            if (imageResult.IsFaulted || imageResult.Data is null)
+            {
+                return new Result<Product>()
                 {
-                    FileName = dto.Image.FileName,
-                    File = dto.Image
-                }
+                    IsCompleted = false,
+                    ErrorMessage = imageResult.ErrorMessage ?? "Image Name is NULL"
+                };
+            }
+            var imageName = imageResult.Data;
+            product.Image = new Image()
+            {
+                File = dto.Image,
+                FileName = imageName
             };
             var result = await _productRepository.Add(product);
             if (result <= 0)
@@ -216,16 +226,6 @@ public class ProductService : IProductService
                     ErrorMessage = ErrorMessage.ProductNotCreated
                 };
             }
-            var imageResult = await _imageService.Add(product.Image.File);
-            if (imageResult.IsFaulted)
-            {
-                return new Result<Product>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = imageResult.ErrorMessage
-                };
-            }
-
             return new Result<Product>
             {
                 IsCompleted = true,

@@ -286,6 +286,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Переданный файл не является картинкой.
+        /// </summary>
+        internal static string FileNotImage {
+            get {
+                return ResourceManager.GetString("FileNotImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Картинка не была добавлена.
         /// </summary>
         internal static string ImageNotCreated {

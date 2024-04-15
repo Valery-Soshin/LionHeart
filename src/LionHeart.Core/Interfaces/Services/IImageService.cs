@@ -5,6 +5,5 @@ namespace LionHeart.Core.Interfaces.Services;
 
 public interface IImageService
 {
-    Task<Result<IFormFile>> Add(IFormFile file);
-    Task<Result<IFormFile>> Remove(IFormFile file);
+    Task<Result<string>> Add(IFormFile image);
 }

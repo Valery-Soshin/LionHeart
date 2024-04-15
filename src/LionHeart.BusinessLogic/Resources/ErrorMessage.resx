@@ -192,6 +192,9 @@
   <data name="FeedbacksNotFound" xml:space="preserve">
     <value>Отзывы не были найдены</value>
   </data>
+  <data name="FileNotImage" xml:space="preserve">
+    <value>Переданный файл не является картинкой</value>
+  </data>
   <data name="ImageNotCreated" xml:space="preserve">
     <value>Картинка не была добавлена</value>
   </data>
