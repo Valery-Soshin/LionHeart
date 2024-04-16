@@ -8,5 +8,5 @@ public interface IProductRepository : IRepository<Product>
     Task<List<Product>> GetProductsByCategoryId(string categoryId);
     Task<List<Product>> GetProductsByUserId(string userId);
     Task<PagedResponse<Product>> GetProductsWithPagination(int pageNumber, int pageSize);
-    Task<List<Product>> Search(string productName);
+    Task<PagedResponse<Product>> Search(string productName, int pageNumber, int pageSize);
 }

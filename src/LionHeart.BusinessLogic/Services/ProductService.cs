@@ -160,28 +160,29 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<List<Product>>> Search(string productName)
+    public async Task<Result<PagedResponse<Product>>> Search(string productName, int pageNumber)
     {
         try
         {
-            var products = await _productRepository.Search(productName);
-            if (products is null)
+            const int pageSize = 12;
+            var pagedResponse = await _productRepository.Search(productName, pageNumber, pageSize);
+            if (pagedResponse is null)
             {
-                return new Result<List<Product>>
+                return new Result<PagedResponse<Product>>
                 {
                     IsCompleted = false,
                     ErrorMessage = ErrorMessage.ProductsNotFound
                 };
             }
-            return new Result<List<Product>>
+            return new Result<PagedResponse<Product>>
             {
                 IsCompleted = true,
-                Data = products
+                Data = pagedResponse
             };
         }
         catch
         {
-            return new Result<List<Product>>
+            return new Result<PagedResponse<Product>>
             {
                 IsCompleted = false,
                 ErrorMessage = ErrorMessage.InternalServerError

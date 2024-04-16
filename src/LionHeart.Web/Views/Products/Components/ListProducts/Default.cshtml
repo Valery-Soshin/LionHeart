@@ -1,0 +1,140 @@
+﻿@using LionHeart.Web.Models
+@using LionHeart.Web.Models.Products
+@model ListProductsViewModel
+
+@{
+    ViewData["Title"] = "Список продуктов";
+}
+
+<style>
+    .site-body-container {
+        margin-left: 130px;
+        margin-right: 120px;
+    }
+
+    .index-img-box {
+        height: 250px;
+    }
+
+    .index-img {
+        height: 250px;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="site-body-container mt-1">
+    <div class="row row-cols-sm-auto justify-content-center">
+        @foreach (var product in Model.Products)
+        {
+            <div>
+                <div class="favorites-button">
+                    <form class="col-3">
+                        <a asp-action="ShowProduct" asp-controller="Products" asp-route-id="@product.Id" class="order-0 bg-white text-center" style="text-decoration:none; color:black;">
+                            <div class="card border-0" style="width: 14rem;">
+                                <img src="/images/@product.ImageName" class="card-img-top index-img">
+                                <div class="card-img-overlay m-0 p-0 text-end">
+                                    @if (product.IsInFavorites)
+                                    {
+                                        <button class="btn" id="toFavorites" onclick="removeFromFavorites('@product.Id')">❤</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn" id="toFavorites" onclick="addToFavorites('@product.Id')">⁠🤍</button>
+                                    }
+                                </div>
+                                <div class="text-start mt-2 mb-2">
+                                    <div class="main-color fw-bold">
+                                        @product.Price ₽
+                                    </div>
+                                    <div>
+                                        <div class="card-title text-truncate" style="color:teal; font-size: 16px;">
+                                            @product.Name
+                                        </div>
+                                        <div class="card-text text-truncate" style="color:#9d9da5; font-size: 16px;">
+                                            @product.Description
+                                        </div>
+                                    </div>
+                                    @await Html.PartialAsync("/Views/Feedbacks/ShowFeedbackCounter.cshtml",
+                                             new ShowFeedbackCounterViewModel { TotalRating = product.TotalRating, FeedbackQuantity = product.FeedbackQuantity })
+                                </div>
+                            </div>
+                        </a>
+                    </form>
+                </div>
+                <div style="width: 14rem;">
+                    @if (!product.IsDeleted)
+                    {
+                        @if (product.IsInBasket)
+                        {
+                            <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="removeFromBasket('@product.Id')">Убрать из корзины</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-grad" style="width:100%; margin:0px;" onclick="addToBasket('@product.Id')">В корзину</button>
+                        }
+                    }
+                    else
+                    {
+                        <button disabled class="btn btn-grad" style="width:100%; margin:0px; padding: 0;">Удален</button>
+                    }
+                </div>
+                <br />
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    async function addToFavorites(productId) {
+        event.preventDefault();
+        await fetch("/Favorites/AddToFavorites", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
+
+    async function removeFromFavorites(productId) {
+        event.preventDefault();
+        await fetch("/Favorites/RemoveFromFavorites", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
+
+    async function addToBasket(productId) {
+        event.preventDefault();
+        await fetch("/Basket/AddToBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
+
+    async function removeFromBasket(productId) {
+        event.preventDefault();
+        await fetch("/Basket/RemoveFromBasket", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(productId)
+        });
+        window.location.reload();
+    };
+</script>

@@ -3,14 +3,33 @@
 
 @{
     ViewBag.Title = "Поиск товаров";
+    var page = ViewData["Page"] as PagedResponse<Product>;
 }
 
-<div class="site-body-container">
-    <div style="height: 300px;"></div>
-    <div class="d-flex justify-content-center">
-        <form method="post" asp-action="SearchProducts" class="d-flex gap-2">
-            <input asp-for="Name" type="text" class="form-control custom-input" placeholder="Введите названия продукта" style="width:500px;">
-            <button class="btn btn-grad">Найти</button>
-        </form>
+@if (Model is not null && page is not null)
+{
+    <form method="post" asp-action="SearchProducts" class="mt-5 me-5 pe-5 d-flex justify-content-end gap-1">
+        <input hidden asp-for="Name" value="@Model.Name" />
+        @if (page.HasPreviousPage)
+        {
+            <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
+        }
+        @if (page.HasNextPage)
+        {
+            <button asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</button>
+        }
+    </form>
+    @await Component.InvokeAsync("ListProducts", new { Products = page.Entities })
+}
+else
+{
+    <div class="site-body-container">
+        <div style="height: 300px;"></div>
+        <div class="d-flex justify-content-center">
+            <form method="post" asp-action="SearchProducts" class="d-flex gap-2">
+                <input asp-for="Name" type="text" class="form-control custom-input" placeholder="Введите названия продукта" style="width:500px;">
+                <button class="btn btn-grad">Найти</button>
+            </form>
+        </div>
     </div>
-</div>
+}

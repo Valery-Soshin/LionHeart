@@ -60,20 +60,31 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
 
         return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
     }
-    public Task<List<Product>> Search(string productName)
+    public async Task<PagedResponse<Product>> Search(string productName, int pageNumber, int pageSize)
     {
         var firstSymbol = productName[0].ToString().ToUpper();
         var lastSymbols = productName[1..].ToLower();
 
         productName = firstSymbol + lastSymbols;
 
-        return _dbContext.Products.AsNoTracking()
+        var totalRecords = await _dbContext.Products.AsNoTracking()
+            .Where(p => !p.IsDeleted)
+            .Where(p => p.Name == productName ||
+                        p.Name.StartsWith(productName))
+            .CountAsync();
+
+        var products = await _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
             .Where(p => p.Name == productName ||
                         p.Name.StartsWith(productName))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
     }
     public override async Task<int> Update(Product product)
     {
