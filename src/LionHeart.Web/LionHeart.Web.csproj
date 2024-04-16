@@ -40,4 +40,8 @@
     <None Include="wwwroot\css\rating.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Notifications\" />
+  </ItemGroup>
+
 </Project>

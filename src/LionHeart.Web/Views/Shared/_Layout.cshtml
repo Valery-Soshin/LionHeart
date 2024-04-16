@@ -22,7 +22,6 @@
             max-width: 100%;
             max-height: 100%;
         }
-
         * {
             font-size: 18px;
         }
@@ -34,7 +33,7 @@
         var userId = user?.Id;
     }
     <header>
-        <ul class="nav justify-content-center align-content-center" style="height: 70px; background-color: #930667">
+        <ul class="nav justify-content-center align-content-center gap-1" style="height: 70px; background-color: #930667">
             @if (user is not null && await userManager.IsInRoleAsync(user, "Supplier"))
             {
                 <li class="nav-item me-5 pe-5">
@@ -44,12 +43,14 @@
             <li class="nav-item">
                 <a asp-action="Index" asp-controller="Products" class="nav-link site-nav-item">Главное</a>
             </li>
-
             <li class="nav-item">
                 <a asp-action="SearchProducts" asp-controller="Products" class="nav-link site-nav-item">Поиск</a>
             </li>
             <li class="nav-item">
-                <a asp-action="ShowProfile" asp-controller="Profile" class="nav-link site-nav-item">Профиль</a>
+                <a asp-action="ShowProfile" asp-controller="Profile" class="nav-link site-nav-item position-relative ps-3 pe-2">
+                    Профиль
+                    @await Component.InvokeAsync("NotificationCounter")
+                </a>
             </li>
             @if (userId is not null && (await orderService.Any(userId)).Data)
             {

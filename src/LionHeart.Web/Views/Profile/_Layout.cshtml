@@ -11,10 +11,8 @@
                 <a asp-action="ShowMyFeedbacks" class="nav-link custom-btn-link">Мои отзывы</a>
                 <a asp-action="ShowNotifications" class="nav-link custom-btn-link position-relative">
                     Уведомления
-                    @await Html.PartialAsync("Notifications")
+                    @await Component.InvokeAsync("NotificationCounter")
                 </a>
-            </div>
-            <div class="d-flex justify-content-end align-items-center" style="color: white;">
             </div>
         </div>
         <div class="card-body bg-light">
