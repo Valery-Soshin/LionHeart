@@ -165,6 +165,9 @@
   <data name="CategoryNotUpdated" xml:space="preserve">
     <value>Категория не была обновлена</value>
   </data>
+  <data name="CompanyNotFound" xml:space="preserve">
+    <value>Компания не была найдена</value>
+  </data>
   <data name="ExceptionMessage" xml:space="preserve">
     <value>Исключение: </value>
   </data>

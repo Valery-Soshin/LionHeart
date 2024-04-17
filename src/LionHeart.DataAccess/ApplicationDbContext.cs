@@ -10,7 +10,7 @@ namespace LionHeart.DataAccess;
 public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
-    public DbSet<Image> Images { get; set; }
+    public DbSet<Company> Companies { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
     public DbSet<BasketEntry> BasketEntries{ get; set; }
     public DbSet<FavoriteProduct> FavoriteProducts{ get; set; }
@@ -20,6 +20,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<OrderItemDetail> OrderItemDetails { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Image> Images { get; set; }
+
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
@@ -35,8 +37,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new CompanyConfiguration());
         builder.ApplyConfiguration(new ProductUnitConfiguration());
-        builder.ApplyConfiguration(new ImageConfiguration());
         builder.ApplyConfiguration(new BasketEntryConfiguration());
         builder.ApplyConfiguration(new FavoriteProductConfiguration());
         builder.ApplyConfiguration(new CategoryConfiguration());
@@ -45,6 +47,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new OrderItemConfiguration());
         builder.ApplyConfiguration(new OrderItemDetailConfiguration());
         builder.ApplyConfiguration(new NotificationConfiguration());
+        builder.ApplyConfiguration(new ImageConfiguration());
 
         base.OnModelCreating(builder);
     }

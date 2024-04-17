@@ -205,6 +205,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Компания не была найдена.
+        /// </summary>
+        internal static string CompanyNotFound {
+            get {
+                return ResourceManager.GetString("CompanyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Исключение: .
         /// </summary>
         internal static string ExceptionMessage {
