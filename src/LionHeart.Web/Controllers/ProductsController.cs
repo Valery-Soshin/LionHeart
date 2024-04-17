@@ -15,16 +15,22 @@ public class ProductsController : Controller
     private readonly IProductService _productService;
     private readonly IProductUnitService _productUnitService;
     private readonly IFeedbackService _feedbackService;
+    private readonly IBasketEntryService _basketEntryService;
+    private readonly IFavoriteProductService _favoriteProductService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
                               IProductUnitService productUnitService,
                               IFeedbackService feedbackService,
+                              IBasketEntryService basketEntryService,
+                              IFavoriteProductService favoriteProductService,
                               UserManager<User> userManager)
     {
         _productService = productService;
         _productUnitService = productUnitService;
         _feedbackService = feedbackService;
+        _basketEntryService = basketEntryService;
+        _favoriteProductService = favoriteProductService;
         _userManager = userManager;
     }
 
@@ -41,7 +47,7 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ShowProduct(string id, bool showFeedbacks = false)
+    public async Task<IActionResult> ShowProduct(string id)
     {
         var userId = _userManager.GetUserId(User);
 
@@ -52,11 +58,21 @@ public class ProductsController : Controller
         if (product is null) return BadRequest();
 
         bool writeFeedback = false;
+        bool isInBasket = false;
+        bool isInFavorites = false;
         if (userId is not null)
         {
             var feedbackServiceResult = await _feedbackService.HasFeedbackPending(userId, product.Id);
             if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
             writeFeedback = feedbackServiceResult.Data;
+
+            var basketEntryServiceResult = await _basketEntryService.Exists(userId, product.Id);
+            if (basketEntryServiceResult.IsFaulted) return BadRequest(basketEntryServiceResult.ErrorMessage);
+            isInBasket = basketEntryServiceResult.Data;
+
+            var favoriteProductServiceResult = await _favoriteProductService.Exists(userId, product.Id);
+            if (favoriteProductServiceResult.IsFaulted) return BadRequest(favoriteProductServiceResult.ErrorMessage);
+            isInFavorites = favoriteProductServiceResult.Data;
         }
         var model = new ShowProductViewModel()
         {
@@ -68,10 +84,11 @@ public class ProductsController : Controller
             ImageName = product.Image.FileName,
             FeedbackQuantity = product.Feedbacks.Count,
             TotalRating = product.Feedbacks.Count > 0 ? product.Feedbacks.Average(f => (int)f.Rating) : -1,
-            ShowFeedbacks = showFeedbacks,
             WriteFeedback = writeFeedback,
             IsDeleted = product.IsDeleted,
             IsInStock = product.Units.Count > 0,
+            IsInBasket = isInBasket,
+            IsInFavorites = isInFavorites,
             HasFeedbacks = product.Feedbacks.Count > 0
         };
         return View(model);

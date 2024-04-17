@@ -43,29 +43,49 @@
             </div>
         </div>
         <div class="col-3 mt-5">
-            <p class="main-color fw-bold fs-4">@Model.Price ₽</p>
+            <div class="main-color fw-bold w-75 d-flex p-2">
+                <div class="fs-4 pt-2 pb-2 pe-2 col-6">@Model.Price ₽</div>
+                <div class="col-6 text-end">
+                    @if (Model.IsInFavorites)
+                    {
+                        <a class="btn fs-4" id="toFavorites" onclick="removeFromFavorites('@Model.Id')">❤</a>
+                    }
+                    else
+                    {
+                        <a class="btn fs-4" id="toFavorites" onclick="addToFavorites('@Model.Id')">⁠🤍</a>
+                    }
+                </div>
+            </div>
+
             @if (Model.IsDeleted)
             {
-                <button disabled class="btn btn-grad w-75 m-0">Удален</button>
+                <a disabled class="btn btn-grad w-75 m-0">Удален</a>
             }
             else if (!Model.IsInStock)
             {
-                <button disabled class="btn btn-grad w-75 m-0">Нет в наличии</button>
+                <a disabled class="btn btn-grad w-75 m-0">Нет в наличии</a>
             }
             else
             {
-                <button onclick="buyProduct('@Model.Id')" class="btn btn-grad w-75 m-0">В корзину</button>
+                if (Model.IsInBasket)
+                {
+                    <a onclick="removeFromBasket('@Model.Id')" class="btn btn-grad w-75 m-0">Убрать из корзины</a>
+                }
+                else
+                {
+                    <a onclick="addToBasket('@Model.Id')" class="btn btn-grad w-75 m-0">В корзину</a>
+                    <a onclick="buyProduct('@Model.Id')" class="btn btn-grad w-75 m-0 mt-2">Купить сейчас</a>
+                }
             }
             @if (Model.WriteFeedback)
             {
-                <br />
-                <a asp-action="CreateFeedback" asp-controller="Feedbacks" asp-route-productId="@Model.Id" class="btn btn-grad w-75 m-0">Написать отзыв</a>
+                <a asp-action="CreateFeedback" asp-controller="Feedbacks" asp-route-productId="@Model.Id" class="btn btn-grad w-75 m-0 mt-5">Написать отзыв</a>
             }
         </div>
     </div>
-    <br />
-    <br />
     <div class="row">
+        <br />
+        <br />
         @if (Model.HasFeedbacks)
         {
             <div class="d-flex justify-content-center">
@@ -74,46 +94,10 @@
             <div id="feedbacks-content"></div>
         }
     </div>
-</div>
+</div
 
 @section Scripts {
     <script>
-        async function addToBasket(productId) {
-            event.preventDefault();
-            await fetch("/Basket/AddToBasket", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(productId)
-            });
-            window.location.reload();
-        };
-        async function removeFromBasket(productId) {
-            event.preventDefault();
-            await fetch("/Basket/RemoveFromBasket", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(productId)
-            });
-            window.location.reload();
-        };
-        async function buyProduct(productId) {
-            event.preventDefault();
-            const response = await fetch("/Basket/AddToBasket", {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(productId)
-            });
-            window.location.pathname = "/Basket/Index";
-        };
         $("#load-feedbacks").click(function (event) {
             $("#load-feedbacks").hide();
             $.ajax({
@@ -137,4 +121,5 @@
             });
         });
     </script>
+
 }

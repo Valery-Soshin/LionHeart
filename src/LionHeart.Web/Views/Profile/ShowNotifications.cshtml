@@ -33,18 +33,3 @@ else
         <h5>В данный момент у вас нет уведомлений</h5>
     </div>
 }
-
-<script>
-    async function deleteNotification(notificationId) {
-        event.preventDefault();
-        const response = await fetch("/Notifications/DeleteNotification", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(notificationId)
-        });
-        window.location.pathname = "/Profile/ShowNotifications";
-    }
-</script>

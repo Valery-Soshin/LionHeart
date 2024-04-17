@@ -12,9 +12,10 @@ public class ShowProductViewModel
     public string? ImageName { get; set; }
     public int FeedbackQuantity { get; set; }
     public double TotalRating { get; set; }
-    public bool ShowFeedbacks { get; set; }
     public bool WriteFeedback { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsInStock { get; set; }
+    public bool IsInBasket { get; set; }
+    public bool IsInFavorites { get; set; }
     public bool HasFeedbacks { get; set; }
 }

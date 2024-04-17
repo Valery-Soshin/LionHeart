@@ -70,30 +70,3 @@ else
         </div>
     </div>
 }
-
-<script>
-    async function removeFromFavorites(productId) {
-        event.preventDefault();
-        const response = await fetch("/Favorites/RemoveFromFavorites", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(productId)
-        });
-        window.location.reload();
-    }
-    async function buyProduct(productId) {
-        event.preventDefault();
-        const response = await fetch("/Basket/AddToBasket", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(productId)
-        });
-        window.location.pathname = "/Basket/Index";
-    }
-</script>
