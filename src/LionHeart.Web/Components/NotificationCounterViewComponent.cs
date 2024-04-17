@@ -20,12 +20,11 @@ public class NotificationCounterViewComponent : ViewComponent
     public async Task<IViewComponentResult> InvokeAsync()
     {
         var userId = _userManager.GetUserId(UserClaimsPrincipal);
-        if (userId is null) return View("Error");
+        if (userId is null) return View(-1);
 
         var notificationServiceResult = await _notificationService.Count(userId);
-        if (notificationServiceResult.IsFaulted) return View("Error");
+        if (notificationServiceResult.IsFaulted) return View(-1);
         var count = notificationServiceResult.Data;
-
         return View(count);
     }
 }
