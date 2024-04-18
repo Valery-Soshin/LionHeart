@@ -16,6 +16,34 @@ public class CompanyService : ICompanyService
         _companyRepository = companyRepository;
     }
 
+    public async Task<Result<Company>> GetById(string id)
+    {
+        try
+        {
+            var company = await _companyRepository.GetById(id);
+            if (company is null)
+            {
+                return new Result<Company>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.CompanyNotFound
+                };
+            }
+            return new Result<Company>
+            {
+                IsCompleted = true,
+                Data = company
+            };
+        }
+        catch
+        {
+            return new Result<Company>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
     public async Task<Result<Company>> Add(AddCompanyDto dto)
     {
         try

@@ -11,6 +11,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
     {
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
+            .Include(p => p.Company)
             .Include(p => p.Feedbacks)
             .Include(p => p.Units)
             .Include(p => p.Image)
