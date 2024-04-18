@@ -94,7 +94,8 @@ public class OrderService : IOrderService
     {
         try
         {
-            var orders = await _orderRepository.GetAll();
+            //var orders = await _orderRepository.GetAll();
+            var orders = new List<Order>();
             if (orders is null)
             {
                 return new Result<List<Order>>()

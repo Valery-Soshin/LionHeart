@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.DataAccess.Repositories;
 
-public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class
+public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class
 {
     protected readonly ApplicationDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
@@ -14,14 +14,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : clas
         _dbSet = _dbContext.Set<TEntity>();
     }
 
-    public virtual async Task<TEntity?> GetById(string id)
-    {
-        return await _dbSet.FindAsync(id);
-    }
-    public virtual Task<List<TEntity>> GetAll()
-    {                       
-        return _dbSet.ToListAsync();
-    }
+    public abstract Task<TEntity?> GetById(string id);
     public virtual Task<int> Add(TEntity entity)
     {
         _dbSet.Add(entity);

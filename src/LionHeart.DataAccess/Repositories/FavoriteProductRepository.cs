@@ -21,13 +21,6 @@ public class FavoriteProductRepository(ApplicationDbContext dbContext) : Reposit
             .FirstOrDefaultAsync(f => f.UserId == userId &&
                                       f.ProductId == productId);
     }
-    public override Task<List<FavoriteProduct>> GetAll()
-    {
-        return _dbContext.FavoriteProducts.AsNoTracking()
-            .Include(f => f.Product)
-                .ThenInclude(p => p.Image)
-            .ToListAsync();
-    }
     public Task<List<FavoriteProduct>> GetFavoritesByUserIdWithoutQueryFilter(string userId)
     {
         return _dbContext.FavoriteProducts.AsNoTracking()

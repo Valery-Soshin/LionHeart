@@ -21,13 +21,6 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
             .Where(o => o.UserId == userId)
             .ToListAsync();
     }
-    public override Task<List<Order>> GetAll()
-    {
-        return _dbContext.Orders.AsNoTracking()
-            .Include(o => o.Items)
-                .ThenInclude(i => i.Details)
-            .ToListAsync();
-    }
     public override async Task<int> Update(Order order)
     {
         await EFUpdateHelper.CheckItemsOnDelete(

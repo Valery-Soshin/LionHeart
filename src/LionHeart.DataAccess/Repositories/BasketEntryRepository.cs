@@ -33,13 +33,6 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
             .Where(e => e.UserId == userId)
             .ToListAsync();
     }
-    public override Task<List<BasketEntry>> GetAll()
-    {
-        return _dbContext.BasketEntries.AsNoTracking()
-            .Include(e => e.Product)
-                .ThenInclude(p => p.Image)
-            .ToListAsync();
-    }
     public Task<List<BasketEntry>> GetAll(List<string> ids)
     {
         return _dbContext.BasketEntries.AsNoTracking()

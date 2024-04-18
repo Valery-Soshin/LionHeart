@@ -6,6 +6,11 @@ namespace LionHeart.DataAccess.Repositories;
 
 public class NotificationRepository(ApplicationDbContext dbContext) : RepositoryBase<Notification>(dbContext), INotificationRepository
 {
+    public override Task<Notification?> GetById(string id)
+    {
+        return _dbContext.Notifications.AsNoTracking()
+            .FirstOrDefaultAsync(n => n.Id == id);
+    }
     public Task<List<Notification>> GetNotificationsByUserId(string userId)
     {
         return _dbContext.Notifications.AsNoTracking()

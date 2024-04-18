@@ -48,7 +48,8 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            var categories = await _categoryRepository.GetAll();
+            //var categories = await _categoryRepository.GetAll();
+            var categories = new List<Category>();
             if (categories is null)
             {
                 return new Result<List<Category>>
