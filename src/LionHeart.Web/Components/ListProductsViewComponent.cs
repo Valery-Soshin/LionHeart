@@ -24,12 +24,19 @@ public class ListProductsViewComponent : ViewComponent
         _userManager = userManager;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync(List<Product> products)
+    public async Task<IViewComponentResult> InvokeAsync(PagedResponse<Product> page, bool useButtonsForPage = false)
     {
         var userId = _userManager.GetUserId(UserClaimsPrincipal);
 
-        var model = new ListProductsViewModel();
-        foreach (var product in products)
+        ViewData["UseButtonsForPage"] = useButtonsForPage;
+        
+        var model = new ListProductsViewModel()
+        {
+            PageNumber = page.PageNumber,
+            HasPreviousPage = page.HasPreviousPage,
+            HasNextPage = page.HasNextPage
+        };
+        foreach (var product in page.Entities)
         {
             bool isInBasket = userId is not null &&
                 (await _basketEntryService.Exists(userId, product.Id)).Data;
@@ -50,6 +57,6 @@ public class ListProductsViewComponent : ViewComponent
                 IsInFavorites = isInFavorites
             });
         }
-        return View(model);
+        return View("/Views/Products/Components/ListProducts/Default.cshtml", model);
     }
 }

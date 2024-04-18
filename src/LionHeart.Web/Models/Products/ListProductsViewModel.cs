@@ -2,6 +2,9 @@
 
 public class ListProductsViewModel
 {
+    public int PageNumber { get; set; }
+    public bool HasPreviousPage { get; set; }
+    public bool HasNextPage { get; set; }
     public List<ListProductsItemViewModel> Products { get; } = [];
 }
 public class ListProductsItemViewModel

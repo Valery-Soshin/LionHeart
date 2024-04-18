@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Список продуктов";
+    bool useButtonsForPage = (bool)ViewData["UseButtonsForPage"];
 }
 
 <style>
@@ -23,7 +24,35 @@
     }
 </style>
 
-<div class="site-body-container mt-1">
+<div class="site-body-container">
+    <div class="d-flex justify-content-end mb-2 gap-1">
+        @if (useButtonsForPage)
+        {
+            @if (Model.HasPreviousPage)
+            {
+                <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
+            }
+            @if (Model.HasNextPage)
+            {
+                <button asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</button>
+            }
+        }
+        else
+        {
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+            }
+            @if (Model.HasNextPage)
+            {
+                <a asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+            }
+        }
+        @if (!Model.HasPreviousPage && !Model.HasNextPage)
+        {
+            <br />
+        }
+    </div>
     <div class="row row-cols-sm-auto justify-content-center">
         @foreach (var product in Model.Products)
         {

@@ -8,20 +8,10 @@
 
 @if (Model is not null && page is not null)
 {
-    <div class="mt-5 me-5 pe-5 d-flex justify-content-end gap-1">
-        <form method="post" asp-action="SearchProducts">
-            <input hidden asp-for="SearchedValue" value="@Model.SearchedValue" />
-            @if (page.HasPreviousPage)
-            {
-                <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
-            }
-            @if (page.HasNextPage)
-            {
-                <button asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</button>
-            }
-        </form>
-    </div>
-    @await Component.InvokeAsync("ListProducts", new { Products = page.Entities })
+    <form method="post" asp-action="SearchProducts">
+        <input hidden asp-for="SearchedValue" value="@Model.SearchedValue" />
+        <vc:list-products page="page" use-buttons-for-page="true"></vc:list-products>
+    </form>
 }
 else
 {

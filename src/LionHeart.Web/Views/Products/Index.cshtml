@@ -6,15 +6,4 @@
     ViewData["Title"] = "Список товаров";
 }
 
-<div class="mt-5 me-5 pe-5 d-flex justify-content-end gap-1">
-    @if (Model.HasPreviousPage)
-    {
-        <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
-    }
-    <br />
-    @if (Model.HasNextPage)
-    {
-        <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
-    }
-</div>
-@await Component.InvokeAsync("ListProducts", new { Products = Model.Entities })
+<vc:list-products page="Model" use-buttons-for-page="false"></vc:list-products>
