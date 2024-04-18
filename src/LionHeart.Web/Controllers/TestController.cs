@@ -33,6 +33,7 @@ namespace LionHeart.Web.Controllers
 
             var supplier = await CreateUsersAndReturnSupplier();
             await CreateProducts(supplier);
+            await CreateFeedbacks(supplier.Id);
             await CreateCategories();
 
             return Redirect("/Home/Index");
@@ -104,8 +105,8 @@ namespace LionHeart.Web.Controllers
                 var product1 = new Product()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserId = supplier.Id,
                     CategoryId = category.Id,
+                    Company = new Company() { Name = "Apple" + i, UserId = supplier.Id },
                     Name = "Футболка",
                     Price = 1250,
                     Description = "Красивая и удобная футболка.",
@@ -116,12 +117,11 @@ namespace LionHeart.Web.Controllers
                         FileName = "img1.jpg"
                     }
                 };
-                CreateFeedbacks(supplier.Id,product1.Id);
                 var product2 = new Product()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserId = supplier.Id,
                     CategoryId = category.Id,
+                    Company = new Company() { Name = "Google" + i, UserId = supplier.Id },
                     Name = "Мяч",
                     Price = 1250,
                     Description = "Футбольный мяч, может быть использован даже во время дождя.",
@@ -157,17 +157,20 @@ namespace LionHeart.Web.Controllers
             }
             return _applicationDbContext.SaveChangesAsync();
         }
-        private Task CreateFeedbacks(string userId, string productId)
+        private Task CreateFeedbacks(string userId)
         {
-            var feedbacks = Enumerable.Range(0, 25).Select(i => new Feedback()
+            foreach (var product in _applicationDbContext.Products)
             {
-                UserId = userId,
-                ProductId = productId,
-                Content = Guid.NewGuid().ToString(),
-                CreatedAt = DateTimeOffset.UtcNow,
-                Rating = (Rating)new Random().Next(1, 5)
-            });
-            _applicationDbContext.AddRange(feedbacks);
+                var feedbacks = Enumerable.Range(0, 25).Select(i => new Feedback()
+                {
+                    UserId = userId,
+                    ProductId = product.Id,
+                    Content = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    Rating = (Rating)new Random().Next(1, 5)
+                });
+                _applicationDbContext.AddRange(feedbacks);
+            }
             return _applicationDbContext.SaveChangesAsync();
         }
     }

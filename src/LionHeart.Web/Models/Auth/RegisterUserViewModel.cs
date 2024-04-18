@@ -2,7 +2,7 @@
 
 namespace LionHeart.Web.Models.Auth;
 
-public class RegisterViewModel
+public class RegisterUserViewModel
 {
     [Required]
     public string? FirstName { get; set; }

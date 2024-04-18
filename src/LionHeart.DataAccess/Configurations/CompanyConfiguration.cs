@@ -8,6 +8,8 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(c => c.Id).ValueGeneratedOnAdd();
+
+        builder.HasAlternateKey(c => c.Name);
     }
 }

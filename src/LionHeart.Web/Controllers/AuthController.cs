@@ -48,12 +48,12 @@ public class AuthController : Controller
     }
 
     [HttpGet]
-    public IActionResult Register()
+    public IActionResult RegisterUser()
     {
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    public async Task<IActionResult> RegisterUser(RegisterUserViewModel model)
     {
         if (ModelState.IsValid)
         {

@@ -196,7 +196,6 @@ public class ProductService : IProductService
             var product = new Product
             {
                 CategoryId = dto.CategoryId,
-                UserId = dto.UserId,
                 Name = dto.Name,
                 Price = dto.Price,
                 Description = dto.Description,

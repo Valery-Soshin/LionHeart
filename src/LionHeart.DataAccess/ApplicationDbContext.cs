@@ -24,7 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
+        : base(options) { ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -23,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSql"]));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitRepository>();
 builder.Services.AddScoped<IBasketEntryRepository, BasketEntryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
 builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();

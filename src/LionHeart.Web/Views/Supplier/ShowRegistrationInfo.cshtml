@@ -25,9 +25,7 @@
         </div>
         @if (user is not null && !await userManager.IsInRoleAsync(user, "Supplier"))
         {
-            <form method="post" asp-action="Register" asp-controller="Supplier">
-                <button class="btn btn-grad w-25">Отправить заявку</button>
-            </form>
+            <a asp-action="RegisterSupplier" class="btn btn-grad w-25">Перейти к регистрации</a>
         }
     </div>
 </div>

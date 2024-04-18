@@ -40,7 +40,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Category)
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted)
-            .Where(p => p.UserId == userId)
+            .Where(p => p.Company.UserId == userId)
             .ToListAsync();
     }
     public async Task<PagedResponse<Product>> GetProductsWithPagination(int pageNumber, int pageSize)

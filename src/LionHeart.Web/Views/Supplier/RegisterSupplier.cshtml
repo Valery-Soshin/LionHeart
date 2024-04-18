@@ -1,0 +1,23 @@
+﻿@using LionHeart.Web.Models.Supplier
+@model RegisterSupplierViewModel
+
+@{
+    ViewData["Title"] = "Регистрация поставщика";
+}
+
+<div class="site-body-container main-color">
+    <div style="height: 700px;" class="d-flex justify-content-center align-items-center">
+        <form method="post" asp-action="RegisterSupplier" class="align-self-center row">
+            <div class="col-6" style="max-width: 500px; max-height:500px;">
+                <img src="/images/img3.jpg" class="img-fluid rounded-start">
+            </div>
+            <div class="col-6 p-5">
+                <label class="form-label">Название компании</label>
+                <input asp-for="CompanyName" type="text" class="form-control custom-input" />
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-grad w-50 m-0 mt-5">Завершить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
