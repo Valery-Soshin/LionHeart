@@ -36,6 +36,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new CompanyConfiguration());
         builder.ApplyConfiguration(new ProductUnitConfiguration());
