@@ -10,7 +10,7 @@
 {
     <div class="mt-5 me-5 pe-5 d-flex justify-content-end gap-1">
         <form method="post" asp-action="SearchProducts">
-            <input hidden asp-for="Name" value="@Model.Name" />
+            <input hidden asp-for="SearchedValue" value="@Model.SearchedValue" />
             @if (page.HasPreviousPage)
             {
                 <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
@@ -29,7 +29,7 @@ else
         <div style="height: 300px;"></div>
         <div class="d-flex justify-content-center">
             <form method="post" asp-action="SearchProducts" class="d-flex gap-2">
-                <input asp-for="Name" type="text" class="form-control custom-input" placeholder="Введите названия продукта" style="width:500px;">
+                <input asp-for="SearchedValue" type="text" class="form-control custom-input" placeholder="Введите названия продукта" style="width:500px;">
                 <button class="btn btn-grad">Найти</button>
             </form>
         </div>

@@ -1,4 +1,5 @@
-﻿using LionHeart.BusinessLogic.Resources;
+﻿using LionHeart.BusinessLogic.Helpers;
+using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Product;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
@@ -131,12 +132,39 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<PagedResponse<Product>>> GetProductsWithPagination(int pageNumber)
+    public async Task<Result<PagedResponse<Product>>> GetProductsByCompanyId(string companyId, int pageNumber)
     {
         try
         {
-            const int pageSize = 12;
-            var pagedResponse = await _productRepository.GetProductsWithPagination(pageNumber, pageSize);
+            var pagedResponse = await _productRepository.GetProductsByCompanyId(companyId, pageNumber, PageHelper.PageSize);
+            if (pagedResponse is null)
+            {
+                return new Result<PagedResponse<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = true,
+                Data = pagedResponse
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse<Product>>> GetProducts(int pageNumber)
+    {
+        try
+        {
+            var pagedResponse = await _productRepository.GetProducts(pageNumber, PageHelper.PageSize);
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Product>>
@@ -164,8 +192,7 @@ public class ProductService : IProductService
     {
         try
         {
-            const int pageSize = 12;
-            var pagedResponse = await _productRepository.Search(productName, pageNumber, pageSize);
+            var pagedResponse = await _productRepository.Search(productName, pageNumber, PageHelper.PageSize);
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Product>>

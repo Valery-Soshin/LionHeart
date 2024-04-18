@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -43,48 +44,30 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Where(p => p.Company.UserId == userId)
             .ToListAsync();
     }
-    public async Task<PagedResponse<Product>> GetProductsWithPagination(int pageNumber, int pageSize)
+    public Task<PagedResponse<Product>> GetProductsByCompanyId(string companyId, int pageNumber, int pageSize)
     {
-        var totalRecords = await _dbContext.Products.AsNoTracking()
-            .Where(p => !p.IsDeleted)
-            .CountAsync();
-
-        var products = await _dbContext.Products.AsNoTracking()
-            .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
-            .Include(p => p.Image)
-            .Where(p => !p.IsDeleted)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
+        Expression<Func<Product, bool>> filter = (Product p) => p.Company.Id == companyId;
+        return ExecutePagination(pageNumber, pageSize, filter);
     }
-    public async Task<PagedResponse<Product>> Search(string productName, int pageNumber, int pageSize)
+    public Task<PagedResponse<Product>> GetProducts(int pageNumber, int pageSize)
     {
-        var firstSymbol = productName[0].ToString().ToUpper();
-        var lastSymbols = productName[1..].ToLower();
+        return ExecutePagination(pageNumber, pageSize);
+    }
+    public Task<PagedResponse<Product>> Search(string searchedValue, int pageNumber, int pageSize)
+    {
+        var firstSymbol = searchedValue[0].ToString().ToUpper();
+        var lastSymbols = searchedValue[1..].ToLower();
+        searchedValue = firstSymbol + lastSymbols;
 
-        productName = firstSymbol + lastSymbols;
+        Expression<Func<Product, bool>> filter =
+            (Product p) => p.Name == searchedValue ||
+                           p.Name.StartsWith(searchedValue) ||
+                           p.Category.Name == searchedValue ||
+                           p.Category.Name.StartsWith(searchedValue) ||
+                           p.Company.Name == searchedValue ||
+                           p.Company.Name.StartsWith(searchedValue);
 
-        var totalRecords = await _dbContext.Products.AsNoTracking()
-            .Where(p => !p.IsDeleted)
-            .Where(p => p.Name == productName ||
-                        p.Name.StartsWith(productName))
-            .CountAsync();
-
-        var products = await _dbContext.Products.AsNoTracking()
-            .Include(p => p.Category)
-            .Include(p => p.Feedbacks)
-            .Include(p => p.Image)
-            .Where(p => !p.IsDeleted)
-            .Where(p => p.Name == productName ||
-                        p.Name.StartsWith(productName))
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
+        return ExecutePagination(pageNumber, pageSize, filter);
     }
     public override async Task<int> Update(Product product)
     {
@@ -108,5 +91,33 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         }
 
         return await base.UpdateRange(products);
+    }
+
+    private async Task<PagedResponse<Product>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<Product, bool>>? filter = null)
+    {
+        var totalRecordsQuery = _dbContext.Products.AsNoTracking()
+            .Where(p => !p.IsDeleted);
+
+        var productsQuery = _dbContext.Products.AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Feedbacks)
+            .Include(p => p.Image)
+            .Where(p => !p.IsDeleted);
+
+        if (filter is not null)
+        {
+            totalRecordsQuery = totalRecordsQuery.Where(filter);
+            productsQuery = productsQuery.Where(filter);
+        }
+
+        var totalRecords = await totalRecordsQuery
+            .CountAsync();
+
+        var products = await productsQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
     }
 }

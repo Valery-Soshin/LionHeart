@@ -39,7 +39,7 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var productServiceResult = await _productService.GetProductsWithPagination(pageNumber);
+        var productServiceResult = await _productService.GetProducts(pageNumber);
         if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
         var pagedResponse = productServiceResult.Data;
         if (pagedResponse is null) return BadRequest();
@@ -215,7 +215,7 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return View();
 
-        var productServiceResult = await _productService.Search(model.Name, model.PageNumber);
+        var productServiceResult = await _productService.Search(model.SearchedValue, model.PageNumber);
         if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
         var page = productServiceResult.Data;
         if (page is null) return BadRequest();
