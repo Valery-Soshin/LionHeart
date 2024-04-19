@@ -10,6 +10,7 @@ namespace LionHeart.DataAccess;
 public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
+    public DbSet<Brand> Brands { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
     public DbSet<BasketEntry> BasketEntries{ get; set; }
@@ -29,15 +30,16 @@ public class ApplicationDbContext : IdentityDbContext<User>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSnakeCaseNamingConvention();
-        optionsBuilder.LogTo(
-                            Console.WriteLine,
-                            new EventId[] { RelationalEventId.CommandExecuted });
+        //optionsBuilder.LogTo(
+        //                    Console.WriteLine,
+        //                    new EventId[] { RelationalEventId.CommandExecuted });
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new BrandConfiguration());
         builder.ApplyConfiguration(new CompanyConfiguration());
         builder.ApplyConfiguration(new ProductUnitConfiguration());
         builder.ApplyConfiguration(new BasketEntryConfiguration());

@@ -5,6 +5,8 @@ public class Product
     public string Id { get; set; } = null!;
     public string CategoryId { get; set; } = null!;
     public Category Category { get; set; } = null!;
+    public string BrandId { get; set; } = null!;
+    public Brand Brand { get; set; } = null!;
     public string CompanyId { get; set; } = null!;
     public Company Company { get; set; } = null!;
     public string Name { get; set; } = null!;

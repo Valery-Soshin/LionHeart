@@ -150,6 +150,12 @@
   <data name="BasketEntryUpdated" xml:space="preserve">
     <value>Товар в корзине обновлен</value>
   </data>
+  <data name="BrandNotCreated" xml:space="preserve">
+    <value>Бренд не был добавлен</value>
+  </data>
+  <data name="BrandNotFound" xml:space="preserve">
+    <value>Бренд не был найден</value>
+  </data>
   <data name="CategoriesNotFound" xml:space="preserve">
     <value>Категории не были найдены</value>
   </data>
