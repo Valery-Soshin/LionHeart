@@ -4,7 +4,9 @@
 @{
     ViewData["Title"] = $"Бренд: {Model.Name}";
 }
-
-<h2>Бренд: @Model.Name</h2>
-
+<div class="site-body-container-without-bottom ps-4 pe-3">
+    <div class="main-theme text-center p-5">
+        <h2>Бренд: @Model.Name</h2>
+    </div>
+</div>
 <vc:list-products page="Model.Page" use-buttons-for-page="false"></vc:list-products>

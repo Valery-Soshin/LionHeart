@@ -25,34 +25,6 @@
 </style>
 
 <div class="site-body-container">
-    <div class="d-flex justify-content-end mb-2 gap-1">
-        @if (useButtonsForPage)
-        {
-            @if (Model.HasPreviousPage)
-            {
-                <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
-            }
-            @if (Model.HasNextPage)
-            {
-                <button asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</button>
-            }
-        }
-        else
-        {
-            @if (Model.HasPreviousPage)
-            {
-                <a asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
-            }
-            @if (Model.HasNextPage)
-            {
-                <a asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
-            }
-        }
-        @if (!Model.HasPreviousPage && !Model.HasNextPage)
-        {
-            <br />
-        }
-    </div>
     <div class="row row-cols-sm-auto justify-content-center">
         @foreach (var product in Model.Products)
         {
@@ -110,6 +82,34 @@
                 </div>
                 <br />
             </div>
+        }
+    </div>
+    <div class="d-flex justify-content-end mb-2 me-5 pe-5 gap-1">
+        @if (useButtonsForPage)
+        {
+            @if (Model.HasPreviousPage)
+            {
+                <button asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</button>
+            }
+            @if (Model.HasNextPage)
+            {
+                <button asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</button>
+            }
+        }
+        else
+        {
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+            }
+            @if (Model.HasNextPage)
+            {
+                <a asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+            }
+        }
+        @if (!Model.HasPreviousPage && !Model.HasNextPage)
+        {
+            <br />
         }
     </div>
 </div>
