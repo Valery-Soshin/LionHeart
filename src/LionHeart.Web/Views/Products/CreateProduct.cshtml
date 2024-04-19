@@ -1,11 +1,13 @@
 ﻿@using LionHeart.Core.Interfaces.Services;
 @using LionHeart.Web.Models.Products
 @model CreateProductViewModel
-@inject ICategoryService categoryService 
+@inject ICategoryService categoryService
+@inject IBrandService brandService
 
 @{
     ViewBag.Title = "Добавление товара";
     var categories = (await categoryService.GetParentCategories()).Data ?? [];
+    var brands = (await brandService.GetBrands()).Data ?? [];
 }
 
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
@@ -21,14 +23,21 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Категория</label>
-                    <select asp-for="CategoryId" class="form-select custom-input" aria-label="Default select example">
+                    <select asp-for="CategoryId" class="form-select custom-input">
                         <option selected oninput="">Выберите категорию товара</option>
-                        @if(categoryService is not null)
+                        @foreach (var category in categories)
                         {
-                            @foreach (var category in categories)
-                            {
-                                <option value="@category.Id">@category.Name</option>
-                            }
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Бренд</label>
+                    <select asp-for="BrandId" class="form-select custom-input">
+                        <option selected oninput="">Выберите бренд товара</option>
+                        @foreach (var brand in brands)
+                        {
+                            <option value="@brand.Id">@brand.Name</option>
                         }
                     </select>
                 </div>

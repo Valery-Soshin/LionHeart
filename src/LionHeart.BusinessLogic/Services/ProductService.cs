@@ -1,6 +1,8 @@
 ﻿using LionHeart.BusinessLogic.Helpers;
 using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Product;
+using LionHeart.Core.Dtos.ProductUnit;
+using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
@@ -143,6 +145,34 @@ public class ProductService : IProductService
         try
         {
             var pagedResponse = await _productRepository.GetProductsByCompanyId(companyId, pageNumber, PageHelper.PageSize);
+            if (pagedResponse is null)
+            {
+                return new Result<PagedResponse<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = true,
+                Data = pagedResponse
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse<Product>>> GetProductsByBrandId(string brandId, int pageNumber)
+    {
+        try
+        {
+            var pagedResponse = await _productRepository.GetProductsByBrandId(brandId, pageNumber, PageHelper.PageSize);
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Product>>

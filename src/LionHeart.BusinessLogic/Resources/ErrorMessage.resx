@@ -156,6 +156,9 @@
   <data name="BrandNotFound" xml:space="preserve">
     <value>Бренд не был найден</value>
   </data>
+  <data name="BrandsNotFound" xml:space="preserve">
+    <value>Бренды не были найдены</value>
+  </data>
   <data name="CategoriesNotFound" xml:space="preserve">
     <value>Категории не были найдены</value>
   </data>

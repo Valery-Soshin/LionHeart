@@ -178,6 +178,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Бренды не были найдены.
+        /// </summary>
+        internal static string BrandsNotFound {
+            get {
+                return ResourceManager.GetString("BrandsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Категории не были найдены.
         /// </summary>
         internal static string CategoriesNotFound {

@@ -11,6 +11,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
     {
         return _dbContext.Products.AsNoTracking()
             .Include(p => p.Category)
+            .Include(p => p.Brand)
             .Include(p => p.Company)
             .Include(p => p.Feedbacks)
             .Include(p => p.Units)
@@ -47,7 +48,12 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
     }
     public Task<PagedResponse<Product>> GetProductsByCompanyId(string companyId, int pageNumber, int pageSize)
     {
-        Expression<Func<Product, bool>> filter = (Product p) => p.Company.Id == companyId;
+        Expression<Func<Product, bool>> filter = (Product p) => p.CompanyId == companyId;
+        return ExecutePagination(pageNumber, pageSize, filter);
+    }
+    public Task<PagedResponse<Product>> GetProductsByBrandId(string brandId, int pageNumber, int pageSize)
+    {
+        Expression<Func<Product, bool>> filter = (Product p) => p.BrandId == brandId;
         return ExecutePagination(pageNumber, pageSize, filter);
     }
     public Task<PagedResponse<Product>> GetProducts(int pageNumber, int pageSize)

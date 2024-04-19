@@ -9,5 +9,7 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
     public void Configure(EntityTypeBuilder<Brand> builder)
     {
         builder.Property(b => b.Id).ValueGeneratedOnAdd();
+
+        builder.HasAlternateKey(b => b.Name);
     }
 }

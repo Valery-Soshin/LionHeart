@@ -1,0 +1,12 @@
+﻿@using LionHeart.Web.Models.Company
+@model ShowCompanyViewModel
+@addTagHelper *, LionHeart.Web
+
+@{
+    ViewData["Title"] = $"Компания: {Model.Name}";
+}
+
+<form method="post" asp-action="ShowCompany">
+    <input hidden asp-for="Id" value="@Model.Id" />
+    <vc:list-products page="@Model.Page" use-buttons-for-page="true"></vc:list-products>
+</form>

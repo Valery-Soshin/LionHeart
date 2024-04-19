@@ -12,4 +12,9 @@ public class BrandRepository(ApplicationDbContext dbContext) : RepositoryBase<Br
             .Include(b => b.Image)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
+    public Task<List<Brand>> GetBrands()
+    {
+        return _dbContext.Brands.AsNoTracking()
+            .ToListAsync();
+    }
 }

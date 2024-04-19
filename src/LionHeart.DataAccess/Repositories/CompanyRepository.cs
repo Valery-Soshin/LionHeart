@@ -12,4 +12,10 @@ public class CompanyRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(c => c.User)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
+    public Task<Company?> GetByUserId(string userId)
+    {
+        return _dbContext.Companies.AsNoTracking()
+            .Include(c => c.User)
+            .FirstOrDefaultAsync(c => c.UserId == userId);
+    }
 }

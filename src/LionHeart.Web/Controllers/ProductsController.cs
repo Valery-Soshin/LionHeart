@@ -17,6 +17,7 @@ public class ProductsController : Controller
     private readonly IFeedbackService _feedbackService;
     private readonly IBasketEntryService _basketEntryService;
     private readonly IFavoriteProductService _favoriteProductService;
+    private readonly ICompanyService _companyService;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
@@ -24,6 +25,7 @@ public class ProductsController : Controller
                               IFeedbackService feedbackService,
                               IBasketEntryService basketEntryService,
                               IFavoriteProductService favoriteProductService,
+                              ICompanyService companyService,
                               UserManager<User> userManager)
     {
         _productService = productService;
@@ -31,6 +33,7 @@ public class ProductsController : Controller
         _feedbackService = feedbackService;
         _basketEntryService = basketEntryService;
         _favoriteProductService = favoriteProductService;
+        _companyService = companyService;
         _userManager = userManager;
     }
 
@@ -53,7 +56,6 @@ public class ProductsController : Controller
 
         var productServiceResult = await _productService.GetById(id);
         if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
-
         var product = productServiceResult.Data;
         if (product is null) return BadRequest();
 
@@ -89,7 +91,17 @@ public class ProductsController : Controller
             IsInStock = product.Units.Count > 0,
             IsInBasket = isInBasket,
             IsInFavorites = isInFavorites,
-            HasFeedbacks = product.Feedbacks.Count > 0
+            HasFeedbacks = product.Feedbacks.Count > 0,
+            Company = new ShowProductCompanyViewModel
+            {
+                Id = product.Company.Id,
+                Name = product.Company.Name,
+            },
+            Brand = new ShowProductBrandViewModel
+            {
+                Id = product.Brand.Id,
+                Name = product.Brand.Name
+            }
         };
         return View(model);
     }
@@ -105,42 +117,35 @@ public class ProductsController : Controller
     [Authorize(Roles = "Supplier")]
     public async Task<IActionResult> CreateProduct(CreateProductViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
             var userId = _userManager.GetUserId(User);
             if (userId is null) return Unauthorized();
 
+            var companyServiceResult = await _companyService.GetByUserId(userId);
+            if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessage);
+            var company = companyServiceResult.Data;
+            if (company is null) return BadRequest();
+
             var dto = new AddProductDto
             {
+                UserId = userId,
                 Name = model.Name,
                 CategoryId = model.CategoryId,
-                UserId = userId,
+                BrandId = model.BrandId,
+                CompanyId = company.Id,
                 Price = model.Price,
                 Description = model.Description,
                 Specifications = model.Specifications,
+                Quantity = model.Quantity,
                 CreatedAt = DateTimeOffset.UtcNow,
                 Image = model.Image
             };
-            var productResult = await _productService.Add(dto);
-            if (productResult.IsFaulted) return BadRequest(productResult.ErrorMessage);
-
-            var product = productResult.Data;
-            if (product is null) return BadRequest();
-
-            var productUnits = new List<AddProductUnitDto>();
-            for (int i = 0; i < model.Quantity; i++)
-            {
-                productUnits.Add(new AddProductUnitDto
-                {
-                    ProductId = product.Id,
-                    CreatedAt = product.CreatedAt,
-                    SaleStatus = SaleStatus.Available
-                });
-            }
-            var productUnitResult = await _productUnitService.AddRange(productUnits);
-            if (productUnitResult.IsFaulted) return BadRequest(productUnitResult.ErrorMessage);
+            var productServiceResult = await _productService.Add(dto);
+            if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
+            return Redirect("/SupplierPanel");
         }
-        return Redirect("/SupplierPanel");
+        return View();
     }
 
     [HttpGet]
@@ -149,10 +154,9 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var result = await _productService.GetById(productId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-
-        var product = result.Data;
+        var productServiceResult = await _productService.GetById(productId);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
+        var product = productServiceResult.Data;
         if (product is null) return BadRequest();
 
         var model = new EditProductViewModel()
@@ -185,8 +189,8 @@ public class ProductsController : Controller
                 Specifications = model.Specifications,
                 Image = model.Image,
             };
-            var result = await _productService.Update(dto);
-            if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+            var productServiceResult = await _productService.Update(dto);
+            if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
 
             return RedirectToAction("ListSupplierProducts");
         }
@@ -199,8 +203,8 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest();
 
-        var result = await _productService.Remove(productId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var productServiceResult = await _productService.Remove(productId);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
 
         return RedirectToAction("ListSupplierProducts");
     }
@@ -211,7 +215,7 @@ public class ProductsController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> SearchProducts(SearchProductsViewModel model)  
+    public async Task<IActionResult> SearchProducts(SearchProductsViewModel model)
     {
         if (!ModelState.IsValid) return View();
 
@@ -231,10 +235,9 @@ public class ProductsController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var result = await _productService.GetProductsByUserId(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-
-        var products = result.Data;
+        var productServiceResult = await _productService.GetProductsByUserId(userId);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
+        var products = productServiceResult.Data;
         if (products is null) return BadRequest();
 
         var models = new List<SupplierProductViewModel>();

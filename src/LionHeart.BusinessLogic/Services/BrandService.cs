@@ -44,6 +44,34 @@ public class BrandService : IBrandService
             };
         }
     }
+    public async Task<Result<List<Brand>>> GetBrands()
+    {
+        try
+        {
+            var brands = await _brandRepository.GetBrands();
+            if (brands is null)
+            {
+                return new Result<List<Brand>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.BrandsNotFound
+                };
+            }
+            return new Result<List<Brand>>
+            {
+                IsCompleted = true,
+                Data = brands
+            };
+        }
+        catch
+        {
+            return new Result<List<Brand>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
 
     public async Task<Result<Brand>> Add(AddBrandDto dto)
     {

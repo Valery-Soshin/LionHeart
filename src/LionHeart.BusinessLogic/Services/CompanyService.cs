@@ -44,6 +44,34 @@ public class CompanyService : ICompanyService
             };
         }
     }
+    public async Task<Result<Company>> GetByUserId(string userId)
+    {
+        try
+        {
+            var company = await _companyRepository.GetByUserId(userId);
+            if (company is null)
+            {
+                return new Result<Company>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.CompanyNotFound
+                };
+            }
+            return new Result<Company>
+            {
+                IsCompleted = true,
+                Data = company
+            };
+        }
+        catch
+        {
+            return new Result<Company>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
     public async Task<Result<Company>> Add(AddCompanyDto dto)
     {
         try

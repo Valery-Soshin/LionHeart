@@ -34,6 +34,8 @@
         <div class="col-4 mt-5">
             <div class="p-4">
                 <h3>@Model.Name</h3>
+                <a asp-action="ShowBrand" asp-controller="Brands" asp-route-id="@Model.Brand.Id" class="main-color">Бренд: @Model.Brand.Name</a>
+                <br />
                 <p>
                     @await Html.PartialAsync("/Views/Feedbacks/ShowFeedbackCounter.cshtml",
                              new ShowFeedbackCounterViewModel { TotalRating = Model.TotalRating, FeedbackQuantity = Model.FeedbackQuantity })
@@ -81,6 +83,9 @@
             {
                 <a asp-action="CreateFeedback" asp-controller="Feedbacks" asp-route-productId="@Model.Id" class="btn btn-grad w-75 m-0 mt-5">Написать отзыв</a>
             }
+            <div class="mt-2">
+                <a asp-action="ShowCompany" asp-controller="Companies" asp-route-id="@Model.Company.Id" class="main-color">Компания: @Model.Company.Name</a>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -94,7 +99,7 @@
             <div id="feedbacks-content"></div>
         }
     </div>
-</div
+</div   
 
 @section Scripts {
     <script>
@@ -121,5 +126,4 @@
             });
         });
     </script>
-
 }

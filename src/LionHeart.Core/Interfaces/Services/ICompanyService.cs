@@ -7,5 +7,6 @@ namespace LionHeart.Core.Interfaces.Services;
 public interface ICompanyService
 {
     Task<Result<Company>> GetById(string id);
+    Task<Result<Company>> GetByUserId(string userId);
     Task<Result<Company>> Add(AddCompanyDto dto);
 }
