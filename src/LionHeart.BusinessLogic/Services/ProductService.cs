@@ -10,13 +10,19 @@ namespace LionHeart.BusinessLogic.Services;
 
 public class ProductService : IProductService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
+    private readonly IProductUnitService _productUnitService;
     private readonly IImageService _imageService;
 
-    public ProductService(IProductRepository productRepository,
+    public ProductService(IUnitOfWork unitOfWork,
+                          IProductRepository productRepository,
+                          IProductUnitService productUnitService,
                           IImageService imageService)
     {
+        _unitOfWork = unitOfWork;
         _productRepository = productRepository;
+        _productUnitService = productUnitService;
         _imageService = imageService;
     }
 
@@ -220,39 +226,49 @@ public class ProductService : IProductService
     {
         try
         {
-            var product = new Product
-            {
-                CategoryId = dto.CategoryId,
-                Name = dto.Name,
-                Price = dto.Price,
-                Description = dto.Description,
-                Specifications = dto.Specifications,
-                CreatedAt = dto.CreatedAt
-            };
-            var imageResult = await _imageService.Add(dto.Image);
-            if (imageResult.IsFaulted || imageResult.Data is null)
-            {
-                return new Result<Product>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = imageResult.ErrorMessage ?? "Image Name is NULL"
-                };
-            }
-            var imageName = imageResult.Data;
-            product.Image = new Image()
-            {
-                File = dto.Image,
-                FileName = imageName
-            };
-            var result = await _productRepository.Add(product);
-            if (result <= 0)
+            await _unitOfWork.BeginTransaction();
+
+            var imageServiceResult = await _imageService.Add(dto.Image);
+            if (imageServiceResult.IsFaulted || imageServiceResult.Data is null)
             {
                 return new Result<Product>
                 {
                     IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotCreated
+                    ErrorMessage = imageServiceResult.ErrorMessage ?? "ImageServiceResult.Data is NULL"
                 };
             }
+            var product = new Product
+            {
+                Name = dto.Name,
+                CategoryId = dto.CategoryId,
+                BrandId = dto.BrandId,
+                CompanyId = dto.CompanyId,
+                Price = dto.Price,
+                Description = dto.Description,
+                Specifications = dto.Specifications,
+                CreatedAt = dto.CreatedAt,
+                Image = new Image() { FileName = imageServiceResult.Data }
+            };
+            var productRepositoryResult = await _productRepository.Add(product);
+            var productUnitDtos = Enumerable.Range(0, dto.Quantity).Select(i => new AddProductUnitDto
+            {
+                ProductId = product.Id,
+                CreatedAt = product.CreatedAt,
+                SaleStatus = SaleStatus.Available
+            }).ToList();
+            var productUnitServiceResult = await _productUnitService.AddRange(productUnitDtos);
+
+            if (productUnitServiceResult.IsFaulted ||
+                productRepositoryResult <= 0)
+            {
+                await _unitOfWork.Rollback();
+                return new Result<Product>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.InternalServerError
+                };
+            }
+            await _unitOfWork.Commit();
             return new Result<Product>
             {
                 IsCompleted = true,
@@ -261,6 +277,7 @@ public class ProductService : IProductService
         }
         catch
         {
+            await _unitOfWork.Rollback();
             return new Result<Product>
             {
                 IsCompleted = false,
@@ -286,17 +303,7 @@ public class ProductService : IProductService
             product.Price = dto.Price;
             product.Description = dto.Description;
             product.Specifications = dto.Specifications;
-            if (dto.Image is not null && dto.Image.FileName is not null)
-            {
-                if (product.Image.FileName != dto.Image.FileName)
-                {
-                    product.Image = new Image
-                    {
-                        FileName = dto.Image.FileName,
-                        File = dto.Image
-                    };
-                }
-            }
+            // todo: update image
 
             var result = await _productRepository.Update(product);
             if (result <= 0)

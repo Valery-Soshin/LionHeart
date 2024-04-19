@@ -33,8 +33,8 @@ public class ImageService : IImageService
                 };
             }
             var separator = ".";
-            var imageName = Path.GetRandomFileName() + separator + extension;
-            var fullPath = Path.Combine(_folderPath, imageName);
+            var nameWithExtension = Path.GetRandomFileName() + separator + extension;
+            var fullPath = Path.Combine(_folderPath, nameWithExtension);
 
             using var stream = new FileStream(fullPath, FileMode.Create);
             await image.CopyToAsync(stream);
@@ -42,7 +42,7 @@ public class ImageService : IImageService
             return new Result<string>
             {
                 IsCompleted = true,
-                Data = imageName
+                Data = nameWithExtension
             };
         }
         catch

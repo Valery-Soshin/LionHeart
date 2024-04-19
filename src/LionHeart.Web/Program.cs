@@ -11,7 +11,6 @@ using NLog.Web;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
 builder.Services.AddControllersWithViews();
@@ -22,6 +21,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSql"]));
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitRepository>();
@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
@@ -42,8 +43,8 @@ builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
