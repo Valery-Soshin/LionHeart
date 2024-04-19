@@ -28,32 +28,8 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Where(p => ids.Contains(p.Id))
             .ToListAsync();
     }
-    public Task<List<Product>> GetProductsByCategoryId(string categoryId)
+    public Task<PagedResponse<Product>> GetProductsByFilter(Expression<Func<Product, bool>> filter, int pageNumber, int pageSize)
     {
-        return _dbContext.Products.AsNoTracking()
-            .Include(p => p.Category)
-            .Include(p => p.Image)
-            .Where(p => !p.IsDeleted)
-            .Where(p => p.CategoryId == categoryId)
-            .ToListAsync();
-    }
-    public Task<List<Product>> GetProductsByUserId(string userId)
-    {
-        return _dbContext.Products.AsNoTracking()
-            .Include(p => p.Category)
-            .Include(p => p.Image)
-            .Where(p => !p.IsDeleted)
-            .Where(p => p.Company.UserId == userId)
-            .ToListAsync();
-    }
-    public Task<PagedResponse<Product>> GetProductsByCompanyId(string companyId, int pageNumber, int pageSize)
-    {
-        Expression<Func<Product, bool>> filter = (Product p) => p.CompanyId == companyId;
-        return ExecutePagination(pageNumber, pageSize, filter);
-    }
-    public Task<PagedResponse<Product>> GetProductsByBrandId(string brandId, int pageNumber, int pageSize)
-    {
-        Expression<Func<Product, bool>> filter = (Product p) => p.BrandId == brandId;
         return ExecutePagination(pageNumber, pageSize, filter);
     }
     public Task<PagedResponse<Product>> GetProducts(int pageNumber, int pageSize)

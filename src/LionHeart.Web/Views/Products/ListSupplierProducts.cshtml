@@ -1,6 +1,6 @@
-﻿@using LionHeart.Web.Models.Products
-@model List<SupplierProductViewModel>
-
+﻿@using LionHeart.BusinessLogic.Helpers
+@using LionHeart.Web.Models.Products
+@model ListSupplierProductsViewModel
 @{
     ViewData["Title"] = "Список товаров";
 }
@@ -19,9 +19,9 @@
         </thead>
         <tbody class="border-1">
             @{
-                int rowNumber = 1;
+                int rowNumber = 1 + (Model.PageNumber - 1) * PageHelper.PageSize;
             }
-            @foreach (var product in Model.OrderBy(m => m.CreatedAt))
+            @foreach (var product in Model.Products.OrderBy(m => m.CreatedAt))
             {
                 <tr>
                     <form asp-action="DeleteProduct" asp-route-productId="@product.Id" method="post">
@@ -41,6 +41,16 @@
             }
         </tbody>
     </table>
+    <div class="text-end">
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+        }
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+        }
+    </div>
 </div>
 
 

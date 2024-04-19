@@ -1,5 +1,13 @@
 ﻿namespace LionHeart.Web.Models.Products;
 
+public class ListSupplierProductsViewModel
+{
+    public int PageNumber { get; set; }
+    public bool HasPreviousPage { get; set; }
+    public bool HasNextPage { get; set; }
+    public List<SupplierProductViewModel> Products { get; set; } = [];
+}
+
 public class SupplierProductViewModel
 {
     public string Id { get; set; } = null!;

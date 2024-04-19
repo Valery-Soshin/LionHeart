@@ -7,6 +7,7 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
+using System.ComponentModel.Design;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -84,68 +85,14 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<List<Product>>> GetProductsByCategoryId(string categoryId)
+    public async Task<Result<PagedResponse<Product>>> GetProductsByCategoryId(string categoryId, int pageNumber)
     {
         try
         {
-            var products = await _productRepository.GetProductsByCategoryId(categoryId);
-            if (products is null)
-            {
-                return new Result<List<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<List<Product>>
-            {
-                IsCompleted = true,
-                Data = products
-            };
-        }
-        catch
-        {
-            return new Result<List<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
-        }
-    }
-    public async Task<Result<List<Product>>> GetProductsByUserId(string userId)
-    {
-        try
-        {
-            var products = await _productRepository.GetProductsByUserId(userId);
-            if (products is null)
-            {
-                return new Result<List<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<List<Product>>
-            {
-                IsCompleted = true,
-                Data = products
-            };
-        }
-        catch
-        {
-            return new Result<List<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
-        }
-    }
-    public async Task<Result<PagedResponse<Product>>> GetProductsByCompanyId(string companyId, int pageNumber)
-    {
-        try
-        {
-            var pagedResponse = await _productRepository.GetProductsByCompanyId(companyId, pageNumber, PageHelper.PageSize);
-            if (pagedResponse is null)
+            var productPage = await _productRepository.GetProductsByFilter(
+                p => p.CategoryId == categoryId, pageNumber, PageHelper.PageSize);
+
+            if (productPage is null)
             {
                 return new Result<PagedResponse<Product>>
                 {
@@ -156,7 +103,67 @@ public class ProductService : IProductService
             return new Result<PagedResponse<Product>>
             {
                 IsCompleted = true,
-                Data = pagedResponse
+                Data = productPage
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse<Product>>> GetProductsByUserId(string userId, int pageNumber)
+    {
+        try
+        {
+            var productPage = await _productRepository.GetProductsByFilter(
+                p => p.Company.UserId == userId, pageNumber, PageHelper.PageSize);
+
+            if (productPage is null)
+            {
+                return new Result<PagedResponse<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = true,
+                Data = productPage
+            };
+        }
+        catch
+        {
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = false,
+                ErrorMessage = ErrorMessage.InternalServerError
+            };
+        }
+    }
+    public async Task<Result<PagedResponse<Product>>> GetProductsByCompanyId(string companyId, int pageNumber)
+    {
+        try
+        {
+            var productPage = await _productRepository.GetProductsByFilter(
+                p => p.CompanyId == companyId, pageNumber, PageHelper.PageSize);
+
+            if (productPage is null)
+            {
+                return new Result<PagedResponse<Product>>
+                {
+                    IsCompleted = false,
+                    ErrorMessage = ErrorMessage.ProductsNotFound
+                };
+            }
+            return new Result<PagedResponse<Product>>
+            {
+                IsCompleted = true,
+                Data = productPage
             };
         }
         catch
@@ -172,8 +179,10 @@ public class ProductService : IProductService
     {
         try
         {
-            var pagedResponse = await _productRepository.GetProductsByBrandId(brandId, pageNumber, PageHelper.PageSize);
-            if (pagedResponse is null)
+            var productPage = await _productRepository.GetProductsByFilter(
+                p => p.BrandId == brandId, pageNumber, PageHelper.PageSize);
+
+            if (productPage is null)
             {
                 return new Result<PagedResponse<Product>>
                 {
@@ -184,7 +193,7 @@ public class ProductService : IProductService
             return new Result<PagedResponse<Product>>
             {
                 IsCompleted = true,
-                Data = pagedResponse
+                Data = productPage
             };
         }
         catch
@@ -196,12 +205,12 @@ public class ProductService : IProductService
             };
         }
     }
-    public async Task<Result<PagedResponse<Product>>> GetProducts(int pageNumber)
+    public async Task<Result<PagedResponse<Product>>> GetAll(int pageNumber)
     {
         try
         {
-            var pagedResponse = await _productRepository.GetProducts(pageNumber, PageHelper.PageSize);
-            if (pagedResponse is null)
+            var productPage = await _productRepository.GetProducts(pageNumber, PageHelper.PageSize);
+            if (productPage is null)
             {
                 return new Result<PagedResponse<Product>>
                 {
@@ -212,7 +221,7 @@ public class ProductService : IProductService
             return new Result<PagedResponse<Product>>
             {
                 IsCompleted = true,
-                Data = pagedResponse
+                Data = productPage
             };
         }
         catch

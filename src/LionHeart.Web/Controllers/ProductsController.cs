@@ -42,7 +42,7 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var productServiceResult = await _productService.GetProducts(pageNumber);
+        var productServiceResult = await _productService.GetAll(pageNumber);
         if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
         var pagedResponse = productServiceResult.Data;
         if (pagedResponse is null) return BadRequest();
@@ -230,20 +230,25 @@ public class ProductsController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Supplier")]
-    public async Task<IActionResult> ListSupplierProducts()
+    public async Task<IActionResult> ListSupplierProducts(int pageNumber = 1)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var productServiceResult = await _productService.GetProductsByUserId(userId);
+        var productServiceResult = await _productService.GetProductsByUserId(userId, pageNumber);
         if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
-        var products = productServiceResult.Data;
-        if (products is null) return BadRequest();
+        var page = productServiceResult.Data;
+        if (page is null) return BadRequest();
 
-        var models = new List<SupplierProductViewModel>();
-        foreach (var product in products)
+        var model = new ListSupplierProductsViewModel()
         {
-            models.Add(new SupplierProductViewModel()
+            PageNumber = page.PageNumber,
+            HasPreviousPage = page.HasPreviousPage,
+            HasNextPage = page.HasNextPage
+        };
+        foreach (var product in page.Entities)
+        {
+            model.Products.Add(new SupplierProductViewModel()
             {
                 Id = product.Id,
                 CategoryId = product.CategoryId,
@@ -256,6 +261,6 @@ public class ProductsController : Controller
                 Quantity = (await _productUnitService.Count(product.Id)).Data
             });
         }
-        return View(models);
+        return View(model);
     }
 }
