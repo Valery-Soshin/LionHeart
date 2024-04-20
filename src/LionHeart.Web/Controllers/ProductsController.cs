@@ -7,6 +7,8 @@ using LionHeart.Web.Models.Products;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Dtos.Product;
 using LionHeart.Core.Dtos.ProductUnit;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Diagnostics;
 
 namespace LionHeart.Web.Controllers;
 
@@ -18,6 +20,7 @@ public class ProductsController : Controller
     private readonly IBasketEntryService _basketEntryService;
     private readonly IFavoriteProductService _favoriteProductService;
     private readonly ICompanyService _companyService;
+    private readonly ILogger<Product> _logger;
     private readonly UserManager<User> _userManager;
 
     public ProductsController(IProductService productService,
@@ -26,6 +29,7 @@ public class ProductsController : Controller
                               IBasketEntryService basketEntryService,
                               IFavoriteProductService favoriteProductService,
                               ICompanyService companyService,
+                              ILogger<Product> logger,
                               UserManager<User> userManager)
     {
         _productService = productService;
@@ -34,6 +38,7 @@ public class ProductsController : Controller
         _basketEntryService = basketEntryService;
         _favoriteProductService = favoriteProductService;
         _companyService = companyService;
+        _logger = logger;
         _userManager = userManager;
     }
 

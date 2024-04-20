@@ -76,9 +76,8 @@ public class FeedbacksController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var feedbackServiceResult = await _feedbackService.GetFeedbacksByProductIdWithPagination(productId, pageNumber);
+        var feedbackServiceResult = await _feedbackService.GetFeedbacksByProductId(productId, pageNumber);
         if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
-
         var pagedResponse = feedbackServiceResult.Data;
         if (pagedResponse is null) return BadRequest();
 
@@ -90,7 +89,7 @@ public class FeedbacksController : Controller
             HasPreviousPage = pagedResponse.HasPreviousPage,
             Feedbacks = pagedResponse.Entities.Select(e => new ListFeedbacksItemViewModel()
             {
-                FirstName = e.User.FirstName!,
+                FirstName = e.User.Email,
                 Rating = (int)e.Rating,
                 Content = e.Content,
                 CreatedAt = e.CreatedAt

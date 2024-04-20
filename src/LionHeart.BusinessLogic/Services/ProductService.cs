@@ -90,7 +90,7 @@ public class ProductService : IProductService
         try
         {
             var productPage = await _productRepository.GetProductsByFilter(
-                p => p.CategoryId == categoryId, pageNumber, PageHelper.PageSize);
+                 pageNumber, PageHelper.PageSize, p => p.CategoryId == categoryId);
 
             if (productPage is null)
             {
@@ -120,7 +120,7 @@ public class ProductService : IProductService
         try
         {
             var productPage = await _productRepository.GetProductsByFilter(
-                p => p.Company.UserId == userId, pageNumber, PageHelper.PageSize);
+                 pageNumber, PageHelper.PageSize, p => p.Company.UserId == userId);
 
             if (productPage is null)
             {
@@ -150,7 +150,7 @@ public class ProductService : IProductService
         try
         {
             var productPage = await _productRepository.GetProductsByFilter(
-                p => p.CompanyId == companyId, pageNumber, PageHelper.PageSize);
+                pageNumber, PageHelper.PageSize, p => p.CompanyId == companyId);
 
             if (productPage is null)
             {
@@ -180,7 +180,7 @@ public class ProductService : IProductService
         try
         {
             var productPage = await _productRepository.GetProductsByFilter(
-                p => p.BrandId == brandId, pageNumber, PageHelper.PageSize);
+                 pageNumber, PageHelper.PageSize, p => p.BrandId == brandId);
 
             if (productPage is null)
             {

@@ -67,7 +67,7 @@ public class ProfileController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var feedbackServiceResult = await _feedbackService.GetFeedbacksByUserIdWithPagination(userId, pageNumber);
+        var feedbackServiceResult = await _feedbackService.GetFeedbacksByUserId(userId, pageNumber);
         if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
         var pagedResponse = feedbackServiceResult.Data;
         if (pagedResponse is null) return BadRequest();

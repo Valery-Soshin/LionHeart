@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -12,36 +13,19 @@ public class FeedbackRepository(ApplicationDbContext dbContext) : RepositoryBase
             .Include(f => f.User)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
-    public async Task<PagedResponse<Feedback>> GetFeedbacksByUserIdWithPagination(string userId, int pageNumber, int pageSize)
+    public Task<PagedResponse<Feedback>> GetFeedbacksByFilter(int pageNumber, int pageSize, Expression<Func<Feedback, bool>> filter)
     {
-        var totalRecords = await _dbContext.Feedbacks.AsNoTracking()
-            .Where(f => f.UserId == userId)
-            .CountAsync();
-
-        var feedbacks = await _dbContext.Feedbacks.AsNoTracking()
-            .Include(f => f.Product)
-                .ThenInclude(p => p.Image)
-            .Where(f => f.UserId == userId)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedResponse<Feedback>(feedbacks, totalRecords, pageNumber, pageSize);
+        return ExecutePagination(pageNumber, pageSize, filter);
     }
-    public async Task<PagedResponse<Feedback>> GetFeedbacksByProductIdWithPagination(string productId, int pageNumber, int pageSize)
+    private Task<PagedResponse<Feedback>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<Feedback, bool>>? filter = null) 
     {
-        var totalRecords = await _dbContext.Feedbacks.AsNoTracking()
-            .Where(f => f.ProductId == productId)
-            .CountAsync();
+        var totalRecordsQuery = _dbContext.Feedbacks.AsNoTracking();
 
-        var feedbacks = await _dbContext.Feedbacks.AsNoTracking()
+        var feedbacksQuery = _dbContext.Feedbacks.AsNoTracking()
             .Include(f => f.User)
-            .Where(f => f.ProductId == productId)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+            .Include(f => f.Product.Image);
 
-        return new PagedResponse<Feedback>(feedbacks, totalRecords, pageNumber, pageSize);
+        return BuildPagination(totalRecordsQuery, feedbacksQuery, pageNumber, pageSize, filter);
     }
     public Task<bool> Exists(string userId, string productId)
     {

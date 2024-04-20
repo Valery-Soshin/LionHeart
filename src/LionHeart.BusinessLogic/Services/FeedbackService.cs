@@ -1,4 +1,5 @@
-﻿using LionHeart.BusinessLogic.Resources;
+﻿using LionHeart.BusinessLogic.Helpers;
+using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Feedback;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
@@ -47,12 +48,13 @@ public class FeedbackService : IFeedbackService
             };
         }
     }
-    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByUserIdWithPagination(string userId, int pageNumber)
+    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByUserId(string userId, int pageNumber)
     {
         try
         {
-            const int pageSize = 10;
-            var pagedResponse = await _feedbackRepository.GetFeedbacksByUserIdWithPagination(userId, pageNumber, pageSize);
+            var pagedResponse = await _feedbackRepository.GetFeedbacksByFilter(
+                pageNumber, PageHelper.PageSize, f => f.UserId == userId);
+
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Feedback>>
@@ -76,12 +78,13 @@ public class FeedbackService : IFeedbackService
             };
         }
     }
-    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByProductIdWithPagination(string productId, int pageNumber)
+    public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByProductId(string productId, int pageNumber)
     {
         try
         {
-            const int pageSize = 10;
-            var pagedResponse = await _feedbackRepository.GetFeedbacksByProductIdWithPagination(productId, pageNumber, pageSize);
+            var pagedResponse = await _feedbackRepository.GetFeedbacksByFilter(
+                pageNumber, PageHelper.PageSize, f => f.ProductId == productId);
+
             if (pagedResponse is null)
             {
                 return new Result<PagedResponse<Feedback>>

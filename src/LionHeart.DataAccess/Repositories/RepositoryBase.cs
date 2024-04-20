@@ -1,5 +1,8 @@
 ﻿using LionHeart.Core.Interfaces.Repositories;
+using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -56,6 +59,28 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
 
         _dbContext.ChangeTracker.Clear();
         return result;
+    }
+    protected async Task<PagedResponse<T>> BuildPagination<T>(IQueryable<T> totalRecordsQuery,
+                                                            IQueryable<T> entitiesQuery,
+                                                            int pageNumber,
+                                                            int pageSize,
+                                                            Expression<Func<T, bool>>? filter = null)
+    {
+        if (filter is not null)
+        {
+            totalRecordsQuery = totalRecordsQuery.Where(filter);
+            entitiesQuery = entitiesQuery.Where(filter);
+        }
+
+        var totalRecords = await totalRecordsQuery
+            .CountAsync();
+
+        var entites = await entitiesQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse<T>(entites, totalRecords, pageNumber, pageSize);
     }
 
     public void Dispose()

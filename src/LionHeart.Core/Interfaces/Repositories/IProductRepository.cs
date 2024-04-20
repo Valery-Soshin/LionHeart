@@ -6,7 +6,7 @@ namespace LionHeart.Core.Interfaces.Repositories;
 public interface IProductRepository : IRepository<Product>
 {
     Task<List<Product>> GetProductsByIds(List<string> ids);
-    Task<PagedResponse<Product>> GetProductsByFilter(Expression<Func<Product, bool>> filter, int pageNumber, int pageSize);
+    Task<PagedResponse<Product>> GetProductsByFilter(int pageNumber, int pageSize, Expression<Func<Product, bool>> filter);
     Task<PagedResponse<Product>> GetProducts(int pageNumber, int pageSize);
     Task<PagedResponse<Product>> Search(string searchedValue, int pageNumber, int pageSize);
 }

@@ -28,7 +28,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Where(p => ids.Contains(p.Id))
             .ToListAsync();
     }
-    public Task<PagedResponse<Product>> GetProductsByFilter(Expression<Func<Product, bool>> filter, int pageNumber, int pageSize)
+    public Task<PagedResponse<Product>> GetProductsByFilter(int pageNumber, int pageSize, Expression<Func<Product, bool>> filter)
     {
         return ExecutePagination(pageNumber, pageSize, filter);
     }
@@ -44,11 +44,7 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
 
         Expression<Func<Product, bool>> filter =
             (Product p) => p.Name == searchedValue ||
-                           p.Name.StartsWith(searchedValue) ||
-                           p.Category.Name == searchedValue ||
-                           p.Category.Name.StartsWith(searchedValue) ||
-                           p.Company.Name == searchedValue ||
-                           p.Company.Name.StartsWith(searchedValue);
+                           p.Name.StartsWith(searchedValue);
 
         return ExecutePagination(pageNumber, pageSize, filter);
     }
@@ -74,9 +70,8 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
         }
 
         return await base.UpdateRange(products);
-    }
-
-    private async Task<PagedResponse<Product>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<Product, bool>>? filter = null)
+    }   
+    private Task<PagedResponse<Product>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<Product, bool>>? filter = null)
     {
         var totalRecordsQuery = _dbContext.Products.AsNoTracking()
             .Where(p => !p.IsDeleted);
@@ -87,20 +82,6 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Image)
             .Where(p => !p.IsDeleted);
 
-        if (filter is not null)
-        {
-            totalRecordsQuery = totalRecordsQuery.Where(filter);
-            productsQuery = productsQuery.Where(filter);
-        }
-
-        var totalRecords = await totalRecordsQuery
-            .CountAsync();
-
-        var products = await productsQuery
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedResponse<Product>(products, totalRecords, pageNumber, pageSize);
+        return BuildPagination(totalRecordsQuery, productsQuery, pageNumber, pageSize, filter);
     }
 }

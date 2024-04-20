@@ -72,7 +72,6 @@ public class BrandService : IBrandService
             };
         }
     }
-
     public async Task<Result<Brand>> Add(AddBrandDto dto)
     {
         try
