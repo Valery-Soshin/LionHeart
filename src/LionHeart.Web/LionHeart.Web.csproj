@@ -9,13 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Helpers\**" />
     <Compile Remove="Models\Orders\**" />
-    <Content Remove="Helpers\**" />
     <Content Remove="Models\Orders\**" />
-    <EmbeddedResource Remove="Helpers\**" />
     <EmbeddedResource Remove="Models\Orders\**" />
-    <None Remove="Helpers\**" />
     <None Remove="Models\Orders\**" />
   </ItemGroup>
 

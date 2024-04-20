@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.DataAccess;
 using LionHeart.DataAccess.Repositories;
+using LionHeart.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
@@ -80,4 +81,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.UseMiddleware<LoggingRequestTimeMiddleware>();
 app.Run();
