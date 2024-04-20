@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/rating.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LionHeart.Web.styles.css" asp-append-version="true" />
     <style>
         .body-container {
@@ -27,7 +28,7 @@
         }
     </style>
 </head>
-<body style="background-color: white">
+<body>
     @{
         var user = await userManager.GetUserAsync(User);
         var userId = user?.Id;
@@ -85,7 +86,7 @@
         </ul>
     </header>
 
-    <div class="container body-container">
+    <div class="container body-container" style=">
         <main role="main">
             @RenderBody()
         </main>

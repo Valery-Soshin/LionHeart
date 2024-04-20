@@ -1,12 +1,13 @@
 ﻿@using LionHeart.Web.Models.Brand
 @model ShowBrandViewModel
 
+
 @{
     ViewData["Title"] = $"Бренд: {Model.Name}";
 }
-<div class="site-body-container-without-bottom ps-4 pe-3">
-    <div class="main-theme text-center p-5">
-        <h2>Бренд: @Model.Name</h2>
+<div class="site-body-container-without-bottom ps-4 pe-3" >
+    <div class="text-center p-5 main-theme brand-banner">
+        <h1 class="brand-banner fw-bold">Бренд: @Model.Name</h1>
     </div>
 </div>
 <vc:list-products page="Model.Page" use-buttons-for-page="false"></vc:list-products>
