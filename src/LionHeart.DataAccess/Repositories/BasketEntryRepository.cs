@@ -17,7 +17,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
             .FirstOrDefaultAsync(e => e.Id == id);
     }
 
-    public Task<BasketEntry?> GetByUserIdProductId(string userId, string productId)
+    public Task<BasketEntry?> GetByAlternateKey(string userId, string productId)
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)

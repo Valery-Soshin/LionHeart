@@ -37,7 +37,7 @@ public class BasketEntryService : IBasketEntryService
     {
         try
         {
-            var entry = await _basketEntryRepository.GetByUserIdProductId(userId, productId);
+            var entry = await _basketEntryRepository.GetByAlternateKey(userId, productId);
             if (entry is null)
             {
                 return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotFound);

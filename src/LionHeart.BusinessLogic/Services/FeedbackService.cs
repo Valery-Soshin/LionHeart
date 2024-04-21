@@ -76,11 +76,14 @@ public class FeedbackService : IFeedbackService
                 Content = dto.Content,
                 CreatedAt = dto.CreatedAt
             };
+            var feedbackServiceResult = await HasFeedbackPending(dto.UserId, dto.ProductId);
+            if (feedbackServiceResult.IsFaulted) return Result<Feedback>.Failure(feedbackServiceResult.ErrorMessages);
+            var hasFeedbackPending = feedbackServiceResult.Value;
+            if (!hasFeedbackPending) return Result<Feedback>.Failure(ErrorMessage.UserHasNotFeedbackPending);
+
             var result = await _feedbackRepository.Add(feedback);
-            if (result <= 0)
-            {
-                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotCreated);
-            }
+            if (result <= 0)return Result<Feedback>.Failure(ErrorMessage.FeedbackNotCreated);
+            
             return Result<Feedback>.Success(feedback);
         }
         catch

@@ -482,5 +482,14 @@ namespace LionHeart.BusinessLogic.Resources {
                 return ResourceManager.GetString("ProductUnitsNotUpdated", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Не получается добавить отзыв о товаре.
+        /// </summary>
+        internal static string UserHasNotFeedbackPending {
+            get {
+                return ResourceManager.GetString("UserHasNotFeedbackPending", resourceCulture);
+            }
+        }
     }
 }

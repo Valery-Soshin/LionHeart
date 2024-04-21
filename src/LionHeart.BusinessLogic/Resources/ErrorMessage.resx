@@ -258,4 +258,7 @@
   <data name="ProductUnitsNotUpdated" xml:space="preserve">
     <value>Единицы продукта не были обновлены</value>
   </data>
+  <data name="UserHasNotFeedbackPending" xml:space="preserve">
+    <value>Не получается добавить отзыв о товаре</value>
+  </data>
 </root>
