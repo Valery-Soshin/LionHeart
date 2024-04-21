@@ -7,16 +7,20 @@ namespace LionHeart.BusinessLogic.Services;
 
 public class ImageService : IImageService
 {
-    private readonly string _folderPath;
+    private readonly string _folderPath = string.Empty;
 
     public ImageService()
     {
-        _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-
-        if (!Directory.Exists(_folderPath))
+        try
         {
-            Directory.CreateDirectory(_folderPath);
+            _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            if (!Directory.Exists(_folderPath))
+            {
+                Directory.CreateDirectory(_folderPath);
+            }
         }
+        catch { }
     }
 
     public async Task<Result<string>> Add(IFormFile image)
@@ -26,11 +30,7 @@ public class ImageService : IImageService
             var extension = image.ContentType.Split("/")[1];
             if (!ValidateExtension(extension))
             {
-                return new Result<string>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FileNotImage
-                };
+                return Result<string>.Failure(ErrorMessage.FileNotImage);
             }
             var separator = ".";
             var nameWithExtension = Path.GetRandomFileName() + separator + extension;
@@ -39,22 +39,14 @@ public class ImageService : IImageService
             using var stream = new FileStream(fullPath, FileMode.Create);
             await image.CopyToAsync(stream);
 
-            return new Result<string>
-            {
-                IsCompleted = true,
-                Data = nameWithExtension
-            };
+            return Result<string>.Success(nameWithExtension);
         }
         catch
         {
-            return new Result<string>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<string>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public static bool ValidateExtension(string extension)
+    private bool ValidateExtension(string extension)
     {
         return extension is "png" or "jpeg";
     }

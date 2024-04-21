@@ -6,8 +6,8 @@
 
 @{
     ViewBag.Title = "Добавление товара";
-    var categories = (await categoryService.GetParentCategories()).Data ?? [];
-    var brands = (await brandService.GetBrands()).Data ?? [];
+    var categories = (await categoryService.GetParentCategories()).Value ?? [];
+    var brands = (await brandService.GetBrands()).Value ?? [];
 }
 
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">

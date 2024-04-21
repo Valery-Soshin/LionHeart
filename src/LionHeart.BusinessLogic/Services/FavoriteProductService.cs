@@ -1,5 +1,5 @@
-﻿using LionHeart.BusinessLogic.Resources;
-using LionHeart.Core.Dtos.FavoriteProduct;
+﻿using LionHeart.BusinessLogic.Helpers;
+using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
@@ -21,83 +21,41 @@ public class FavoriteProductService : IFavoriteProductService
         try
         {
             var favoriteProduct = await _favoriteRepository.GetById(id);
-            if (favoriteProduct is null)
-            {
-                return new Result<FavoriteProduct>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
-                };
-            }
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = true,
-                Data = favoriteProduct
-            };
+            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            
+            return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
         {
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<FavoriteProduct>.Failure(ErrorMessage.InternalServerError);
         }
-    }
-    public async Task<Result<FavoriteProduct>> GetByUserIdProductId(string userId, string productId)
+    }                                      
+    public async Task<Result<FavoriteProduct>> GetByAlternateKey(string userId, string productId)
     {
         try
         {
-            var favoriteProduct = await _favoriteRepository.GetByUserIdProductId(userId, productId);
-            if (favoriteProduct is null)
-            {
-                return new Result<FavoriteProduct>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
-                };
-            }
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = true,
-                Data = favoriteProduct
-            };
+            var favoriteProduct = await _favoriteRepository.GetByAlternateKey(userId, productId);
+            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            
+            return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
         {
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<FavoriteProduct>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public async Task<Result<List<FavoriteProduct>>> GetFavoritesByUserIdWithoutQueryFilter(string userId)
+    public async Task<Result<PagedResponse<FavoriteProduct>>> GetFavoritesByUserId(string userId, int pageNumber)
     {
         try
         {
-            var favoriteProducts = await _favoriteRepository.GetFavoritesByUserIdWithoutQueryFilter(userId);
-            if (favoriteProducts is null)
-            {
-                return new Result<List<FavoriteProduct>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductsNotFound
-                };
-            }
-            return new Result<List<FavoriteProduct>>
-            {
-                IsCompleted = true,
-                Data = favoriteProducts
-            };
+            var page = await _favoriteRepository.GetFavoritesByUserId(
+                pageNumber, PageHelper.PageSize, f => f.UserId == userId);
+            
+            return Result<PagedResponse<FavoriteProduct>>.Success(page);
         }
         catch
         {
-            return new Result<List<FavoriteProduct>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<FavoriteProduct>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<FavoriteProduct>> Add(string userId, string productId)
@@ -110,104 +68,54 @@ public class FavoriteProductService : IFavoriteProductService
                 ProductId = productId
             };
             var result = await _favoriteRepository.Add(favoriteProduct);
-            if (result <= 0)
-            {
-                return new Result<FavoriteProduct>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductNotCreated
-                };
-            }
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = true,
-                Data = favoriteProduct
-            };
+            if (result <= 0) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotCreated);
+           
+            return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
         {
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<FavoriteProduct>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<FavoriteProduct>> Remove(string userId, string productId)
     {
         try
         {
-            var favoriteProduct = await _favoriteRepository
-                .GetByUserIdProductId(userId, productId);
-
-            if (favoriteProduct is null)
-            {
-                return new Result<FavoriteProduct>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductNotFound
-                };
-            }
+            var favoriteProduct = await _favoriteRepository.GetByAlternateKey(userId, productId);
+            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            
             var result = await _favoriteRepository.Remove(favoriteProduct);
-            if (result <= 0)
-            {
-                return new Result<FavoriteProduct>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FavoriteProductNotCreated
-                };
-            }
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = true,
-                Data = favoriteProduct
-            };
+            if (result <= 0) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotRemoved);
+            
+            return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
         {
-            return new Result<FavoriteProduct>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<FavoriteProduct>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<bool>> Any(string userId)
     {
         try
         {
-            return new Result<bool>
-            {
-                IsCompleted = true,
-                Data = await _favoriteRepository.Any(userId)
-            };
+            var result = await _favoriteRepository.Any(userId);
+            return Result<bool>.Success(result);
         }
         catch
         {
-            return new Result<bool>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<bool>> Exists(string userId, string productId)
     {
         try
         {
-            return new Result<bool>
-            {
-                IsCompleted = true,
-                Data = await _favoriteRepository.Exists(userId, productId)
-            };
+            var result = await _favoriteRepository.Exists(userId, productId);
+            return Result<bool>.Success(result);
         }
         catch
         {
-            return new Result<bool>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

@@ -30,25 +30,13 @@ public class NotificationService : INotificationService
             var result = await _notificationRepository.Add(notification);
             if (result <= 0)
             {
-                return new Result<Notification>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.NotificationNotCreated
-                };
+                return Result<Notification>.Failure(ErrorMessage.NotificationNotCreated);
             }
-            return new Result<Notification>
-            {
-                IsCompleted = true,
-                Data = notification
-            };
+            return Result<Notification>.Success(notification);
         }
         catch
         {
-            return new Result<Notification>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Notification>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<Notification>>> AddRange(List<AddNotificationDto> dtos)
@@ -65,25 +53,13 @@ public class NotificationService : INotificationService
             var result = await _notificationRepository.AddRange(notifications);
             if (result <= 0)
             {
-                return new Result<List<Notification>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.NotificationsNotCreated
-                };
+                return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotCreated);
             }
-            return new Result<List<Notification>>
-            {
-                IsCompleted = true,
-                Data = notifications
-            };
+            return Result<List<Notification>>.Success(notifications);
         }
         catch
         {
-            return new Result<List<Notification>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<Notification>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Notification>> Remove(string id)
@@ -93,34 +69,18 @@ public class NotificationService : INotificationService
             var notification = await _notificationRepository.GetById(id);
             if (notification is null)
             {
-                return new Result<Notification>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.NotificationNotFound
-                };
+                return Result<Notification>.Failure(ErrorMessage.NotificationNotFound);
             }
             var result = await _notificationRepository.Remove(notification);
             if (result <= 0)
             {
-                return new Result<Notification>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.NotificationNotRemoved
-                };
+                return Result<Notification>.Failure(ErrorMessage.NotificationNotRemoved);
             }
-            return new Result<Notification>
-            {
-                IsCompleted = true,
-                Data = notification
-            };
+            return Result<Notification>.Success(notification);
         }
         catch
         {
-            return new Result<Notification>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Notification>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<Notification>>> GetNotificationsByUserId(string userId)
@@ -128,47 +88,23 @@ public class NotificationService : INotificationService
         try
         {
             var notifications = await _notificationRepository.GetNotificationsByUserId(userId);
-            if (notifications is null)
-            {
-                return new Result<List<Notification>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.NotificationsNotFound
-                };
-            }
-
-            return new Result<List<Notification>>
-            {
-                IsCompleted = true,
-                Data = notifications
-            };
+            return Result<List<Notification>>.Success(notifications);
         }
         catch
         {
-            return new Result<List<Notification>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<Notification>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<int>> Count(string userId)
     {
         try
         {
-            return new Result<int>
-            {
-                IsCompleted = true,
-                Data = await _notificationRepository.Count(userId)
-            };
+            var result = await _notificationRepository.Count(userId);
+            return Result<int>.Success(result);
         }
         catch
         {
-            return new Result<int>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<int>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

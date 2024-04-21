@@ -21,14 +21,12 @@ public class CompaniesController : Controller
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var companyServiceResult = await _companyService.GetById(id);
-        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessage);
-        var company = companyServiceResult.Data;
-        if (company is null) return BadRequest();
+        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessages);
+        var company = companyServiceResult.Value;
 
         var productServiceResult = await _productService.GetProductsByCompanyId(company.Id, pageNumber);
-        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessage);
-        var page = productServiceResult.Data;
-        if (page is null) return BadRequest();
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessages);
+        var page = productServiceResult.Value;
 
         var model = new ShowCompanyViewModel
         {

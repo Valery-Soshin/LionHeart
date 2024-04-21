@@ -21,27 +21,13 @@ public class ProductUnitService : IProductUnitService
         try
         {
             var productUnit = await _productUnitRepository.GetById(id);
-            if (productUnit is null)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitNotFound
-                };
-            }
-            return new Result<ProductUnit>
-            {
-                IsCompleted = true,
-                Data = productUnit
-            };
+            if (productUnit is null) return Result<ProductUnit>.Failure(ErrorMessage.ProductUnitNotFound);
+            
+            return Result<ProductUnit>.Success(productUnit);
         }
         catch
         {
-            return new Result<ProductUnit>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<ProductUnit>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<ProductUnit>> Add(AddProductUnitDto dto)
@@ -55,27 +41,13 @@ public class ProductUnitService : IProductUnitService
                 CreatedAt = dto.CreatedAt
             };
             var result = await _productUnitRepository.Add(productUnit);
-            if (result <= 0)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitNotCreated
-                };
-            }
-            return new Result<ProductUnit>
-            {
-                IsCompleted = true,
-                Data = productUnit
-            };
+            if (result <= 0) return Result<ProductUnit>.Failure(ErrorMessage.ProductUnitNotCreated);
+
+            return Result<ProductUnit>.Success(productUnit);
         }
         catch
         {
-            return new Result<ProductUnit>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<ProductUnit>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<ProductUnit>>> AddRange(List<AddProductUnitDto> dtos)
@@ -89,27 +61,13 @@ public class ProductUnitService : IProductUnitService
                 CreatedAt = d.CreatedAt
             }).ToList();
             var result = await _productUnitRepository.AddRange(productUnits);
-            if (result <= 0)
-            {
-                return new Result<List<ProductUnit>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitsNotCreated
-                };
-            }
-            return new Result<List<ProductUnit>>
-            {
-                IsCompleted = true,
-                Data = productUnits
-            };
+            if (result <= 0) return Result<List<ProductUnit>>.Failure(ErrorMessage.ProductUnitsNotCreated);
+
+            return Result<List<ProductUnit>>.Success(productUnits);
         }
         catch
         {
-            return new Result<List<ProductUnit>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<ProductUnit>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<ProductUnit>> Update(UpdateProductUnitDto dto)
@@ -117,52 +75,27 @@ public class ProductUnitService : IProductUnitService
         try
         {
             var productUnit = await _productUnitRepository.GetById(dto.Id);
-            if (productUnit is null)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitNotFound
-                };
-            }
+            if (productUnit is null) return Result<ProductUnit>.Failure(ErrorMessage.ProductUnitNotFound);
+            
             productUnit.SaleStatus = dto.SaleStatus;
+
             var result = await _productUnitRepository.Update(productUnit);
-            if (result <= 0)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotUpdated
-                };
-            }
-            return new Result<ProductUnit>
-            {
-                IsCompleted = true,
-                Data = productUnit
-            };
+            if (result <= 0) return Result<ProductUnit>.Failure(ErrorMessage.ProductNotUpdated);
+            
+            return Result<ProductUnit>.Success(productUnit);
         }
         catch
         {
-            return new Result<ProductUnit>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<ProductUnit>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<ProductUnit>>> UpdateRange(List<UpdateProductUnitDto> dtos)
     {
         try
         {
-            var productUnits = await _productUnitRepository.GetProductsByIds(dtos.Select(d => d.Id).ToList());
-            if (productUnits is null)
-            {
-                return new Result<List<ProductUnit>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitsNotFound
-                };
-            }
+            var productUnits = await _productUnitRepository.FindProductUnits(dtos.Select(d => d.Id).ToList());
+            if (productUnits is null) return Result<List<ProductUnit>>.Failure(ErrorMessage.ProductUnitsNotFound);
+
             foreach (var productUnit in productUnits)
             {
                 var productUnitDto = dtos.Single(d => d.Id == productUnit.Id);
@@ -170,27 +103,13 @@ public class ProductUnitService : IProductUnitService
             }
 
             var result = await _productUnitRepository.UpdateRange(productUnits);
-            if (result <= 0)
-            {
-                return new Result<List<ProductUnit>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotUpdated
-                };
-            }
-            return new Result<List<ProductUnit>>
-            {
-                IsCompleted = true,
-                Data = productUnits
-            };
+            if (result <= 0) return Result<List<ProductUnit>>.Failure(ErrorMessage.ProductUnitsNotUpdated);
+
+            return Result<List<ProductUnit>>.Success(productUnits);
         }
         catch
         {
-            return new Result<List<ProductUnit>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<ProductUnit>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<ProductUnit>> Remove(string id)
@@ -198,55 +117,28 @@ public class ProductUnitService : IProductUnitService
         try
         {
             var productUnit = await _productUnitRepository.GetById(id);
-            if (productUnit is null)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitNotFound
-                };
-            }
+            if (productUnit is null) return Result<ProductUnit>.Failure(ErrorMessage.ProductUnitNotFound);
+            
             var result = await _productUnitRepository.Remove(productUnit);
-            if (result <= 0)
-            {
-                return new Result<ProductUnit>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductUnitNotRemoved
-                };
-            }
-            return new Result<ProductUnit>
-            {
-                IsCompleted = true,
-                Data = productUnit
-            };
+            if (result <= 0) return Result<ProductUnit>.Failure(ErrorMessage.ProductUnitNotRemoved);
+
+            return Result<ProductUnit>.Success(productUnit);
         }
         catch
         {
-            return new Result<ProductUnit>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<ProductUnit>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<int>> Count(string productId)
     {
         try
         {
-            return new Result<int>
-            {
-                IsCompleted = true,
-                Data = await _productUnitRepository.Count(productId)
-            };
+            var result = await _productUnitRepository.Count(productId);
+            return Result<int>.Success(result);
         }
         catch
         {
-            return new Result<int>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<int>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

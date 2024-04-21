@@ -18,14 +18,15 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int pageNumber = 1)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var result = await _orderService.GetOrdersByUserId(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var orderServiceResult = await _orderService.GetOrdersByUserId(userId, pageNumber);
+        if (orderServiceResult.IsFaulted) return BadRequest(orderServiceResult.ErrorMessages);
+        var page = orderServiceResult.Value;
 
-        return View(result.Data);
+        return View(page.Entities);
     }
 }

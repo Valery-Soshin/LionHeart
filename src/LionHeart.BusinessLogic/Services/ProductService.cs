@@ -7,7 +7,6 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
-using System.ComponentModel.Design;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -36,229 +35,109 @@ public class ProductService : IProductService
             var product = await _productRepository.GetById(id);
             if (product is null)
             {
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotFound
-                };
+                return Result<Product>.Failure(ErrorMessage.ProductNotFound);
             }
-            return new Result<Product>
-            {
-                IsCompleted = true,
-                Data = product
-            };
+            return Result<Product>.Success(product);
         }
         catch
         {
-            return new Result<Product>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public async Task<Result<List<Product>>> GetProductsByIds(List<string> ids)
+    public async Task<Result<List<Product>>> FindProducts(List<string> ids)
     {
         try
         {
-            var products = await _productRepository.GetProductsByIds(ids);
+            var products = await _productRepository.FindProducts(ids);
             if (products is null)
             {
-                return new Result<List<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
+                return Result<List<Product>>.Failure(ErrorMessage.ProductsNotFound);
             }
-            return new Result<List<Product>>
-            {
-                IsCompleted = true,
-                Data = products
-            };
+            return Result<List<Product>>.Success(products);
         }
         catch
         {
-            return new Result<List<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> GetProductsByCategoryId(string categoryId, int pageNumber)
     {
         try
         {
-            var productPage = await _productRepository.GetProductsByFilter(
+            var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.CategoryId == categoryId);
 
-            if (productPage is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = productPage
-            };
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> GetProductsByUserId(string userId, int pageNumber)
     {
         try
         {
-            var productPage = await _productRepository.GetProductsByFilter(
+            var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.Company.UserId == userId);
 
-            if (productPage is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = productPage
-            };
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> GetProductsByCompanyId(string companyId, int pageNumber)
     {
         try
         {
-            var productPage = await _productRepository.GetProductsByFilter(
+            var page = await _productRepository.GetProductsByFilter(
                 pageNumber, PageHelper.PageSize, p => p.CompanyId == companyId);
 
-            if (productPage is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = productPage
-            };
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> GetProductsByBrandId(string brandId, int pageNumber)
     {
         try
         {
-            var productPage = await _productRepository.GetProductsByFilter(
+            var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.BrandId == brandId);
 
-            if (productPage is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = productPage
-            };
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> GetAll(int pageNumber)
     {
         try
         {
-            var productPage = await _productRepository.GetProducts(pageNumber, PageHelper.PageSize);
-            if (productPage is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = productPage
-            };
+            var page = await _productRepository.GetProducts(pageNumber, PageHelper.PageSize);
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Product>>> Search(string productName, int pageNumber)
     {
         try
         {
-            var pagedResponse = await _productRepository.Search(productName, pageNumber, PageHelper.PageSize);
-            if (pagedResponse is null)
-            {
-                return new Result<PagedResponse<Product>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
-            }
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = true,
-                Data = pagedResponse
-            };
+            var page = await _productRepository.Search(productName, pageNumber, PageHelper.PageSize);
+            return Result<PagedResponse<Product>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Product>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Product>> Add(AddProductDto dto)
@@ -268,14 +147,8 @@ public class ProductService : IProductService
             await _unitOfWork.BeginTransaction();
 
             var imageServiceResult = await _imageService.Add(dto.Image);
-            if (imageServiceResult.IsFaulted || imageServiceResult.Data is null)
-            {
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = imageServiceResult.ErrorMessage ?? "ImageServiceResult.Data is NULL"
-                };
-            }
+            if (imageServiceResult.IsFaulted) return Result<Product>.Failure(imageServiceResult.ErrorMessages);
+
             var product = new Product
             {
                 Name = dto.Name,
@@ -286,9 +159,10 @@ public class ProductService : IProductService
                 Description = dto.Description,
                 Specifications = dto.Specifications,
                 CreatedAt = dto.CreatedAt,
-                Image = new Image() { FileName = imageServiceResult.Data }
+                Image = new Image() { FileName = imageServiceResult.Value }
             };
             var productRepositoryResult = await _productRepository.Add(product);
+
             var productUnitDtos = Enumerable.Range(0, dto.Quantity).Select(i => new AddProductUnitDto
             {
                 ProductId = product.Id,
@@ -301,27 +175,15 @@ public class ProductService : IProductService
                 productRepositoryResult <= 0)
             {
                 await _unitOfWork.Rollback();
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.InternalServerError
-                };
+                return Result<Product>.Failure(ErrorMessage.InternalServerError);
             }
             await _unitOfWork.Commit();
-            return new Result<Product>
-            {
-                IsCompleted = true,
-                Data = product
-            };
+            return Result<Product>.Success(product);
         }
         catch
         {
             await _unitOfWork.Rollback();
-            return new Result<Product>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Product>> Update(UpdateProductDto dto)
@@ -331,11 +193,7 @@ public class ProductService : IProductService
             var product = await _productRepository.GetById(dto.Id);
             if (product is null)
             {
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotFound
-                };
+                return Result<Product>.Failure(ErrorMessage.ProductNotFound);
             }
             product.CategoryId = dto.CategoryId;
             product.Name = dto.Name;
@@ -345,28 +203,13 @@ public class ProductService : IProductService
             // todo: update image
 
             var result = await _productRepository.Update(product);
-            if (result <= 0)
-            {
-                return new Result<Product>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotUpdated
-                };
-            }
+            if (result <= 0) return Result<Product>.Failure(ErrorMessage.ProductNotUpdated);
 
-            return new Result<Product>
-            {
-                IsCompleted = true,
-                Data = product
-            };
+            return Result<Product>.Success(product);
         }
         catch
         {
-            return new Result<Product>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Product>> Remove(string id)
@@ -376,27 +219,23 @@ public class ProductService : IProductService
             var product = await _productRepository.GetById(id);
             if (product is null)
             {
-                return new Result<Product>
+                var errorMessages = new List<string>
                 {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductNotFound
+                    ErrorMessage.ProductNotFound,
+                    ErrorMessage.ProductNotRemoved
                 };
+                return Result<Product>.Failure(errorMessages);
             }
             product.IsDeleted = true;
-            await _productRepository.Update(product);
-            return new Result<Product>
-            {
-                IsCompleted = true,
-                Data = product
-            };
+
+            var result = await _productRepository.Update(product);
+            if (result <= 0) return Result<Product>.Failure(ErrorMessage.ProductNotRemoved);
+
+            return Result<Product>.Success(product);
         }
         catch
         {
-            return new Result<Product>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

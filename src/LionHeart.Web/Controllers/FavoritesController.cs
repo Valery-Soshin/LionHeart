@@ -1,5 +1,4 @@
-﻿using LionHeart.Core.Dtos.FavoriteProduct;
-using LionHeart.Core.Interfaces.Services;
+﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,8 +25,8 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var result = await _favoriteProductService.Add(userId, productId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var favoriteProductServiceResult = await _favoriteProductService.Add(userId, productId);
+        if (favoriteProductServiceResult.IsFaulted) return BadRequest(favoriteProductServiceResult.ErrorMessages);
 
         return Ok();
     }
@@ -38,8 +37,8 @@ public class FavoritesController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized(); 
 
-        var result = await _favoriteProductService.Remove(userId, productId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var favoriteProductServiceResult = await _favoriteProductService.Remove(userId, productId);
+        if (favoriteProductServiceResult.IsFaulted) return BadRequest(favoriteProductServiceResult.ErrorMessages);
 
         return Ok();
     }

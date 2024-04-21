@@ -22,27 +22,14 @@ public class FeedbacksController : Controller
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> ShowFeedback(string id)
-    {
-        var feedbackServiceResult = await _feedbackService.GetById(id);
-        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
-        var feedback = feedbackServiceResult.Data;
-        if (feedback is null) return BadRequest();
-
-        return null;
-
-    }
-
     [HttpGet]
     public async Task<IActionResult> CreateFeedback(string productId)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _productService.GetById(productId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-
-        var product = result.Data;
-        if (product is null) return BadRequest();
+        var productServiceResult = await _productService.GetById(productId);
+        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessages);
+        var product = productServiceResult.Value;
 
         ViewData["ProductId"] = product.Id;
         ViewData["ProductName"] = product.Name;
@@ -52,7 +39,7 @@ public class FeedbacksController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateFeedback(CreateFeedbackViewModel model)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
@@ -65,36 +52,9 @@ public class FeedbacksController : Controller
             Content = model.Content,
             CreatedAt = DateTimeOffset.UtcNow
         };
-        var result = await _feedbackService.Add(dto);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage); 
+        var feedbackServiceResult = await _feedbackService.Add(dto);
+        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessages);
 
         return Redirect("/Products");
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ListFeedbacks(string productId, int pageNumber = 1)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var feedbackServiceResult = await _feedbackService.GetFeedbacksByProductId(productId, pageNumber);
-        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
-        var pagedResponse = feedbackServiceResult.Data;
-        if (pagedResponse is null) return BadRequest();
-
-        var model = new ListFeedbacksViewModel
-        {
-            ProductId = productId,
-            PageNumber = pagedResponse.PageNumber,
-            HasNextPage = pagedResponse.HasNextPage,
-            HasPreviousPage = pagedResponse.HasPreviousPage,
-            Feedbacks = pagedResponse.Entities.Select(e => new ListFeedbacksItemViewModel()
-            {
-                FirstName = e.User.Email,
-                Rating = (int)e.Rating,
-                Content = e.Content,
-                CreatedAt = e.CreatedAt
-            }).ToList()
-        };
-        return PartialView(model);
     }
 }

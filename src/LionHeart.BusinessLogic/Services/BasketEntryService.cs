@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
+using System.Collections.Generic;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -23,55 +24,29 @@ public class BasketEntryService : IBasketEntryService
             var entry = await _basketEntryRepository.GetById(id);
             if (entry is null)
             {
-                return new Result<BasketEntry>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotFound
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotFound);
             }
-            return new Result<BasketEntry>()
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntryFound,
-                Data = entry
-            };
+            return Result<BasketEntry>.Success(entry);
         }
         catch
         {
-            return new Result<BasketEntry>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<BasketEntry>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public async Task<Result<BasketEntry>> GetByUserIdProductId(string userId, string productId)
+    public async Task<Result<BasketEntry>> GetByAlternateKey(string userId, string productId)
     {
         try
         {
             var entry = await _basketEntryRepository.GetByUserIdProductId(userId, productId);
             if (entry is null)
             {
-                return new Result<BasketEntry>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotFound
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotFound);
             }
-            return new Result<BasketEntry>()
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntryFound,
-                Data = entry
-            };
+            return Result<BasketEntry>.Success(entry);
         }
         catch
         {
-            return new Result<BasketEntry>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<BasketEntry>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<BasketEntry>>> GetEntriesByUserId(string userId)
@@ -79,28 +54,11 @@ public class BasketEntryService : IBasketEntryService
         try
         {
             var entries = await _basketEntryRepository.GetEntriesByUserId(userId);
-            if (entries is null)
-            {
-                return new Result<List<BasketEntry>>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntriesNotFound
-                };
-            }
-            return new Result<List<BasketEntry>>()
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntriesFound,
-                Data = entries
-            };
+            return Result<List<BasketEntry>>.Success(entries);
         }
         catch
         {
-            return new Result<List<BasketEntry>>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<BasketEntry>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<BasketEntry>> Add(AddBasketEntryDto dto)
@@ -116,28 +74,14 @@ public class BasketEntryService : IBasketEntryService
             var result = await _basketEntryRepository.Add(entry);
             if (result <= 0)
             {
-                return new Result<BasketEntry>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotCreated,
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotCreated);
             }
-            return new Result<BasketEntry>
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntryCreated,
-                Data = entry
-            };
+            return Result<BasketEntry>.Success(entry);
         }
         catch
         {
-            return new Result<BasketEntry>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError,
-            };
+            return Result<BasketEntry>.Failure(ErrorMessage.InternalServerError);
         }
-
     }
     public async Task<Result<BasketEntry>> Update(UpdateBasketEntryDto dto)
     {
@@ -146,38 +90,19 @@ public class BasketEntryService : IBasketEntryService
             var entry = await _basketEntryRepository.GetById(dto.Id);
             if (entry is null)
             {
-                return new Result<BasketEntry>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotFound,
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotFound);
             }
-
             entry.Quantity = dto.Quantity;
-
             var result = await _basketEntryRepository.Update(entry);
             if (result <= 0)
             {
-                return new Result<BasketEntry>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotUpdated,
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotUpdated);
             }
-            return new Result<BasketEntry>
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntryUpdated,
-                Data = entry
-            };
+            return Result<BasketEntry>.Success(entry);
         }
         catch
         {
-            return new Result<BasketEntry>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError,
-            };
+            return Result<BasketEntry>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<BasketEntry>> Remove(string id)
@@ -187,83 +112,51 @@ public class BasketEntryService : IBasketEntryService
             var entry = await _basketEntryRepository.GetById(id);
             if (entry is null)
             {
-                return new Result<BasketEntry>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotFound,
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotFound);
             }
             var result = await _basketEntryRepository.Remove(entry);
             if (result <= 0)
             {
-                return new Result<BasketEntry>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntryNotDeleted,
-                };
+                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotDeleted);
             }
-            return new Result<BasketEntry>
-            {
-                IsCompleted = true,
-                ErrorMessage = ErrorMessage.BasketEntryDeleted,
-                Data = entry
-            };
+            return Result<BasketEntry>.Success(entry);
         }
         catch
         {
-            return new Result<BasketEntry>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError,
-            };
+            return Result<BasketEntry>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<BasketEntry>>> RemoveRange(List<string> ids)
     {
         try
         {
-            var entries = await _basketEntryRepository.GetAll(ids);
+            var entries = await _basketEntryRepository.Find(ids);
+            if (entries.Count == 0)
+            {
+                return Result<List<BasketEntry>>.Failure(ErrorMessage.BasketEntriesNotFound);
+            }
             var result = await _basketEntryRepository.RemoveRange(entries);
             if (result <= 0)
             {
-                return new Result<List<BasketEntry>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BasketEntriesNotRemoved
-                };
+                return Result<List<BasketEntry>>.Failure(ErrorMessage.BasketEntriesNotRemoved);
             }
-            return new Result<List<BasketEntry>>
-            {
-                IsCompleted = true,
-                Data = entries
-            };
+            return Result<List<BasketEntry>>.Success(entries);
         }
         catch
         {
-            return new Result<List<BasketEntry>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError,
-            };
+            return Result<List<BasketEntry>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<bool>> Exists(string userId, string productId)
     {
         try
         {
-            return new Result<bool>
-            {
-                IsCompleted = true,
-                Data = await _basketEntryRepository.Exists(userId, productId)
-            };
+            var result = await _basketEntryRepository.Exists(userId, productId);
+            return Result<bool>.Success(result);
         }
         catch
         {
-            return new Result<bool>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

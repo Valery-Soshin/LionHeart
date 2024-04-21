@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -13,22 +14,16 @@ public class FavoriteProductRepository(ApplicationDbContext dbContext) : Reposit
                 .ThenInclude(p => p.Image)
             .FirstOrDefaultAsync(f => f.Id == id);
     }
-    public Task<FavoriteProduct?> GetByUserIdProductId(string userId, string productId)
+    public Task<FavoriteProduct?> GetByAlternateKey(string userId, string productId)
     {
         return _dbContext.FavoriteProducts.AsNoTracking()
-            .Include(f => f.Product)
-                .ThenInclude(p => p.Image)
-            .FirstOrDefaultAsync(f => f.UserId == userId &&
+            .Include(f => f.Product.Image)
+            .SingleOrDefaultAsync(f => f.UserId == userId &&
                                       f.ProductId == productId);
     }
-    public Task<List<FavoriteProduct>> GetFavoritesByUserIdWithoutQueryFilter(string userId)
+    public Task<PagedResponse<FavoriteProduct>> GetFavoritesByUserId(int pageNumber, int pageSize, Expression<Func<FavoriteProduct, bool>> filter)
     {
-        return _dbContext.FavoriteProducts.AsNoTracking()
-            .IgnoreQueryFilters()
-            .Include(f => f.Product)
-                .ThenInclude(p => p.Image)
-            .Where(f => f.UserId == userId)
-            .ToListAsync();
+        return ExecutePagination(pageNumber, pageSize, filter);
     }
     public Task<bool> Any(string userId)
     {
@@ -40,5 +35,15 @@ public class FavoriteProductRepository(ApplicationDbContext dbContext) : Reposit
         return _dbContext.FavoriteProducts.AsNoTracking()
             .AnyAsync(f => f.UserId == userId &&
                            f.ProductId == productId);
+    }
+
+    private Task<PagedResponse<FavoriteProduct>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<FavoriteProduct, bool>> filter)
+    {
+        var totalRecordsQuery = _dbContext.FavoriteProducts.AsNoTracking();
+
+        var favoriteProductsQuery = _dbContext.FavoriteProducts.AsNoTracking()
+            .Include(f => f.Product.Image);
+
+        return BuildPagination(totalRecordsQuery, favoriteProductsQuery, pageNumber, pageSize, filter);
     }
 }

@@ -47,18 +47,16 @@ public class ProfileController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> ShowFavorites()
+    public async Task<IActionResult> ShowFavorites(int pageNumber = 1)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var result = await _favoriteProductService.GetFavoritesByUserIdWithoutQueryFilter(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var favoriteProductServiceResult = await _favoriteProductService.GetFavoritesByUserId(userId, pageNumber);
+        if (favoriteProductServiceResult.IsFaulted) return BadRequest(favoriteProductServiceResult.ErrorMessages);
+        var page = favoriteProductServiceResult.Value;
 
-        var favoriteProducts = result.Data;
-        if (favoriteProducts is null) return BadRequest();
-
-        return View(favoriteProducts);
+        return View();
     }
 
     [HttpGet]
@@ -68,20 +66,19 @@ public class ProfileController : Controller
         if (userId is null) return Unauthorized();
 
         var feedbackServiceResult = await _feedbackService.GetFeedbacksByUserId(userId, pageNumber);
-        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessage);
-        var pagedResponse = feedbackServiceResult.Data;
-        if (pagedResponse is null) return BadRequest();
-
-        bool hasNullObjects = pagedResponse.Entities.Exists(
+        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessages);
+        var page = feedbackServiceResult.Value;
+        
+        bool hasNullObjects = page.Entities.Exists(
             e => e.Product is null || e .Product.Image is null);
         if (hasNullObjects) return BadRequest();
 
         var model = new ShowMyFeedbacksViewModel()
         {
-            PageNumber = pagedResponse.PageNumber,
-            HasPreviousPage = pagedResponse.HasPreviousPage,
-            HasNextPage = pagedResponse.HasNextPage,
-            Feedbacks = pagedResponse.Entities.Select(e => new ShowMyFeedbacksItemViewModel
+            PageNumber = page.PageNumber,
+            HasPreviousPage = page.HasPreviousPage,
+            HasNextPage = page.HasNextPage,
+            Feedbacks = page.Entities.Select(e => new ShowMyFeedbacksItemViewModel
             {
                 Id = e.Id,
                 ProductName = e.Product!.Name,
@@ -100,9 +97,9 @@ public class ProfileController : Controller
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var result = await _notificationService.GetNotificationsByUserId(userId);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
-        var notifications = result.Data!;
+        var notificationServiceResult = await _notificationService.GetNotificationsByUserId(userId);
+        if (notificationServiceResult.IsFaulted) return BadRequest(notificationServiceResult.ErrorMessages);
+        var notifications = notificationServiceResult.Value;
 
         var model = new ShowNotificationsViewModel
         {
@@ -156,12 +153,12 @@ public class ProfileController : Controller
 
                 if (!result.Succeeded)
                 {
-                    return Redirect("/Profile/EditProfile");
+                    return View();
                 }
             }
             await _userManager.UpdateAsync(user);
-            return Redirect("/Profile/ShowProfile");
+            return RedirectToAction("ShowProfile");
         }
-        return Redirect("/Profile/EditProfile");
+        return View();
     }
 }

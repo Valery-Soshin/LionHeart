@@ -117,23 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BasketEntriesFound" xml:space="preserve">
-    <value>Записи товаров найдены</value>
-  </data>
   <data name="BasketEntriesNotFound" xml:space="preserve">
     <value>Записи товаров не найдены</value>
   </data>
   <data name="BasketEntriesNotRemoved" xml:space="preserve">
     <value>Товары не были удалены из корзины</value>
-  </data>
-  <data name="BasketEntryCreated" xml:space="preserve">
-    <value>Товар добавлен в корзину</value>
-  </data>
-  <data name="BasketEntryDeleted" xml:space="preserve">
-    <value>Товар удален из корзины</value>
-  </data>
-  <data name="BasketEntryFound" xml:space="preserve">
-    <value>Товар найден в корзине</value>
   </data>
   <data name="BasketEntryNotCreated" xml:space="preserve">
     <value>Товар не добавлен в корзину</value>
@@ -146,9 +134,6 @@
   </data>
   <data name="BasketEntryNotUpdated" xml:space="preserve">
     <value>Товар в корзине не обновлен</value>
-  </data>
-  <data name="BasketEntryUpdated" xml:space="preserve">
-    <value>Товар в корзине обновлен</value>
   </data>
   <data name="BrandNotCreated" xml:space="preserve">
     <value>Бренд не был добавлен</value>
@@ -174,11 +159,11 @@
   <data name="CategoryNotUpdated" xml:space="preserve">
     <value>Категория не была обновлена</value>
   </data>
+  <data name="CompanyNotCreated" xml:space="preserve">
+    <value>Компания не была создана</value>
+  </data>
   <data name="CompanyNotFound" xml:space="preserve">
     <value>Компания не была найдена</value>
-  </data>
-  <data name="ExceptionMessage" xml:space="preserve">
-    <value>Исключение: </value>
   </data>
   <data name="FavoriteProductNotCreated" xml:space="preserve">
     <value>Продукт не был добавлен в избранное</value>
@@ -228,17 +213,8 @@
   <data name="NotificationsNotFound" xml:space="preserve">
     <value>Уведомления не найдены</value>
   </data>
-  <data name="OrderCreated" xml:space="preserve">
-    <value>Заказ был создан</value>
-  </data>
-  <data name="OrderFound" xml:space="preserve">
-    <value>Заказ был найден</value>
-  </data>
   <data name="OrderNotFound" xml:space="preserve">
     <value>Заказ не был найден</value>
-  </data>
-  <data name="OrdersFound" xml:space="preserve">
-    <value>Заказы найдены</value>
   </data>
   <data name="OrdersNotFound" xml:space="preserve">
     <value>Заказы не найдены</value>

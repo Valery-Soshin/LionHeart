@@ -27,85 +27,41 @@ public class FeedbackService : IFeedbackService
             var feedback = await _feedbackRepository.GetById(id);
             if (feedback is null)
             {
-                return new Result<Feedback>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbackNotFound
-                };
+                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotFound);
             }
-            return new Result<Feedback>
-            {
-                IsCompleted = true,
-                Data = feedback
-            };
+            return Result<Feedback>.Success(feedback);
         }
         catch
         {
-            return new Result<Feedback>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Feedback>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByUserId(string userId, int pageNumber)
     {
         try
         {
-            var pagedResponse = await _feedbackRepository.GetFeedbacksByFilter(
+            var page = await _feedbackRepository.GetFeedbacksByFilter(
                 pageNumber, PageHelper.PageSize, f => f.UserId == userId);
 
-            if (pagedResponse is null)
-            {
-                return new Result<PagedResponse<Feedback>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbacksNotFound
-                };
-            }
-            return new Result<PagedResponse<Feedback>>
-            {
-                IsCompleted = true,
-                Data = pagedResponse
-            };
+            return Result<PagedResponse<Feedback>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Feedback>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Feedback>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<PagedResponse<Feedback>>> GetFeedbacksByProductId(string productId, int pageNumber)
     {
         try
         {
-            var pagedResponse = await _feedbackRepository.GetFeedbacksByFilter(
+            var page = await _feedbackRepository.GetFeedbacksByFilter(
                 pageNumber, PageHelper.PageSize, f => f.ProductId == productId);
 
-            if (pagedResponse is null)
-            {
-                return new Result<PagedResponse<Feedback>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbacksNotFound
-                };
-            }
-            return new Result<PagedResponse<Feedback>>
-            {
-                IsCompleted = true,
-                Data = pagedResponse
-            };
+            return Result<PagedResponse<Feedback>>.Success(page);
         }
         catch
         {
-            return new Result<PagedResponse<Feedback>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Feedback>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Feedback>> Add(AddFeedbackDto dto)
@@ -123,25 +79,13 @@ public class FeedbackService : IFeedbackService
             var result = await _feedbackRepository.Add(feedback);
             if (result <= 0)
             {
-                return new Result<Feedback>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbackNotCreated
-                };
+                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotCreated);
             }
-            return new Result<Feedback>
-            {
-                IsCompleted = true,
-                Data = feedback
-            };
+            return Result<Feedback>.Success(feedback);
         }
         catch
         {
-            return new Result<Feedback>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Feedback>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Feedback>> Remove(string id)
@@ -151,34 +95,18 @@ public class FeedbackService : IFeedbackService
             var feedback = await _feedbackRepository.GetById(id);
             if (feedback is null)
             {
-                return new Result<Feedback>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbackNotFound
-                };
+                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotFound);
             }
             var result = await _feedbackRepository.Remove(feedback);
             if (result <= 0)
             {
-                return new Result<Feedback>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.FeedbackNotRemoved
-                };
+                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotRemoved);
             }
-            return new Result<Feedback>
-            {
-                IsCompleted = true,
-                Data = feedback
-            };
+            return Result<Feedback>.Success(feedback);
         }
         catch
         {
-            return new Result<Feedback>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Feedback>.Failure(ErrorMessage.InternalServerError);
         }
 
     }
@@ -189,29 +117,19 @@ public class FeedbackService : IFeedbackService
             var orderServiceResult = await _orderService.Exists(userId, productId);
             if (orderServiceResult.IsFaulted)
             {
-                return new Result<bool>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.OrderNotFound
-                };
+                var errorMessages = orderServiceResult.ErrorMessages.ToList();
+                errorMessages.Add(ErrorMessage.OrderNotFound);
+                return Result<bool>.Failure(errorMessages);
             }
 
             var hasFeedbackPending = !await _feedbackRepository.Exists(userId, productId) &&
-                orderServiceResult.Data;
+                orderServiceResult.Value;
 
-            return new Result<bool>
-            {
-                IsCompleted = true,
-                Data = hasFeedbackPending
-            };
+            return Result<bool>.Success(hasFeedbackPending);
         }
         catch
         {
-            return new Result<bool>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

@@ -18,6 +18,7 @@ public class ShowProductViewModel
     public bool IsInBasket { get; set; }
     public bool IsInFavorites { get; set; }
     public bool HasFeedbacks { get; set; }
+    public int FeedbackPageNumber { get; set; }
 }
 public class ShowProductCompanyViewModel
 {

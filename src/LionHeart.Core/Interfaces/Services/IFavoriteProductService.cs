@@ -6,8 +6,8 @@ namespace LionHeart.Core.Interfaces.Services;
 public interface IFavoriteProductService
 {
     Task<Result<FavoriteProduct>> GetById(string id);
-    Task<Result<FavoriteProduct>> GetByUserIdProductId(string userId, string productId);
-    Task<Result<List<FavoriteProduct>>> GetFavoritesByUserIdWithoutQueryFilter(string userId);
+    Task<Result<FavoriteProduct>> GetByAlternateKey(string userId, string productId);
+    Task<Result<PagedResponse<FavoriteProduct>>> GetFavoritesByUserId(string userId, int pageNumber);
     Task<Result<FavoriteProduct>> Add(string userId, string productId);
     Task<Result<FavoriteProduct>> Remove(string userId, string productId);
     Task<Result<bool>> Any(string userId);

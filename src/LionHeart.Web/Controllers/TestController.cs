@@ -3,6 +3,7 @@ using LionHeart.Core.Models;
 using LionHeart.DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.Web.Controllers;
 
@@ -36,6 +37,26 @@ public class TestController : Controller
         await CreateFeedbacks(supplier.Id);
         await CreateCategories();
 
+        return Redirect("/Home/Index");
+    }
+    public async Task<IActionResult> CreateFeedbacks()
+    {
+        var supplier = await _applicationDbContext.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email == "supplier@yandex.ru");
+
+        if (supplier is null) return BadRequest();
+
+        await CreateFeedbacks(supplier.Id);
+        return Redirect("/Home/Index");
+    }
+    public async Task<IActionResult> CreateProducts()
+    {
+        var supplier = await _applicationDbContext.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email == "supplier@yandex.ru");
+
+        if (supplier is null) return BadRequest();
+
+        await CreateProducts(supplier);
         return Redirect("/Home/Index");
     }
 
@@ -91,7 +112,7 @@ public class TestController : Controller
         _applicationDbContext.Categories.AddRange(products, electronics);
         return _applicationDbContext.SaveChangesAsync();
     }
-    private Task CreateProducts(User supplier)
+    private async Task CreateProducts(User supplier)
     {
         var category = new Category()
         {
@@ -100,15 +121,17 @@ public class TestController : Controller
         };
         _applicationDbContext.Categories.Add(category);
 
-        var brand = new Brand() { Name = "Apple", Image = new Image() { FileName = "2bcthlt1.m31" } };
-        for (int i = 0; i < 30; i++)
+        var brand = new Brand() { Name = Guid.NewGuid().ToString(), Image = new Image() { FileName = "2bcthlt1.m31" } };
+        var company = new Company() { Name = Guid.NewGuid().ToString(), UserId = supplier.Id };
+        for (int i = 0; i < 50000; i++)
         {
-            var product1 = new Product()
+            Console.WriteLine(i);
+            var product = new Product()
             {
                 Id = Guid.NewGuid().ToString(),
                 CategoryId = category.Id,
                 Brand = brand,
-                Company = new Company() { Name = "Apple" + i, UserId = supplier.Id },
+                Company = company,
                 Name = "Футболка",
                 Price = 1250,
                 Description = "Красивая и удобная футболка.",
@@ -116,54 +139,32 @@ public class TestController : Controller
                 CreatedAt = DateTimeOffset.UtcNow,
                 Image = new Image
                 {
-                    FileName = "img1.jpg"
+                    FileName = i % 2 > 0 ? "img1.jpg" : "img2.jpg"
                 }
             };
-            var product2 = new Product()
-            {
-                Id = Guid.NewGuid().ToString(),
-                CategoryId = category.Id,
-                Brand = brand,
-                Company = new Company() { Name = "Google" + i, UserId = supplier.Id },
-                Name = "Мяч",
-                Price = 1250,
-                Description = "Футбольный мяч, может быть использован даже во время дождя.",
-                Specifications = "",
-                CreatedAt = DateTimeOffset.UtcNow,
-                Image = new Image
-                {
-                    FileName = "img2.jpg"
-                }
-            };
+            _applicationDbContext.Add(product);
 
-            _applicationDbContext.AddRange(product1, product2);
-
-            for (int k = 0; k < 50; k++)
+            for (int k = 0; k < 4; k++)
             {
                 var productUnit = new ProductUnit
                 {
                     Id = Guid.NewGuid().ToString(),
-                    ProductId = product1.Id,
+                    ProductId = product.Id,
                     SaleStatus = Core.Enums.SaleStatus.Available,
                     CreatedAt = DateTimeOffset.UtcNow
                 };
-
-                var productUnit2 = new ProductUnit
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    ProductId = product2.Id,
-                    SaleStatus = Core.Enums.SaleStatus.Available,
-                    CreatedAt = DateTimeOffset.UtcNow
-                };
-                _applicationDbContext.ProductUnits.AddRange(productUnit, productUnit2);
+                _applicationDbContext.ProductUnits.Add(productUnit);
             }
         }
-        return _applicationDbContext.SaveChangesAsync();
+        await _applicationDbContext.SaveChangesAsync();
+        _applicationDbContext.ChangeTracker.Clear();
     }
     private Task CreateFeedbacks(string userId)
     {
+        int i = 1;
         foreach (var product in _applicationDbContext.Products)
         {
+            Console.WriteLine(i);
             var feedbacks = Enumerable.Range(0, 25).Select(i => new Feedback()
             {
                 UserId = userId,
@@ -173,6 +174,7 @@ public class TestController : Controller
                 Rating = (Rating)new Random().Next(1, 5)
             });
             _applicationDbContext.AddRange(feedbacks);
+            i++;
         }
         return _applicationDbContext.SaveChangesAsync();
     }

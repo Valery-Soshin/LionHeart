@@ -7,7 +7,7 @@ namespace LionHeart.Core.Interfaces.Services;
 public interface IBasketEntryService
 {
     Task<Result<BasketEntry>> GetById(string id);
-    Task<Result<BasketEntry>> GetByUserIdProductId(string userId, string productId);
+    Task<Result<BasketEntry>> GetByAlternateKey(string userId, string productId);
     Task<Result<List<BasketEntry>>> GetEntriesByUserId(string userId);
     Task<Result<BasketEntry>> Add(AddBasketEntryDto dto);
     Task<Result<BasketEntry>> Update(UpdateBasketEntryDto dto);

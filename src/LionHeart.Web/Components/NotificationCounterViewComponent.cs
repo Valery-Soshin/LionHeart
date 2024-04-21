@@ -24,7 +24,7 @@ public class NotificationCounterViewComponent : ViewComponent
 
         var notificationServiceResult = await _notificationService.Count(userId);
         if (notificationServiceResult.IsFaulted) return View(-1);
-        var count = notificationServiceResult.Data;
+        var count = notificationServiceResult.Value;
         return View(count);
     }
 }

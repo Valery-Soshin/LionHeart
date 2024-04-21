@@ -32,16 +32,14 @@
         </div>
         <br />
     }
-    @if (Model.HasPreviousPage)
-    {
-        <button id="list-previous-feedbacks" class="custom-btn-link btn">Назад</button>
-    }
-    @if (Model.HasNextPage)
-    {
-        <button id="list-next-feedbacks" class="custom-btn-link btn">Вперед</button>
-    }
+    <div class="text-end">
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="ShowProduct" asp-controller="Products" asp-route-productId="@Model.ProductId" asp-route-feedbackPageNumber="@(Model.PageNumber - 1 )" class="custom-btn-link btn">Назад</a>
+        }
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="ShowProduct" asp-controller="Products" asp-route-productId="@Model.ProductId" asp-route-feedbackPageNumber="@(Model.PageNumber + 1 )" class="custom-btn-link btn">Вперед</a>
+        }
+    </div>
 </div>
-<script>
-    setupContentLoader('#list-previous-feedbacks', '#feedbacks', '/Feedbacks/ListFeedbacks?productId=@Model.ProductId&pageNumber=@(Model.PageNumber - 1)');
-    setupContentLoader('#list-next-feedbacks', '#feedbacks', '/Feedbacks/ListFeedbacks?productId=@Model.ProductId&pageNumber=@(Model.PageNumber + 1)');
-</script>

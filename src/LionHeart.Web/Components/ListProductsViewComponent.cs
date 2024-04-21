@@ -39,10 +39,10 @@ public class ListProductsViewComponent : ViewComponent
         foreach (var product in page.Entities)
         {
             bool isInBasket = userId is not null &&
-                (await _basketEntryService.Exists(userId, product.Id)).Data;
+                (await _basketEntryService.Exists(userId, product.Id)).Value;
 
             bool isInFavorites = userId is not null &&
-                (await _favoriteProductService.Exists(userId, product.Id)).Data;
+                (await _favoriteProductService.Exists(userId, product.Id)).Value;
 
             model.Products.Add(new ListProductsItemViewModel()
             {

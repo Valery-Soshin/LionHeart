@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LionHeart.Web.Views.Feedbacks
+namespace LionHeart.Web.Views.Feedbacks.Components.ListFeedbacks
 {
-    public class ListFeedbacksModel : PageModel
+    public class ErrorModel : PageModel
     {
         public void OnGet()
         {

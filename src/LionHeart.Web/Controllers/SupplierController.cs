@@ -4,7 +4,6 @@ using LionHeart.Core.Models;
 using LionHeart.Web.Models.Supplier;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.ConstrainedExecution;
 
 namespace LionHeart.Web.Controllers;
 
@@ -53,10 +52,10 @@ public class SupplierController : Controller
             UserId = user.Id
         };
         var companyServiceResult = await _companyService.Add(addCompanyDto);
-        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessage);
+        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessages);
         
         var userManagerResult = await _userManager.AddToRoleAsync(user, "Supplier");
-        if (!userManagerResult.Succeeded) return RedirectToAction("Register");
+        if (!userManagerResult.Succeeded) return RedirectToAction("RegisterSupplier");
         await _signInManager.RefreshSignInAsync(user);
 
         _logger.LogInformation("User '{email}' has been assigned role 'Customer'", user.Email);

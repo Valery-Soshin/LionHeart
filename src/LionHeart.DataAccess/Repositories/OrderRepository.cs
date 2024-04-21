@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LionHeart.DataAccess.Repositories;
 
@@ -13,13 +14,9 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
                 .ThenInclude(i => i.Details)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
-    public Task<List<Order>> GetOrdersByUserId(string userId)
+    public Task<PagedResponse<Order>> GetOrdersByFilter(int pageNumber, int pageSize, Expression<Func<Order, bool>> filter)
     {
-        return _dbContext.Orders.AsNoTracking()
-            .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
-            .Where(o => o.UserId == userId)
-            .ToListAsync();
+        return ExecutePagination(pageNumber, pageSize, filter);
     }
     public override async Task<int> Update(Order order)
     {
@@ -48,5 +45,15 @@ public class OrderRepository(ApplicationDbContext dbContext) : RepositoryBase<Or
         return _dbContext.Orders.AsNoTracking()
             .AnyAsync(o => o.UserId == userId &&
                            o.Items.Any(i => i.ProductId == productId));
+    }
+
+    private Task<PagedResponse<Order>> ExecutePagination(int pageNumber, int pageSize, Expression<Func<Order, bool>> filter)
+    {
+        var totalRecordsQuery = _dbContext.Orders.AsNoTracking();
+
+        var ordersQuery = _dbContext.Orders.AsNoTracking()
+            .Include(o => o.Items).ThenInclude(i => i.Product);
+
+        return BuildPagination(totalRecordsQuery, ordersQuery, pageNumber, pageSize, filter);
     }
 }

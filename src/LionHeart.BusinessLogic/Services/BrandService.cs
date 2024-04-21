@@ -23,25 +23,13 @@ public class BrandService : IBrandService
             var brand = await _brandRepository.GetById(id);
             if (brand is null)
             {
-                return new Result<Brand>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BrandNotFound
-                };
+                return Result<Brand>.Failure(ErrorMessage.BrandNotFound);
             }
-            return new Result<Brand>
-            {
-                IsCompleted = true,
-                Data = brand
-            };
+            return Result<Brand>.Success(brand);
         }
         catch
         {
-            return new Result<Brand>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Brand>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<Brand>>> GetBrands()
@@ -49,27 +37,15 @@ public class BrandService : IBrandService
         try
         {
             var brands = await _brandRepository.GetBrands();
-            if (brands is null)
+            if (brands.Count == 0)
             {
-                return new Result<List<Brand>>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BrandsNotFound
-                };
+                return Result<List<Brand>>.Failure(ErrorMessage.BrandsNotFound);
             }
-            return new Result<List<Brand>>
-            {
-                IsCompleted = true,
-                Data = brands
-            };
+            return Result<List<Brand>>.Success(brands);
         }
         catch
         {
-            return new Result<List<Brand>>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<List<Brand>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Brand>> Add(AddBrandDto dto)
@@ -84,25 +60,13 @@ public class BrandService : IBrandService
             var result = await _brandRepository.Add(brand);
             if (result <= 0)
             {
-                return new Result<Brand>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.BrandNotCreated
-                };
+                return Result<Brand>.Failure(ErrorMessage.BrandNotCreated);
             }
-            return new Result<Brand>
-            {
-                IsCompleted = true,
-                Data = brand
-            };
+            return Result<Brand>.Success(brand);
         }
         catch
         {
-            return new Result<Brand>
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Brand>.Failure(ErrorMessage.InternalServerError);
         }
     }
 } 

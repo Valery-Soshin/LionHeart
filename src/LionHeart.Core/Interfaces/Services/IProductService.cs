@@ -7,7 +7,7 @@ namespace LionHeart.Core.Interfaces.Services;
 public interface IProductService
 {
     Task<Result<Product>> GetById(string id);
-    Task<Result<List<Product>>> GetProductsByIds(List<string> ids);
+    Task<Result<List<Product>>> FindProducts(List<string> ids);
     Task<Result<PagedResponse<Product>>> GetProductsByCategoryId(string categoryId, int pageNumber);
     Task<Result<PagedResponse<Product>>> GetProductsByUserId(string userId, int pageNumber);
     Task<Result<PagedResponse<Product>>> GetProductsByCompanyId(string companyId, int pageNumber);

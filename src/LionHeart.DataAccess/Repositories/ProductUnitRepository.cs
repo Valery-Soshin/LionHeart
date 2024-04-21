@@ -18,7 +18,7 @@ public class ProductUnitRepository(ApplicationDbContext dbContext) : RepositoryB
             .Take(quantity)
             .ToListAsync();
     }
-    public Task<List<ProductUnit>> GetProductsByIds(List<string> ids)
+    public Task<List<ProductUnit>> FindProductUnits(List<string> ids)
     {
         return _dbContext.ProductUnits.AsNoTracking()
             .Where(pu => ids.Contains(pu.Id))

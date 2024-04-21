@@ -14,10 +14,10 @@ public class NotificationsController : Controller
 
     public async Task<IActionResult> DeleteNotification([FromBody]string id)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _notificationService.Remove(id);
-        if (result.IsFaulted) return BadRequest(result.ErrorMessage);
+        var notificationServiceResult = await _notificationService.Remove(id);
+        if (notificationServiceResult.IsFaulted) return BadRequest(notificationServiceResult.ErrorMessages);
 
         return Ok();
     }

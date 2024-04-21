@@ -33,7 +33,7 @@ public class BasketEntryRepository : RepositoryBase<BasketEntry>, IBasketEntryRe
             .Where(e => e.UserId == userId)
             .ToListAsync();
     }
-    public Task<List<BasketEntry>> GetAll(List<string> ids)
+    public Task<List<BasketEntry>> Find(List<string> ids)
     {
         return _dbContext.BasketEntries.AsNoTracking()
             .Include(e => e.Product)

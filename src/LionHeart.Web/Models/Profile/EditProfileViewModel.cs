@@ -7,7 +7,7 @@ public class EditProfileViewModel
     public string Id { get; set; } = null!;
 
     [EmailAddress]
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
 

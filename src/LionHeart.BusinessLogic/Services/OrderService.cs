@@ -1,4 +1,5 @@
-﻿using LionHeart.BusinessLogic.Resources;
+﻿using LionHeart.BusinessLogic.Helpers;
+using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Notification;
 using LionHeart.Core.Dtos.Order;
 using LionHeart.Core.Dtos.ProductUnit;
@@ -41,82 +42,27 @@ public class OrderService : IOrderService
             var order = await _orderRepository.GetById(id);
             if (order is null)
             {
-                return new Result<Order>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.OrderNotFound
-                };
+                return Result<Order>.Failure(ErrorMessage.OrderNotFound);
             }
-            return new Result<Order>()
-            {
-                IsCompleted = true,
-                Data = order
-            };
+            return Result<Order>.Success(order);
         }
         catch
         {
-            return new Result<Order>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Order>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public async Task<Result<List<Order>>> GetOrdersByUserId(string userId)
+    public async Task<Result<PagedResponse<Order>>> GetOrdersByUserId(string userId, int pageNumber)
     {
         try
         {
-            var orders = await _orderRepository.GetOrdersByUserId(userId);
-            if (orders is null)
-            {
-                return new Result<List<Order>>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.OrdersNotFound
-                };
-            }
-            return new Result<List<Order>>()
-            {
-                IsCompleted = true,
-                Data = orders
-            };
+            var page = await _orderRepository.GetOrdersByFilter(
+                pageNumber, PageHelper.PageSize, o => o.UserId == userId);
+
+            return Result<PagedResponse<Order>>.Success(page);
         }
         catch
         {
-            return new Result<List<Order>>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
-        }
-    }
-    public async Task<Result<List<Order>>> GetAll()
-    {
-        try
-        {
-            //var orders = await _orderRepository.GetAll();
-            var orders = new List<Order>();
-            if (orders is null)
-            {
-                return new Result<List<Order>>()
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.OrdersNotFound
-                };
-            }
-            return new Result<List<Order>>()
-            {
-                IsCompleted = true,
-                Data = orders
-            };
-        }
-        catch
-        {
-            return new Result<List<Order>>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<PagedResponse<Order>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<Order>> Add(AddOrderDto dto)
@@ -125,17 +71,13 @@ public class OrderService : IOrderService
         {
             await _unitOfWork.BeginTransaction();
 
-            var productServiceResult = await _productService.GetProductsByIds(
+            var productServiceResult = await _productService.FindProducts(
                 dto.Products.Select(p => p.ProductId).ToList());
-            if (productServiceResult.IsFaulted || productServiceResult.Data is null)
+            if (productServiceResult.IsFaulted)
             {
-                return new Result<Order>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotFound
-                };
+                return Result<Order>.Failure(ErrorMessage.ProductsNotFound);
             }
-            var products = productServiceResult.Data;
+            var products = productServiceResult.Value;
 
             bool allProductsFound = products.Count == dto.Products.Count;
             bool areEnoughProducts = products.Exists(
@@ -143,11 +85,7 @@ public class OrderService : IOrderService
 
             if (areEnoughProducts && allProductsFound)
             {
-                return new Result<Order>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.ProductsNotEnough
-                };
+                return Result<Order>.Failure(ErrorMessage.ProductsNotEnough);
             }
 
             var order = new Order
@@ -208,65 +146,39 @@ public class OrderService : IOrderService
                 orderRepositoryResult <= 0)
             {
                 await _unitOfWork.Rollback();
-                return new Result<Order>
-                {
-                    IsCompleted = false,
-                    ErrorMessage = ErrorMessage.InternalServerError
-                };
+                return Result<Order>.Failure(ErrorMessage.InternalServerError);
             }
             await _unitOfWork.Commit();
-            return new Result<Order>()
-            {
-                IsCompleted = true,
-                Data = order
-            };
+            return Result<Order>.Success(order);
         }
         catch
         {
             await _unitOfWork.Rollback();
-            return new Result<Order>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<Order>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<bool>> Any(string userId)
     {
         try
         {
-            return new Result<bool>()
-            {
-                IsCompleted = true,
-                Data = await _orderRepository.Any(userId)
-            };
+            var result = await _orderRepository.Any(userId);
+            return Result<bool>.Success(result);
         }
         catch
         {
-            return new Result<bool>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<bool>> Exists(string userId, string productId)
     {
         try
         {
-            return new Result<bool>()
-            {
-                IsCompleted = true,
-                Data = await _orderRepository.Exists(userId, productId)
-            };
+            var result = await _orderRepository.Exists(userId, productId);
+            return Result<bool>.Success(result);
         }
         catch
         {
-            return new Result<bool>()
-            {
-                IsCompleted = false,
-                ErrorMessage = ErrorMessage.InternalServerError
-            };
+            return Result<bool>.Failure(ErrorMessage.InternalServerError);
         }
     }
 }

@@ -61,15 +61,6 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Записи товаров найдены.
-        /// </summary>
-        internal static string BasketEntriesFound {
-            get {
-                return ResourceManager.GetString("BasketEntriesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Записи товаров не найдены.
         /// </summary>
         internal static string BasketEntriesNotFound {
@@ -84,33 +75,6 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string BasketEntriesNotRemoved {
             get {
                 return ResourceManager.GetString("BasketEntriesNotRemoved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Товар добавлен в корзину.
-        /// </summary>
-        internal static string BasketEntryCreated {
-            get {
-                return ResourceManager.GetString("BasketEntryCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Товар удален из корзины.
-        /// </summary>
-        internal static string BasketEntryDeleted {
-            get {
-                return ResourceManager.GetString("BasketEntryDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Товар найден в корзине.
-        /// </summary>
-        internal static string BasketEntryFound {
-            get {
-                return ResourceManager.GetString("BasketEntryFound", resourceCulture);
             }
         }
         
@@ -147,15 +111,6 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string BasketEntryNotUpdated {
             get {
                 return ResourceManager.GetString("BasketEntryNotUpdated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Товар в корзине обновлен.
-        /// </summary>
-        internal static string BasketEntryUpdated {
-            get {
-                return ResourceManager.GetString("BasketEntryUpdated", resourceCulture);
             }
         }
         
@@ -232,20 +187,20 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Компания не была создана.
+        /// </summary>
+        internal static string CompanyNotCreated {
+            get {
+                return ResourceManager.GetString("CompanyNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Компания не была найдена.
         /// </summary>
         internal static string CompanyNotFound {
             get {
                 return ResourceManager.GetString("CompanyNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Исключение: .
-        /// </summary>
-        internal static string ExceptionMessage {
-            get {
-                return ResourceManager.GetString("ExceptionMessage", resourceCulture);
             }
         }
         
@@ -394,38 +349,11 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Заказ был создан.
-        /// </summary>
-        internal static string OrderCreated {
-            get {
-                return ResourceManager.GetString("OrderCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Заказ был найден.
-        /// </summary>
-        internal static string OrderFound {
-            get {
-                return ResourceManager.GetString("OrderFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Заказ не был найден.
         /// </summary>
         internal static string OrderNotFound {
             get {
                 return ResourceManager.GetString("OrderNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Заказы найдены.
-        /// </summary>
-        internal static string OrdersFound {
-            get {
-                return ResourceManager.GetString("OrdersFound", resourceCulture);
             }
         }
         

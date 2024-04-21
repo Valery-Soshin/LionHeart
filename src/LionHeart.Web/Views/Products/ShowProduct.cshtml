@@ -93,37 +93,7 @@
         <br />
         @if (Model.HasFeedbacks)
         {
-            <div class="d-flex justify-content-center">
-                <button id="load-feedbacks" class="btn btn-grad w-50 p-4">Посмотреть отзывы</button>
-            </div>
-            <div id="feedbacks-content"></div>
+            <vc:list-feedbacks product-id="@Model.Id" page-number="@Model.FeedbackPageNumber"></vc:list-feedbacks>
         }
     </div>
-</div   
-
-@section Scripts {
-    <script>
-        $("#load-feedbacks").click(function (event) {
-            $("#load-feedbacks").hide();
-            $.ajax({
-                url: "/Feedbacks/ListFeedbacks?productId=@Model.Id",
-                type: "GET",
-                success: function (response) {
-                    $("#feedbacks-content").empty();
-                    $("#feedbacks-content").html(response);
-                    $(response).find('script').each(function () {
-                        let scriptContent = $(this).text();
-                        try {
-                            eval(scriptContent);
-                        } catch (error) {
-                            console.error("Ошибка при выполнении JavaScript кода:", error);
-                        }
-                    });
-                },
-                error: function (error) {
-                    console.error("Ошибка при выполнении AJAX-запроса:", error);
-                }
-            });
-        });
-    </script>
-}
+</div>
