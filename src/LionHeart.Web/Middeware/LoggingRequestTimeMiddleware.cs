@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace LionHeart.Web.Helpers;
+namespace LionHeart.Web.Middeware;
 
 public class LoggingRequestTimeMiddleware
 {

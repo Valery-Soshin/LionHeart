@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Enums;
 
-namespace LionHeart.Web.Models.Feedbacks;
+namespace LionHeart.Web.Models.Feedback;
 
 public class CreateFeedbackViewModel
 {

@@ -9,5 +9,5 @@ public class ShowCompanyViewModel
     public string UserId { get; set; } = null!;
     public string UserName { get; set; } = null!;
     public DateTimeOffset CreatedAt { get; set; }
-    public PagedResponse<Product> Page { get; set; } = null!;
+    public PagedResponse<Core.Models.Product> Page { get; set; } = null!;
 }

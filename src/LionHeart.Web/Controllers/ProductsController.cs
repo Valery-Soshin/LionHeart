@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using LionHeart.Web.Models.Products;
+using LionHeart.Web.Models.Product;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Dtos.Product;
 

@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Web.Models.Products;
+using LionHeart.Web.Models.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

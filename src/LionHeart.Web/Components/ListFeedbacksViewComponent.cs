@@ -1,5 +1,5 @@
 ﻿using LionHeart.Core.Interfaces.Services;
-using LionHeart.Web.Models.Feedbacks;
+using LionHeart.Web.Models.Feedback;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Components;

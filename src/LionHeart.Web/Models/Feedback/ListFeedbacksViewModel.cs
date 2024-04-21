@@ -1,4 +1,4 @@
-﻿namespace LionHeart.Web.Models.Feedbacks;
+﻿namespace LionHeart.Web.Models.Feedback;
 
 public class ListFeedbacksViewModel
 {

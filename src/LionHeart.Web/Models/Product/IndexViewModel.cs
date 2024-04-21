@@ -1,4 +1,4 @@
-﻿namespace LionHeart.Web.Models.Products;
+﻿namespace LionHeart.Web.Models.Product;
 
 public class IndexViewModel
 {

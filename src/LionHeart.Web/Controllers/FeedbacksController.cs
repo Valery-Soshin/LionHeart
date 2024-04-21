@@ -1,7 +1,7 @@
 ﻿using LionHeart.Core.Dtos.Feedback;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Web.Models.Feedbacks;
+using LionHeart.Web.Models.Feedback;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,10 +1,10 @@
-﻿@using LionHeart.Web.Models
-@using LionHeart.Web.Models.Products
+﻿@using LionHeart.Web.Models.Feedback
+@using LionHeart.Web.Models.Product
 @model ListProductsViewModel
 
 @{
     ViewData["Title"] = "Список продуктов";
-    bool useButtonsForPage = (bool)ViewData["UseButtonsForPage"];
+    bool useButtonsForPage = ((bool?)ViewData["UseButtonsForPage"]) ?? false;
 }
 
 <style>
