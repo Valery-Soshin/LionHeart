@@ -1,51 +1,13 @@
-using LionHeart.BusinessLogic.Services;
-using LionHeart.Core.Interfaces.Repositories;
-using LionHeart.Core.Interfaces.Services;
-using LionHeart.Core.Models;
-using LionHeart.DataAccess;
-using LionHeart.DataAccess.Repositories;
+using LionHeart.BusinessLogic.DependencyInjection;
+using LionHeart.DataAccess.DependencyInjection;
 using LionHeart.Web.Helpers;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
-
 builder.Host.UseNLog();
-
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseNpgsql(configuration["ConnectionStrings:PostgreSql"]));
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<IProductUnitRepository, ProductUnitRepository>();
-builder.Services.AddScoped<IBasketEntryRepository, BasketEntryRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
-builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
-
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICompanyService, CompanyService>();
-builder.Services.AddScoped<IProductUnitService, ProductUnitService>();
-builder.Services.AddScoped<IBasketEntryService, BasketEntryService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IFavoriteProductService, FavoriteProductService>();
-builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IFeedbackService, FeedbackService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IBrandService, BrandService>();
-
+builder.Services.AddBusinessLogic(builder.Configuration);
+builder.Services.AddDataAccess(builder.Configuration);
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -54,19 +16,19 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.WebHost.UseKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = 1500000;
+    options.Limits.MaxRequestBodySize = 1500000; // 1464 kb or 1,43 mb
 });
 
 var app = builder.Build();
 
-if (app.Environment.IsProduction())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseDeveloperExceptionPage();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -81,5 +43,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseMiddleware<LoggingRequestTimeMiddleware>();
+app.UseLoggingRequestTimeMiddleware();
+
 app.Run();
