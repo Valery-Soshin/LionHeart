@@ -191,10 +191,8 @@ public class ProductService : IProductService
         try
         {
             var product = await _productRepository.GetById(dto.Id);
-            if (product is null)
-            {
-                return Result<Product>.Failure(ErrorMessage.ProductNotFound);
-            }
+            if (product is null) return Result<Product>.Failure(ErrorMessage.ProductNotFound);
+            
             product.CategoryId = dto.CategoryId;
             product.Name = dto.Name;
             product.Price = dto.Price;
