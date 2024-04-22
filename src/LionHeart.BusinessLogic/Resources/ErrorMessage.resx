@@ -123,6 +123,9 @@
   <data name="BasketEntriesNotRemoved" xml:space="preserve">
     <value>Товары не были удалены из корзины</value>
   </data>
+  <data name="BasketEntryAlreadyExists" xml:space="preserve">
+    <value>Товар уже добавлен в корзину</value>
+  </data>
   <data name="BasketEntryNotCreated" xml:space="preserve">
     <value>Товар не добавлен в корзину</value>
   </data>

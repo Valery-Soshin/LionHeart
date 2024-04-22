@@ -4,7 +4,6 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
-using System.Collections.Generic;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -71,11 +70,11 @@ public class BasketEntryService : IBasketEntryService
                 ProductId = dto.ProductId,
                 Quantity = dto.Quantity
             };
+            bool entryAlreadyExists = await _basketEntryRepository.Exists(dto.UserId, dto.ProductId);
+            if (entryAlreadyExists) return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryAlreadyExists);
             var result = await _basketEntryRepository.Add(entry);
-            if (result <= 0)
-            {
-                return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotCreated);
-            }
+            if (result <= 0) return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryNotCreated);
+            
             return Result<BasketEntry>.Success(entry);
         }
         catch

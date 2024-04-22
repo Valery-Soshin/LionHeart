@@ -8,6 +8,8 @@ public class FavoriteProductConfiguration : IEntityTypeConfiguration<FavoritePro
 {
     public void Configure(EntityTypeBuilder<FavoriteProduct> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(f => f.Id).ValueGeneratedOnAdd();
+
+        builder.HasAlternateKey(f => new { f.UserId, f.ProductId });
     }
 }

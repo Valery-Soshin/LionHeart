@@ -79,6 +79,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Товар уже добавлен в корзину.
+        /// </summary>
+        internal static string BasketEntryAlreadyExists {
+            get {
+                return ResourceManager.GetString("BasketEntryAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Товар не добавлен в корзину.
         /// </summary>
         internal static string BasketEntryNotCreated {
