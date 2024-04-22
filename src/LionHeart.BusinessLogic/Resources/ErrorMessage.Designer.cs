@@ -349,6 +349,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомления не были удалены.
+        /// </summary>
+        internal static string NotificationsNotRemoved {
+            get {
+                return ResourceManager.GetString("NotificationsNotRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Заказ не был найден.
         /// </summary>
         internal static string OrderNotFound {

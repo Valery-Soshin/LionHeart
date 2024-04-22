@@ -213,6 +213,9 @@
   <data name="NotificationsNotFound" xml:space="preserve">
     <value>Уведомления не найдены</value>
   </data>
+  <data name="NotificationsNotRemoved" xml:space="preserve">
+    <value>Уведомления не были удалены</value>
+  </data>
   <data name="OrderNotFound" xml:space="preserve">
     <value>Заказ не был найден</value>
   </data>

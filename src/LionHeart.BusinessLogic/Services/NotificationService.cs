@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Core.Result;
+using System.Reflection.Metadata.Ecma335;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -81,6 +82,22 @@ public class NotificationService : INotificationService
         catch
         {
             return Result<Notification>.Failure(ErrorMessage.InternalServerError);
+        }
+    }
+    public async Task<Result<List<Notification>>> RemoveAll(string userId)
+    {
+        try
+        {
+            var notifications = await _notificationRepository.GetNotificationsByUserId(userId);
+            if (notifications.Count == 0) return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotFound);
+            var result = await _notificationRepository.RemoveRange(notifications);
+            if (result <= 0) return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotRemoved);
+
+            return Result<List<Notification>>.Success(notifications);
+        }
+        catch
+        {
+            return Result<List<Notification>>.Failure(ErrorMessage.InternalServerError);
         }
     }
     public async Task<Result<List<Notification>>> GetNotificationsByUserId(string userId)

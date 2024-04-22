@@ -8,6 +8,9 @@
 <br />
 @if (Model.Notifications.Any())
 {
+    <div class="text-end">
+        <a asp-action="DeleteAllNotifications" asp-controller="Notifications" class="btn custom-btn-link mb-3">Удалить все уведомления</a>
+    </div>
     @foreach (var notification in Model.Notifications.OrderByDescending(n => n.CreatedAt))
     {
         <div class="card">

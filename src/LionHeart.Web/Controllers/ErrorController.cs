@@ -21,6 +21,6 @@ public class ErrorController : Controller
 
         _logger.LogError($"The Path {feature?.Path} | Threw an Exception {feature?.Error}");
 
-        return View("Error");
+        return View();
     }
 }
