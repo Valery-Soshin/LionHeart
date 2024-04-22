@@ -1,23 +1,20 @@
 using LionHeart.BusinessLogic.DependencyInjection;
 using LionHeart.DataAccess.DependencyInjection;
+using LionHeart.Web.Configurations;
 using LionHeart.Web.Helpers;
 using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseNLog();
+
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddBusinessLogic(builder.Configuration);
 builder.Services.AddDataAccess(builder.Configuration);
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Auth/Login";
-    options.AccessDeniedPath = "/Home/Error";
-});
-builder.WebHost.UseKestrel(options =>
-{
-    options.Limits.MaxRequestBodySize = 1500000; // 1464 kb or 1,43 mb
-});
+builder.Services.AddCookieSettings();
+builder.WebHost.AddKestrelSettings();
 
 var app = builder.Build();
 

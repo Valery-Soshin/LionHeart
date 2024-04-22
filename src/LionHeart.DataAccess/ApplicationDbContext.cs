@@ -23,16 +23,12 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Image> Images { get; set; }
 
-
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSnakeCaseNamingConvention();
-        //optionsBuilder.LogTo(
-        //                    Console.WriteLine,
-        //                    new EventId[] { RelationalEventId.CommandExecuted });
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
