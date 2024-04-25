@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class ErrorController : Controller
+public class ErrorController : MainController
 {
     private readonly ILogger<ErrorController> _logger;
 

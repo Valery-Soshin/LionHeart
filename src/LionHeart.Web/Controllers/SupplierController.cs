@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class SupplierController : Controller
+public class SupplierController : MainController
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;

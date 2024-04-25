@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class OrdersController : Controller
+public class OrdersController : MainController
 {
     private readonly IOrderService _orderService;
     private readonly UserManager<User> _userManager;

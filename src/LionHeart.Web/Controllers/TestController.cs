@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.Web.Controllers;
 
-public class TestController : Controller
+public class TestController : MainController
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;

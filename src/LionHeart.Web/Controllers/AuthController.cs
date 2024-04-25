@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class AuthController : Controller
+public class AuthController : MainController
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;

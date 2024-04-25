@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LionHeart.Web.Controllers;
 
 [Authorize]
-public class ProfileController : Controller
+public class ProfileController : MainController
 {
     private readonly IFavoriteProductService _favoriteProductService;
     private readonly IFeedbackService _feedbackService;

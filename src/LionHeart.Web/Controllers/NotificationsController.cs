@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class NotificationsController : Controller
+public class NotificationsController : MainController
 {
     private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;

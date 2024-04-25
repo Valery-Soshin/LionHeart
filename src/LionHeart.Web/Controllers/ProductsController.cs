@@ -8,7 +8,7 @@ using LionHeart.Core.Dtos.Product;
 
 namespace LionHeart.Web.Controllers;
 
-public class ProductsController : Controller
+public class ProductsController : MainController
 {
     private readonly IProductService _productService;
     private readonly IProductUnitService _productUnitService;

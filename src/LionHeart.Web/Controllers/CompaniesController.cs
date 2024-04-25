@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class CompaniesController : Controller
+public class CompaniesController : MainController
 {
     private readonly ICompanyService _companyService;
     private readonly IProductService _productService;

@@ -10,7 +10,7 @@ using LionHeart.Core.Dtos.BasketEntry;
 namespace LionHeart.Web.Controllers;
 
 [Authorize]
-public class BasketController : Controller
+public class BasketController : MainController
 {
     private readonly IBasketEntryService _basketEntryService;
     private readonly IOrderService _orderService;

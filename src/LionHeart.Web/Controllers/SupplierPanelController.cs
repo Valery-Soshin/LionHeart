@@ -2,7 +2,7 @@
 
 namespace LionHeart.Web.Controllers;
 
-public class SupplierPanelController : Controller
+public class SupplierPanelController : MainController
 {
     [HttpGet]
     public IActionResult Index()

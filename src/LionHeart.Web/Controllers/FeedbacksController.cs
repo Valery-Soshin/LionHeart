@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-public class FeedbacksController : Controller   
+public class FeedbacksController : MainController
 {
     private readonly IFeedbackService _feedbackService;
     private readonly IProductService _productService;
