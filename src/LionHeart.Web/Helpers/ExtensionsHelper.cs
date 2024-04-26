@@ -2,7 +2,7 @@
 
 namespace LionHeart.Web.Helpers;
 
-public static class Extensions
+public static class ExtensionsHelper
 {
     public static IApplicationBuilder UseLoggingRequestTimeMiddleware(this IApplicationBuilder builder)
     {

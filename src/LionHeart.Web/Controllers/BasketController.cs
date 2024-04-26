@@ -6,6 +6,7 @@ using LionHeart.Web.Models.Basket;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Dtos.Order;
 using LionHeart.Core.Dtos.BasketEntry;
+using LionHeart.Web.Helpers;
 
 namespace LionHeart.Web.Controllers;
 
@@ -26,13 +27,13 @@ public class BasketController : MainController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> CreateOrder()
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
         var basketEntryServiceResult = await _basketEntryService.GetEntriesByUserId(userId);
-        if (basketEntryServiceResult.IsFaulted) return BadRequest(basketEntryServiceResult.ErrorMessages);
+        if (basketEntryServiceResult.IsFaulted) return Warning(basketEntryServiceResult.ErrorMessages);
         var entries = basketEntryServiceResult.Value;
 
         var basket = new BasketViewModel()
@@ -57,7 +58,7 @@ public class BasketController : MainController
     [HttpPost]
     public async Task<IActionResult> CreateOrder(BasketViewModel model)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid) return View(ViewNameHelper.BASKET_CREATE_ORDER);
 
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
@@ -76,10 +77,10 @@ public class BasketController : MainController
             CreateAt = DateTimeOffset.UtcNow
         };
         var orderServiceResult = await _orderService.Add(addOrderDto);
-        if (orderServiceResult.IsFaulted) return BadRequest(orderServiceResult.ErrorMessages);
+        if (orderServiceResult.IsFaulted) return Warning(orderServiceResult.ErrorMessages, true);
 
-        return Redirect("/Products");
-    }
+        return Redirect(RedirectHelper.PRODUCTS_INDEX);
+    }       
 
     [HttpPost]
     public async Task<IActionResult> AddToBasket([FromBody] string productId)
@@ -93,6 +94,7 @@ public class BasketController : MainController
         {
             UserId = userId,
             ProductId = productId,
+            CreatedAt = DateTimeOffset.UtcNow,
         };
         var basketEntryServiceResult = await _basketEntryService.Add(dto);
         if (basketEntryServiceResult.IsFaulted) return BadRequest(basketEntryServiceResult.ErrorMessages);

@@ -1,6 +1,8 @@
 ﻿using LionHeart.Core.Dtos.Company;
+using LionHeart.Core.Helpers;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Web.Helpers;
 using LionHeart.Web.Models.Supplier;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +14,17 @@ public class SupplierController : MainController
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly ICompanyService _companyService;
-    private readonly ILogger<SupplierController> _logger;
 
     public SupplierController(UserManager<User> userManager,
                               SignInManager<User> signInManager,
-                              ICompanyService companyService,
-                              ILogger<SupplierController> logger)
+                              ICompanyService companyService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _companyService = companyService;
-        _logger = logger;
     }
 
+    [HttpGet]
     public IActionResult ShowRegistrationInfo()
     {
         return View();
@@ -38,13 +38,13 @@ public class SupplierController : MainController
     [HttpPost]
     public async Task<IActionResult> RegisterSupplier(RegisterSupplierViewModel model)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return View();
 
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
-        if (await _userManager.IsInRoleAsync(user, "Supplier"))
-            return RedirectToAction("Register");
+        if (await _userManager.IsInRoleAsync(user, RoleNameHelper.Supplier))
+            return Redirect(RedirectHelper.SUPPLIER_REGISTER_SUPPLIER);
 
         var addCompanyDto = new AddCompanyDto()
         {
@@ -52,13 +52,14 @@ public class SupplierController : MainController
             UserId = user.Id
         };
         var companyServiceResult = await _companyService.Add(addCompanyDto);
-        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessages);
+        if (companyServiceResult.IsFaulted) return Warning(companyServiceResult.ErrorMessages, true);
         
-        var userManagerResult = await _userManager.AddToRoleAsync(user, "Supplier");
-        if (!userManagerResult.Succeeded) return RedirectToAction("RegisterSupplier");
+        var userManagerResult = await _userManager.AddToRoleAsync(user, RoleNameHelper.Customer);
+        var errorMessages = userManagerResult.Errors.Select(e => e.Description).ToList();
+        if (!userManagerResult.Succeeded) return Warning(errorMessages, true);
+
         await _signInManager.RefreshSignInAsync(user);
 
-        _logger.LogInformation("User '{email}' has been assigned role 'Customer'", user.Email);
-        return Redirect("/Products");
+        return Redirect(RedirectHelper.PRODUCTS_INDEX);
     }
 }

@@ -131,7 +131,6 @@
 
         updateQuantity(basketEntryId, quantityInput.value);
     };
-
     async function subtract(basketEntryId) {
         var quantityLabel = document.getElementById('label-quantity-' + basketEntryId);
         var quantityInput = document.getElementById('input-quantity-' + basketEntryId);
@@ -156,32 +155,5 @@
 
             updateQuantity(basketEntryId, quantityInput.value);
         }
-    };
-
-    async function updateQuantity(id, quantity) {
-        await fetch("/Basket/UpdateQuantity", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                entryid: id,
-                productquantity: quantity
-            })
-        });
-    };
-
-    async function removeFromBasket(productId) {
-        event.preventDefault();
-        const response = await fetch("/Basket/RemoveFromBasket", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(productId)
-        });
-        window.location.reload();
-    }
+    };   
 </script>

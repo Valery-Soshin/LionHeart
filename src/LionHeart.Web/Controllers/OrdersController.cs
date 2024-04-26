@@ -20,11 +20,13 @@ public class OrdersController : MainController
     [HttpGet]
     public async Task<IActionResult> Index(int pageNumber = 1)
     {
+        if (!ModelState.IsValid) return Warning(ModelState);
+
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
         var orderServiceResult = await _orderService.GetOrdersByUserId(userId, pageNumber);
-        if (orderServiceResult.IsFaulted) return BadRequest(orderServiceResult.ErrorMessages);
+        if (orderServiceResult.IsFaulted) return Warning(orderServiceResult.ErrorMessages);
         var page = orderServiceResult.Value;
 
         return View(page.Entities);

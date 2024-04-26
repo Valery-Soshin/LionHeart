@@ -1,5 +1,6 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Web.Helpers;
 using LionHeart.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,7 @@ public class ProfileController : MainController
         _productService = productService;
         _userManager = userManager;
     }
+
     [HttpGet]
     public async Task<IActionResult> ShowProfile()
     {
@@ -49,11 +51,13 @@ public class ProfileController : MainController
     [HttpGet]
     public async Task<IActionResult> ShowFavorites(int pageNumber = 1)
     {
+        if (!ModelState.IsValid) return Warning(ModelState);
+
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
         var favoriteProductServiceResult = await _favoriteProductService.GetFavoritesByUserId(userId, pageNumber);
-        if (favoriteProductServiceResult.IsFaulted) return BadRequest(favoriteProductServiceResult.ErrorMessages);
+        if (favoriteProductServiceResult.IsFaulted) return Warning(favoriteProductServiceResult.ErrorMessages);
         var page = favoriteProductServiceResult.Value;
 
         return View();
@@ -62,17 +66,15 @@ public class ProfileController : MainController
     [HttpGet]
     public async Task<IActionResult> ShowMyFeedbacks(int pageNumber = 1)
     {
+        if (!ModelState.IsValid) return Warning(ModelState);
+
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
         var feedbackServiceResult = await _feedbackService.GetFeedbacksByUserId(userId, pageNumber);
-        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessages);
+        if (feedbackServiceResult.IsFaulted) return Warning(feedbackServiceResult.ErrorMessages);
         var page = feedbackServiceResult.Value;
-        
-        bool hasNullObjects = page.Entities.Exists(
-            e => e.Product is null || e .Product.Image is null);
-        if (hasNullObjects) return BadRequest();
-
+     
         var model = new ShowMyFeedbacksViewModel()
         {
             PageNumber = page.PageNumber,
@@ -98,7 +100,7 @@ public class ProfileController : MainController
         if (userId is null) return Unauthorized();
 
         var notificationServiceResult = await _notificationService.GetNotificationsByUserId(userId);
-        if (notificationServiceResult.IsFaulted) return BadRequest(notificationServiceResult.ErrorMessages);
+        if (notificationServiceResult.IsFaulted) return Warning(notificationServiceResult.ErrorMessages);
         var notifications = notificationServiceResult.Value;
 
         var model = new ShowNotificationsViewModel
@@ -135,6 +137,8 @@ public class ProfileController : MainController
     [HttpPost]
     public async Task<IActionResult> EditProfile(EditProfileViewModel model)
     {
+        if (!ModelState.IsValid) return View();
+
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Unauthorized();
 
@@ -157,7 +161,7 @@ public class ProfileController : MainController
                 }
             }
             await _userManager.UpdateAsync(user);
-            return RedirectToAction("ShowProfile");
+            return Redirect(RedirectHelper.PROFILE_SHOW_PROFILE);
         }
         return View();
     }

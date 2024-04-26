@@ -1,5 +1,6 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,11 +30,11 @@ public class NotificationsController : MainController
     public async Task<IActionResult> DeleteAllNotifications()
     {
         var userId = _userManager.GetUserId(User);
-        if (userId is null) return BadRequest();
+        if (userId is null) return Unauthorized();
         
         var notificationServiceResult = await _notificationService.RemoveAll(userId);
-        if (notificationServiceResult.IsFaulted) return BadRequest(notificationServiceResult.ErrorMessages);
+        if (notificationServiceResult.IsFaulted) return Warning(notificationServiceResult.ErrorMessages);
 
-        return RedirectToAction("ShowNotifications", "Profile");
+        return Redirect(RedirectHelper.PROFILE_SHOW_NOTIFICATIONS);
     }
 }

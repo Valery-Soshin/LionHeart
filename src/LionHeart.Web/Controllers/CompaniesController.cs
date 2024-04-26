@@ -18,14 +18,14 @@ public class CompaniesController : MainController
 
     public async Task<IActionResult> ShowCompany(string id, int pageNumber = 1)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return Warning(ModelState);
 
         var companyServiceResult = await _companyService.GetById(id);
-        if (companyServiceResult.IsFaulted) return BadRequest(companyServiceResult.ErrorMessages);
+        if (companyServiceResult.IsFaulted) return Warning(companyServiceResult.ErrorMessages);
         var company = companyServiceResult.Value;
 
         var productServiceResult = await _productService.GetProductsByCompanyId(company.Id, pageNumber);
-        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessages);
+        if (productServiceResult.IsFaulted) return Warning(productServiceResult.ErrorMessages);
         var page = productServiceResult.Value;
 
         var model = new ShowCompanyViewModel

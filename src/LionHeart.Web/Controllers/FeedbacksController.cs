@@ -1,6 +1,7 @@
 ﻿using LionHeart.Core.Dtos.Feedback;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Web.Helpers;
 using LionHeart.Web.Models.Feedback;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,10 @@ public class FeedbacksController : MainController
     [HttpGet]
     public async Task<IActionResult> CreateFeedback(string productId)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return Error();
 
         var productServiceResult = await _productService.GetById(productId);
-        if (productServiceResult.IsFaulted) return BadRequest(productServiceResult.ErrorMessages);
+        if (productServiceResult.IsFaulted) return Warning(productServiceResult.ErrorMessages, true);
         var product = productServiceResult.Value;
 
         ViewData["ProductId"] = product.Id;
@@ -39,7 +40,7 @@ public class FeedbacksController : MainController
     [HttpPost]
     public async Task<IActionResult> CreateFeedback(CreateFeedbackViewModel model)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return Warning(ModelState, true);
 
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
@@ -53,8 +54,8 @@ public class FeedbacksController : MainController
             CreatedAt = DateTimeOffset.UtcNow
         };
         var feedbackServiceResult = await _feedbackService.Add(dto);
-        if (feedbackServiceResult.IsFaulted) return BadRequest(feedbackServiceResult.ErrorMessages);
-
-        return Redirect("/Products");
+        if (feedbackServiceResult.IsFaulted) return Warning(feedbackServiceResult.ErrorMessages, true);
+        
+        return Redirect(RedirectHelper.PRODUCTS_INDEX);
     }
 }
