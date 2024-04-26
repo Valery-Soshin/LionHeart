@@ -61,10 +61,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         return result;
     }
     protected async Task<PagedResponse<T>> BuildPagination<T>(IQueryable<T> totalRecordsQuery,
-                                                            IQueryable<T> entitiesQuery,
-                                                            int pageNumber,
-                                                            int pageSize,
-                                                            Expression<Func<T, bool>>? filter = null)
+                                                             IQueryable<T> entitiesQuery,
+                                                             int pageNumber,
+                                                             int pageSize,
+                                                             Expression<Func<T, bool>>? filter = null)
     {
         if (filter is not null)
         {
@@ -75,12 +75,16 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         var totalRecords = await totalRecordsQuery
             .CountAsync();
 
+        if (pageNumber <= 0) pageNumber = 1;
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+        if (pageNumber > totalPages) pageNumber = totalPages;
+
         var entites = await entitiesQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResponse<T>(entites, totalRecords, pageNumber, pageSize);
+        return new PagedResponse<T>(entites, pageNumber, totalPages);
     }
 
     public void Dispose()

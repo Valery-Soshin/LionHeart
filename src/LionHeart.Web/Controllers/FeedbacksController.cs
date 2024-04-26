@@ -26,7 +26,7 @@ public class FeedbacksController : MainController
     [HttpGet]
     public async Task<IActionResult> CreateFeedback(string productId)
     {
-        if (!ModelState.IsValid) return Error();
+        if (!ModelState.IsValid) return Warning(ModelState);
 
         var productServiceResult = await _productService.GetById(productId);
         if (productServiceResult.IsFaulted) return Warning(productServiceResult.ErrorMessages, true);

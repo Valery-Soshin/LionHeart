@@ -9,10 +9,10 @@ public class PagedResponse<T>
     public bool HasPreviousPage => (PageNumber > 1);
     public bool HasNextPage => (PageNumber < TotalPages);
 
-    public PagedResponse(List<T> entities, int totalRecords, int pageNumber, int pageSize)
+    public PagedResponse(List<T> entities, int pageNumber, int totalPages)
     {
         Entities = entities;
         PageNumber = pageNumber;
-        TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+        TotalPages = totalPages;
     }
 }
