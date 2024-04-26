@@ -7,4 +7,5 @@ public class BasketEntry
     public string ProductId { get; set; } = null!;
     public Product Product { get; set; } = null!;
     public int Quantity { get; set; } = 1;
+    public DateTimeOffset CreatedAt { get; set; }
 }

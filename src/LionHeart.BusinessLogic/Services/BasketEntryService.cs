@@ -68,7 +68,7 @@ public class BasketEntryService : IBasketEntryService
             {
                 UserId = dto.UserId,
                 ProductId = dto.ProductId,
-                Quantity = dto.Quantity
+                CreatedAt = dto.CreatedAt
             };
             bool entryAlreadyExists = await _basketEntryRepository.Exists(dto.UserId, dto.ProductId);
             if (entryAlreadyExists) return Result<BasketEntry>.Failure(ErrorMessage.BasketEntryAlreadyExists);

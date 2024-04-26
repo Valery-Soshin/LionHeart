@@ -39,7 +39,7 @@ public class BasketController : MainController
         {
             UserId = userId,
             BasketTotalPrice = entries.Sum(e => e.Product.Price * e.Quantity),
-            Entries = entries.Select(entry => new BasketEntryViewModel
+            Entries = entries.OrderBy(e => e.CreatedAt).Select(entry => new BasketEntryViewModel
             {
                 Id = entry.Id,
                 UserId = entry.UserId,
