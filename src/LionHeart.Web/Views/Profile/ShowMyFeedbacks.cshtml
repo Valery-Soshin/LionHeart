@@ -4,44 +4,49 @@
     ViewData["Title"] = "Мои отзывы";
 }
 
-<style>
-
-</style>
-
-<div>
-    <h2>Отзывы</h2>
-    <br />
-    @foreach (var feedback in Model.Feedbacks.OrderByDescending(f => f.CreatedAt))
-    {
-        <div class="show-my-feedback text-start">
-            <div class="p-5 row">
-                <div class="col-1">
-                    <img src="/images/@feedback.ImageName"/>
-                </div>
-                <div class="col-10 ms-2">
-                    <div>@feedback.ProductName</div>
-                    <div class="row">
-                        <div class="col-1" style="width: 150px;">
-                            @for (int i = 0; i < feedback.Rating; i++)
-                            {
-                                <label>★</label>
-                            }
-                        </div>
-                        <div class="col">@feedback.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")</div>
+<h2>Отзывы</h2>
+<br />
+@if (Model.Feedbacks.Any())
+{
+    <div>
+        @foreach (var feedback in Model.Feedbacks.OrderByDescending(f => f.CreatedAt))
+        {
+            <div class="show-my-feedback text-start">
+                <div class="p-5 row">
+                    <div class="col-1">
+                        <img src="/images/@feedback.ImageName" />
                     </div>
-                    <div>@feedback.Content</div>
+                    <div class="col-10 ms-2">
+                        <div>@feedback.ProductName</div>
+                        <div class="row">
+                            <div class="col-1" style="width: 150px;">
+                                @for (int i = 0; i < feedback.Rating; i++)
+                                {
+                                    <label>★</label>
+                                }
+                            </div>
+                            <div class="col">@feedback.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")</div>
+                        </div>
+                        <div>@feedback.Content</div>
+                    </div>
                 </div>
             </div>
+        }
+        <div class="ps-5">
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+            }
+            @if (Model.HasNextPage)
+            {
+                <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+            }
         </div>
-    }
-    <div class="ps-5">
-        @if (Model.HasPreviousPage)
-        {
-            <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
-        }
-        @if (Model.HasNextPage)
-        {
-            <a asp-action="ShowMyFeedbacks" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
-        }
     </div>
-</div>
+}
+else
+{
+    <div class="text-center">
+        <h5>В данный момент у вас нет отзывов</h5>
+    </div>
+}

@@ -54,7 +54,7 @@ public class SupplierController : MainController
         var companyServiceResult = await _companyService.Add(addCompanyDto);
         if (companyServiceResult.IsFaulted) return Warning(companyServiceResult.ErrorMessages, true);
         
-        var userManagerResult = await _userManager.AddToRoleAsync(user, RoleNameHelper.Customer);
+        var userManagerResult = await _userManager.AddToRoleAsync(user, RoleNameHelper.Supplier);
         var errorMessages = userManagerResult.Errors.Select(e => e.Description).ToList();
         if (!userManagerResult.Succeeded) return Warning(errorMessages, true);
 

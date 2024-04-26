@@ -1,6 +1,17 @@
 ﻿@using LionHeart.Web.Models.Product
-@model PagedResponse<Product>
+@model PagedResponse<FavoriteProduct>
 
 @{
     ViewBag.Title = "Избранные товары";
+}
+
+@if (Model.Entities.Any())
+{
+    
+}
+else
+{
+    <div class="text-center">
+        <h5>В данный момент у вас нет товаров в избранном</h5>
+    </div>
 }

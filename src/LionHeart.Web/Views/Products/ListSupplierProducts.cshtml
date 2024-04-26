@@ -6,52 +6,81 @@
 }
 
 <div class="site-body-container">
-    <table class="table text-center bg-light" style="color: #930667">
-        <thead class="main-theme border-1">
-            <tr>
-                <th scope="col" class="col-1">#</th>
-                <th scope="col" class="col-2">Продукт</th>
-                <th scope="col" class="col-2">Цена ед.</th>
-                <th scope="col" class="col-2">Количество</th>
-                <th scope="col" class="col-2">Дата добавления</th>
-                <th scope="col" class="col-2"></th>
-            </tr>
-        </thead>
-        <tbody class="border-1">
-            @{
-                int rowNumber = 1 + (Model.PageNumber - 1) * PageHelper.PageSize;
-            }
-            @foreach (var product in Model.Products.OrderBy(m => m.CreatedAt))
-            {
+    @if (Model.Products.Any())
+    {
+        <table class="table text-center bg-light" style="color: #930667">
+            <thead class="main-theme border-1">
                 <tr>
-                    <form asp-action="DeleteProduct" asp-route-productId="@product.Id" method="post">
-                        <button hidden id="@product.Id"></button>
-                    </form>
-                    <th scope="row">@rowNumber</th>
-                    <td class="text-truncate">@product.Name</td>
-                    <td>@product.Price</td>
-                    <td>@product.Quantity</td>
-                    <td>@product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
-                    <td class="d-flex justify-content-center">
-                        <a asp-action="EditProduct" asp-route-productId="@product.Id" class="link-secondary">Изменить</a>
-                        <a href="#" class="ms-5 link-danger" onclick="showModalWindow('@product.Id')">Удалить</a>
-                    </td>
+                    <th scope="col" class="col-1">#</th>
+                    <th scope="col" class="col-2">Продукт</th>
+                    <th scope="col" class="col-2">Цена ед.</th>
+                    <th scope="col" class="col-2">Количество</th>
+                    <th scope="col" class="col-2">Дата добавления</th>
+                    <th scope="col" class="col-2"></th>
                 </tr>
-                rowNumber++;
+            </thead>
+            <tbody class="border-1">
+                @{
+                    int rowNumber = 1 + (Model.PageNumber - 1) * PageHelper.PageSize;
+                }
+                @foreach (var product in Model.Products.OrderBy(m => m.CreatedAt))
+                {
+                    <tr>
+                        <form asp-action="DeleteProduct" asp-route-productId="@product.Id" method="post">
+                            <button hidden id="@product.Id"></button>
+                        </form>
+                        <th scope="row">@rowNumber</th>
+                        <td class="text-truncate">@product.Name</td>
+                        <td>@product.Price</td>
+                        <td>@product.Quantity</td>
+                        <td>@product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
+                        <td class="d-flex justify-content-center">
+                            <a asp-action="EditProduct" asp-route-productId="@product.Id" class="link-secondary">Изменить</a>
+                            <a href="#" class="ms-5 link-danger" onclick="showModalWindow('@product.Id')">Удалить</a>
+                        </td>
+                    </tr>
+                    rowNumber++;
+                }
+            </tbody>
+        </table>
+        <div class="text-end">
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
             }
-        </tbody>
-    </table>
-    <div class="text-end">
-        @if (Model.HasPreviousPage)
-        {
-            <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
-        }
-        @if (Model.HasNextPage)
-        {
-            <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
-        }
-    </div>
+            @if (Model.HasNextPage)
+            {
+                <a asp-action="ListSupplierProducts" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row m-5 text-center" style="color: #930667">
+            <div>
+                <h3>В списке товаров пока пусто</h3>
+            </div>
+            <div>
+                <p>Загляните на вкладку создания продукта</p>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div>
+                    <a asp-action="CreateProduct" class="btn btn-grad w-100 pe-5 ps-5">Перейти</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+
+
+
+
+
+
+
+
+
 
 
 <button id="show-modal-button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal" hidden>

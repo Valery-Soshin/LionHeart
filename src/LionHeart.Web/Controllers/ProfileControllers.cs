@@ -60,7 +60,7 @@ public class ProfileController : MainController
         if (favoriteProductServiceResult.IsFaulted) return Warning(favoriteProductServiceResult.ErrorMessages);
         var page = favoriteProductServiceResult.Value;
 
-        return View();
+        return View(page);
     }
 
     [HttpGet]
