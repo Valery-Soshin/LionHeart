@@ -74,8 +74,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         var totalRecords = await totalRecordsQuery
             .CountAsync();
 
-        if (pageNumber <= 0) pageNumber = 1;
+        if (totalRecords == 0) return new PagedResponse<T>([], 0, 0);
+
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+        if (pageNumber <= 0) pageNumber = 1;
         if (pageNumber > totalPages) pageNumber = totalPages;
 
         var entites = await entitiesQuery
@@ -83,7 +85,8 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResponse<T>(entites, pageNumber, totalPages);
+        var page = new PagedResponse<T>(entites, pageNumber, totalPages);
+        return page;
     }
 
     public void Dispose()
