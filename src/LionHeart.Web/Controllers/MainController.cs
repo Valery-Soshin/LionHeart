@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LionHeart.Web.Controllers;
 
-public class MainController : Controller
+public abstract class MainController : Controller
 {
     public ViewResult Warning(IEnumerable<string> messages, bool returnUrl = false) 
     {

@@ -6,6 +6,7 @@ using LionHeart.Web.Models.Product;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Dtos.Product;
 using LionHeart.Web.Helpers;
+using LionHeart.Core.Helpers;
 
 namespace LionHeart.Web.Controllers;
 
@@ -37,6 +38,7 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index(int pageNumber = 1)
     {
         if (!ModelState.IsValid) return Warning(ModelState);
@@ -49,6 +51,7 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> ShowProduct(string id, int feedbackPageNumber = 1)
     {
         if (!ModelState.IsValid) return Warning(ModelState);
@@ -108,14 +111,14 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public IActionResult CreateProduct()
     {
         return View();
     }
 
     [HttpPost]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public async Task<IActionResult> CreateProduct(CreateProductViewModel model)
     {
         if (!ModelState.IsValid) return View();
@@ -147,7 +150,7 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public async Task<IActionResult> EditProduct(string productId)
     {
         if (!ModelState.IsValid) return Warning(ModelState);
@@ -171,7 +174,7 @@ public class ProductsController : MainController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public async Task<IActionResult> EditProduct(EditProductViewModel model)
     {
         if (!ModelState.IsValid) return Warning(ModelState, true);
@@ -193,7 +196,7 @@ public class ProductsController : MainController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public async Task<IActionResult> DeleteProduct(string productId)
     {
         if (!ModelState.IsValid) return Warning(ModelState);
@@ -205,11 +208,14 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult SearchProducts()
     {
         return View();
     }
+
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> SearchProducts(string searchedValue, int pageNumber = 1)
     {
         if (!ModelState.IsValid) return View();
@@ -232,7 +238,7 @@ public class ProductsController : MainController
     }
 
     [HttpGet]
-    [Authorize(Roles = "Supplier")]
+    [Authorize(Roles = RoleNameHelper.Supplier)]
     public async Task<IActionResult> ListSupplierProducts(int pageNumber = 1)
     {
         if (!ModelState.IsValid) return Warning(ModelState);

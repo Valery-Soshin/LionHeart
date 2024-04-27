@@ -4,6 +4,7 @@ using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
 using LionHeart.Web.Helpers;
 using LionHeart.Web.Models.Supplier;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,7 @@ public class SupplierController : MainController
     {
         return View();
     }
+
     [HttpPost]
     public async Task<IActionResult> RegisterSupplier(RegisterSupplierViewModel model)
     {

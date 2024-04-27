@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-[Authorize]
 public class ProfileController : MainController
 {
     private readonly IFavoriteProductService _favoriteProductService;
@@ -134,6 +133,7 @@ public class ProfileController : MainController
         };
         return View(model);
     }
+
     [HttpPost]
     public async Task<IActionResult> EditProfile(EditProfileViewModel model)
     {

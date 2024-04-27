@@ -1,10 +1,12 @@
 ﻿using LionHeart.Core.Models;
 using LionHeart.Web.Models.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
+[AllowAnonymous]
 public class AuthController : MainController
 {
     private readonly UserManager<User> _userManager;
@@ -26,6 +28,7 @@ public class AuthController : MainController
         ViewBag.ReturnUrL = returnUrl;
         return View();
     }
+
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
@@ -52,6 +55,7 @@ public class AuthController : MainController
     {
         return View();
     }
+
     [HttpPost]
     public async Task<IActionResult> RegisterUser(RegisterUserViewModel model)
     {

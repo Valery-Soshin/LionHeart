@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
 
-[Authorize]
 public class FavoritesController : MainController
 {
     private readonly IFavoriteProductService _favoriteProductService;

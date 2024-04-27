@@ -10,7 +10,6 @@ using LionHeart.Web.Helpers;
 
 namespace LionHeart.Web.Controllers;
 
-[Authorize]
 public class BasketController : MainController
 {
     private readonly IBasketEntryService _basketEntryService;

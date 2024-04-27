@@ -1,5 +1,6 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Web.Models.Company;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LionHeart.Web.Controllers;
@@ -16,6 +17,8 @@ public class CompaniesController : MainController
         _productService = productService;
     }
 
+    [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> ShowCompany(string id, int pageNumber = 1)
     {
         if (!ModelState.IsValid) return Warning(ModelState);

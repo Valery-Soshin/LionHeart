@@ -18,6 +18,7 @@ public class NotificationsController : MainController
         _userManager = userManager;
     }
 
+    [HttpGet]
     public async Task<IActionResult> DeleteNotification([FromBody]string id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -27,6 +28,8 @@ public class NotificationsController : MainController
 
         return Ok();
     }
+
+    [HttpGet]
     public async Task<IActionResult> DeleteAllNotifications()
     {
         var userId = _userManager.GetUserId(User);

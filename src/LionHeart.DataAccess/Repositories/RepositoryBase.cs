@@ -2,7 +2,6 @@
 using LionHeart.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Linq;
 
 namespace LionHeart.DataAccess.Repositories;
 

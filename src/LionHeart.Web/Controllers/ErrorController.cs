@@ -13,9 +13,10 @@ public class ErrorController : MainController
         _logger = logger;
     }
 
-    [AllowAnonymous]
     [Route("Error")]
-    public IActionResult Error()
+    [HttpGet]
+    [AllowAnonymous]
+    public new IActionResult Error()
     {
         var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
