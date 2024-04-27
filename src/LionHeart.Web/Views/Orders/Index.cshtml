@@ -1,4 +1,6 @@
-﻿@model List<Order>
+﻿@using LionHeart.BusinessLogic.Helpers
+@using LionHeart.Web.Models.Order
+@model IndexViewModel
 
 @{
     ViewBag.Title = "Список заказов";
@@ -17,27 +19,29 @@
         </thead>
         <tbody class="border-1">
             @{
-                int rowNumber = 1;
-            }
-            @foreach (var order in Model.OrderBy(o => o.CreateAt))
-            {
-                foreach (var orderItem in order.Items)
+                int rowNumber = 1 + (Model.PageNumber - 1) * PageHelper.PageSize;
+                foreach (var order in Model.Orders.OrderBy(o => o.CreatedAt))
                 {
-                    var product = orderItem.Product;
-
-                    if (product is null) continue;
-
                     <tr>
                         <th scope="row">@rowNumber</th>
-                        <td>@product.Name</td>
-                        <td>@orderItem.ProductPrice</td>
-                        <td>@orderItem.ProductQuantity</td>
-                        <td>@order.CreateAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")</td>
+                        <td>@order.ProductName</td>
+                        <td>@order.ProductPrice</td>
+                        <td>@order.ProductQuantity</td>
+                        <td>@order.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy, HH:mm")</td>
                     </tr>
-
                     rowNumber++;
                 }
             }
         </tbody>
     </table>
- </div>
+    <div class="text-end">
+        @if (Model.HasPreviousPage)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" class="custom-btn-link btn">Назад</a>
+        }
+        @if (Model.HasNextPage)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" class="custom-btn-link btn">Вперед</a>
+        }
+    </div>
+</div>

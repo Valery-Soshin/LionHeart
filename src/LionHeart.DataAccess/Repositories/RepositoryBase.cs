@@ -60,10 +60,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         return result;
     }
     protected async Task<PagedResponse<T>> BuildPagination<T>(IQueryable<T> totalRecordsQuery,
-                                                             IQueryable<T> entitiesQuery,
-                                                             int pageNumber,
-                                                             int pageSize,
-                                                             Expression<Func<T, bool>>? filter = null)
+                                                              IQueryable<T> entitiesQuery,
+                                                              int pageNumber,
+                                                              int pageSize,
+                                                              Expression<Func<T, bool>>? filter = null)
     {
         if (filter is not null)
         {

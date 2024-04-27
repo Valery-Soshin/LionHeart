@@ -1,5 +1,6 @@
 ﻿using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
+using LionHeart.Web.Models.Order;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,10 +26,23 @@ public class OrdersController : MainController
         var userId = _userManager.GetUserId(User);
         if (userId is null) return Unauthorized();
 
-        var orderServiceResult = await _orderService.GetOrdersByUserId(userId, pageNumber);
+        var orderServiceResult = await _orderService.GetOrderItemsByUserId(userId, pageNumber);
         if (orderServiceResult.IsFaulted) return Warning(orderServiceResult.ErrorMessages);
         var page = orderServiceResult.Value;
 
-        return View(page.Entities);
+        var model = new IndexViewModel
+        {
+            PageNumber = page.PageNumber,
+            HasPreviousPage = page.HasPreviousPage,
+            HasNextPage = page.HasNextPage,
+            Orders = page.Entities.Select(i => new IndexOrderViewModel()
+            {
+                ProductName = i.Product.Name,
+                ProductPrice = i.ProductPrice,
+                ProductQuantity = i.ProductQuantity,
+                CreatedAt = i.Order.CreatedAt
+            }).ToList()
+        };
+        return View(model);
     }
 }

@@ -15,6 +15,7 @@ public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
+    private readonly IOrderItemRepository _orderItemRepository;
     private readonly IProductService _productService;
     private readonly IProductUnitService _productUnitService;
     private readonly IBasketEntryService _basketEntryService;
@@ -22,6 +23,7 @@ public class OrderService : IOrderService
 
     public OrderService(IUnitOfWork unitOfWork,
                         IOrderRepository orderRepository,
+                        IOrderItemRepository orderItemRepository,
                         IProductService productService,
                         IProductUnitService productUnitService,
                         IBasketEntryService basketEntryService,
@@ -29,6 +31,7 @@ public class OrderService : IOrderService
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
+        _orderItemRepository = orderItemRepository;
         _productService = productService;
         _productUnitService = productUnitService;
         _basketEntryService = basketEntryService;
@@ -65,6 +68,20 @@ public class OrderService : IOrderService
             return Result<PagedResponse<Order>>.Failure(ErrorMessage.InternalServerError);
         }
     }
+    public async Task<Result<PagedResponse<OrderItem>>> GetOrderItemsByUserId(string userId, int pageNumber)
+    {
+        try
+        {
+            var page = await _orderItemRepository.GetOrderItemsByFilter(
+                pageNumber, PageHelper.PageSize, o => o.Order.UserId == userId);
+
+            return Result<PagedResponse<OrderItem>>.Success(page);
+        }
+        catch
+        {
+            return Result<PagedResponse<OrderItem>>.Failure(ErrorMessage.InternalServerError);
+        }
+    }
     public async Task<Result<Order>> Add(AddOrderDto dto)
     {
         try
@@ -92,7 +109,7 @@ public class OrderService : IOrderService
             {
                 UserId = dto.UserId,
                 TotalPrice = dto.BasketTotalPrice,
-                CreateAt = dto.CreateAt
+                CreatedAt = dto.CreateAt
             };
             var productUnitDtos = new List<UpdateProductUnitDto>();
             var notificationDtos = new List<AddNotificationDto>();
