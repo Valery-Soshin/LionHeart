@@ -10,3 +10,4 @@ Technologies:
 - Repository Pattern
 - Result Pattern
 - NLog
+- Fluent Validation
