@@ -1,29 +1,50 @@
-﻿using LionHeart.BusinessLogic.Helpers;
+﻿using LionHeart.BusinessLogic.FluentValidations.Models;
+using LionHeart.BusinessLogic.FluentValidations.Validators.Feedback;
+using LionHeart.BusinessLogic.Helpers;
 using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Feedback;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.Feedback;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class FeedbackService : IFeedbackService
 {
     private readonly IFeedbackRepository _feedbackRepository;
-    private readonly IOrderService _orderService;
+    private readonly IProductRepository _productRepository;
+    private readonly IOrderRepository _orderRepository;
+    private readonly FeedbackServiceValidators _validators;
+    private readonly UserManager<User> _userManager;
 
     public FeedbackService(IFeedbackRepository feedbackRepository,
-                           IOrderService orderService)
+                           IProductRepository productRepository,
+                           IOrderRepository orderRepository,
+                           FeedbackServiceValidators validators,
+                           UserManager<User> userManager)
     {
         _feedbackRepository = feedbackRepository;
-        _orderService = orderService;
+        _productRepository = productRepository;
+        _orderRepository = orderRepository;
+        _validators = validators;
+        _userManager = userManager;
     }
 
     public async Task<Result<Feedback>> GetById(string id)
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Feedback>.Failure(errorMessages);
+            }
+
             var feedback = await _feedbackRepository.GetById(id);
             if (feedback is null)
             {
@@ -40,6 +61,13 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Feedback>>.Failure(errorMessages);
+            }
+
             var page = await _feedbackRepository.GetFeedbacksByFilter(
                 pageNumber, PageHelper.PageSize, f => f.UserId == userId);
 
@@ -54,6 +82,13 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(productId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Feedback>>.Failure(errorMessages);
+            }
+
             var page = await _feedbackRepository.GetFeedbacksByFilter(
                 pageNumber, PageHelper.PageSize, f => f.ProductId == productId);
 
@@ -68,10 +103,39 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
+            var dtoValidationResult = _validators.AddFeedbackDtoValidator.Validate(dto);
+            if (!dtoValidationResult.IsValid)
+            {
+                var errorMessages = dtoValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Feedback>.Failure(errorMessages);
+            }
+
+            bool feedbackAlreadyExists = await _feedbackRepository
+                .Exists(f => f.UserId == dto.UserId && f.ProductId == dto.ProductId);
+            bool userExists = await _userManager.Users.AnyAsync(u => u.Id == dto.UserId);
+            bool productExists = await _productRepository.Exists(p => p.Id == dto.ProductId);
+            var validateAddModel = new ValidateAddModel()
+            {
+                FeedbackAlreadyExists = feedbackAlreadyExists,
+                UserExists = userExists,
+                ProductExists = productExists
+            };
+            var feedbackValidatorResult = _validators.FeedbackValidator.ValidateAdd(validateAddModel);
+            if (feedbackValidatorResult.IsFaulted)
+            {
+                return Result<Feedback>.Failure(feedbackValidatorResult.ErrorMessages);
+            }
+
             var feedbackServiceResult = await HasFeedbackPending(dto.UserId, dto.ProductId);
-            if (feedbackServiceResult.IsFaulted) return Result<Feedback>.Failure(feedbackServiceResult.ErrorMessages);
-            var hasFeedbackPending = feedbackServiceResult.Value;
-            if (!hasFeedbackPending) return Result<Feedback>.Failure(ErrorMessage.UserHasNotFeedbackPending);
+            if (feedbackServiceResult.IsFaulted)
+            {
+                return Result<Feedback>.Failure(feedbackServiceResult.ErrorMessages);
+            }
+            bool hasFeedbackPending = feedbackServiceResult.Value;
+            if (!hasFeedbackPending)
+            {
+                return Result<Feedback>.Failure(ErrorMessage.UserHasNotFeedbackPending);
+            }
 
             var feedback = new Feedback
             {
@@ -81,9 +145,11 @@ public class FeedbackService : IFeedbackService
                 Content = dto.Content,
                 CreatedAt = dto.CreatedAt
             };
-            var result = await _feedbackRepository.Add(feedback);
-            if (result <= 0) return Result<Feedback>.Failure(ErrorMessage.FeedbackNotCreated);
-
+            var feedbackRepositoryResult = await _feedbackRepository.Add(feedback);
+            if (feedbackRepositoryResult <= 0)
+            {
+                return Result<Feedback>.Failure(ErrorMessage.FeedbackNotCreated);
+            }
             return Result<Feedback>.Success(feedback);
         }
         catch
@@ -95,13 +161,31 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Feedback>.Failure(errorMessages);
+            }
+
+            bool feedbackExists = await _feedbackRepository.Exists(f => f.Id == id);
+            var validateRemoveModel = new ValidateRemoveModel()
+            {
+                FeedbackExists = feedbackExists
+            };
+            var feedbackValidatorResult = _validators.FeedbackValidator.ValidateRemove(validateRemoveModel);
+            if (feedbackValidatorResult.IsFaulted)
+            {
+                return Result<Feedback>.Failure(feedbackValidatorResult.ErrorMessages);
+            }
+
             var feedback = await _feedbackRepository.GetById(id);
             if (feedback is null)
             {
                 return Result<Feedback>.Failure(ErrorMessage.FeedbackNotFound);
             }
-            var result = await _feedbackRepository.Remove(feedback);
-            if (result <= 0)
+            var feedbackRepositoryResult = await _feedbackRepository.Remove(feedback);
+            if (feedbackRepositoryResult <= 0)
             {
                 return Result<Feedback>.Failure(ErrorMessage.FeedbackNotRemoved);
             }
@@ -111,23 +195,14 @@ public class FeedbackService : IFeedbackService
         {
             return Result<Feedback>.Failure(ErrorMessage.InternalServerError);
         }
-
     }
     public async Task<Result<bool>> HasFeedbackPending(string userId, string productId)
     {
         try
         {
-            var orderServiceResult = await _orderService.Exists(userId, productId);
-            if (orderServiceResult.IsFaulted)
-            {
-                var errorMessages = orderServiceResult.ErrorMessages.ToList();
-                errorMessages.Add(ErrorMessage.OrderNotFound);
-                return Result<bool>.Failure(errorMessages);
-            }
-            var feedbackRepositoryResult = await _feedbackRepository.Exists(userId, productId);
-
-            var hasFeedbackPending = !feedbackRepositoryResult && orderServiceResult.Value;
-
+            bool orderExists = await _orderRepository.Exists(userId, productId);
+            bool feedbackExists = await _feedbackRepository.Exists(userId, productId);
+            bool hasFeedbackPending = !feedbackExists && orderExists;
             return Result<bool>.Success(hasFeedbackPending);
         }
         catch

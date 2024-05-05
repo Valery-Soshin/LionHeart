@@ -1,25 +1,38 @@
 ﻿using LionHeart.BusinessLogic.Resources;
+using LionHeart.BusinessLogic.FluentValidations.Validators.Brand;
 using LionHeart.Core.Dtos.Brand;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.Brand;
+using LionHeart.BusinessLogic.FluentValidations.Models;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class BrandService : IBrandService
 {
     private readonly IBrandRepository _brandRepository;
+    private readonly BrandServiceValidators _validators;
 
-    public BrandService(IBrandRepository brandRepository)
+    public BrandService(IBrandRepository brandRepository,
+                        BrandServiceValidators validators)
     {
         _brandRepository = brandRepository;
+        _validators = validators;
     }
 
     public async Task<Result<Brand>> GetById(string id)
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Brand>.Failure(errorMessages);
+            }
+
             var brand = await _brandRepository.GetById(id);
             if (brand is null)
             {
@@ -52,13 +65,31 @@ public class BrandService : IBrandService
     {
         try
         {
+            var dtoValidationResult = _validators.AddBrandDtoValidator.Validate(dto);
+            if (!dtoValidationResult.IsValid)
+            {
+                var errorMessages = dtoValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Brand>.Failure(errorMessages);
+            }
+
+            bool brandAlreadyExists = await _brandRepository.Exists(b => b.Name == dto.Name);
+            var validateAddModel = new ValidateAddModel()
+            {
+                BrandAlreadyExists = brandAlreadyExists
+            };
+            var brandValidatorResult = _validators.BrandValidator.ValidateAdd(validateAddModel);
+            if (brandValidatorResult.IsFaulted)
+            {
+                return Result<Brand>.Failure(brandValidatorResult.ErrorMessages);
+            }
+
             var brand = new Brand
             {
                 Name = dto.Name, 
                 ImageId = dto.ImageId
             };
-            var result = await _brandRepository.Add(brand);
-            if (result <= 0)
+            var brandRepositoryResult = await _brandRepository.Add(brand);
+            if (brandRepositoryResult <= 0)
             {
                 return Result<Brand>.Failure(ErrorMessage.BrandNotCreated);
             }

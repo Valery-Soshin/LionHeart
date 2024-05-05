@@ -1,9 +1,12 @@
-﻿namespace LionHeart.Web.Models.Product;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace LionHeart.Web.Models.Product;
 
 public class EditProductViewModel
 {
     public string Id { get; set; } = null!;
     public string CategoryId { get; set; } = null!;
+    public string BrandId { get; set; } = null!;
     public string? CategoryName { get; set; } = null!;
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }

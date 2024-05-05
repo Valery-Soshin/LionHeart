@@ -121,7 +121,7 @@ public class TestController : MainController
         };
         _applicationDbContext.Categories.Add(category);
 
-        var brand = new Brand() { Name = Guid.NewGuid().ToString(), Image = new Image() { FileName = "2bcthlt1.m31" } };
+        var brand = new Brand() { Name = Guid.NewGuid().ToString(), Image = new Image("2bcthlt1.m31") };
         var company = new Company() { Name = Guid.NewGuid().ToString(), UserId = supplier.Id };
         for (int i = 0; i < 50000; i++)
         {
@@ -137,10 +137,7 @@ public class TestController : MainController
                 Description = "Красивая и удобная футболка.",
                 Specifications = "Размер - XXL",
                 CreatedAt = DateTimeOffset.UtcNow,
-                Image = new Image
-                {
-                    FileName = i % 2 > 0 ? "img1.jpg" : "img2.jpg"
-                }
+                Image = new Image(i % 2 > 0 ? "img1.jpg" : "img2.jpg")
             };
             _applicationDbContext.Add(product);
 

@@ -138,6 +138,9 @@
   <data name="BasketEntryNotUpdated" xml:space="preserve">
     <value>Товар в корзине не обновлен</value>
   </data>
+  <data name="BrandAlreadyExists" xml:space="preserve">
+    <value>Бренд уже существует</value>
+  </data>
   <data name="BrandNotCreated" xml:space="preserve">
     <value>Бренд не был добавлен</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="CategoriesNotFound" xml:space="preserve">
     <value>Категории не были найдены</value>
+  </data>
+  <data name="CategoryAlreadyExists" xml:space="preserve">
+    <value>Категория уже существует</value>
   </data>
   <data name="CategoryNotCreated" xml:space="preserve">
     <value>Категория не была создана</value>
@@ -162,11 +168,17 @@
   <data name="CategoryNotUpdated" xml:space="preserve">
     <value>Категория не была обновлена</value>
   </data>
+  <data name="CompanyAlreadyExists" xml:space="preserve">
+    <value>Компания уже существует</value>
+  </data>
   <data name="CompanyNotCreated" xml:space="preserve">
     <value>Компания не была создана</value>
   </data>
   <data name="CompanyNotFound" xml:space="preserve">
     <value>Компания не была найдена</value>
+  </data>
+  <data name="FavoriteProductAlreadyExists" xml:space="preserve">
+    <value>Продукт уже находится в избранном</value>
   </data>
   <data name="FavoriteProductNotCreated" xml:space="preserve">
     <value>Продукт не был добавлен в избранное</value>
@@ -179,6 +191,9 @@
   </data>
   <data name="FavoriteProductsNotFound" xml:space="preserve">
     <value>Продукты в избранном не были найдены</value>
+  </data>
+  <data name="FeedbackAlreadyExists" xml:space="preserve">
+    <value>Отзыв уже существует</value>
   </data>
   <data name="FeedbackNotCreated" xml:space="preserve">
     <value>Отзыв не был создан</value>
@@ -200,6 +215,9 @@
   </data>
   <data name="InternalServerError" xml:space="preserve">
     <value>Внутренняя проблема сервера</value>
+  </data>
+  <data name="NotificationAlreadyExists" xml:space="preserve">
+    <value>Уведомление уже существует</value>
   </data>
   <data name="NotificationNotCreated" xml:space="preserve">
     <value>Уведомление не было создано</value>
@@ -224,6 +242,9 @@
   </data>
   <data name="OrdersNotFound" xml:space="preserve">
     <value>Заказы не найдены</value>
+  </data>
+  <data name="ProductNameAlreadyExists" xml:space="preserve">
+    <value>Продукт с таким именим уже существует</value>
   </data>
   <data name="ProductNotCreated" xml:space="preserve">
     <value>Продукт не был создан</value>
@@ -266,5 +287,8 @@
   </data>
   <data name="UserHasNotFeedbackPending" xml:space="preserve">
     <value>Не получается добавить отзыв о товаре</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Пользователь не найден</value>
   </data>
 </root>

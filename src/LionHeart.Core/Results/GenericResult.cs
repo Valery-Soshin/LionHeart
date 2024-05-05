@@ -1,11 +1,11 @@
-﻿namespace LionHeart.Core.Result;
+﻿namespace LionHeart.Core.Results;
 
 public class Result<T>
 {
     public T Value { get; }
     public bool IsCompleted => ErrorMessages.Count == 0;
     public bool IsFaulted => !IsCompleted;
-    public IReadOnlyList<string> ErrorMessages { get; }
+    public IReadOnlyList<string> ErrorMessages { get; } = [];
 
     private Result(T value, List<string>? errorMessages)
     {

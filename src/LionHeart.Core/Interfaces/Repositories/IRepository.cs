@@ -1,4 +1,6 @@
-﻿namespace LionHeart.Core.Interfaces.Repositories;
+﻿using System.Linq.Expressions;
+
+namespace LionHeart.Core.Interfaces.Repositories;
 
 public interface IRepository<TEntity> : IDisposable where TEntity: class
 {
@@ -9,4 +11,5 @@ public interface IRepository<TEntity> : IDisposable where TEntity: class
     Task<int> UpdateRange(IEnumerable<TEntity> entities);
     Task<int> Remove(TEntity entity);
     Task<int> RemoveRange(IEnumerable<TEntity> entities);
+    Task<bool> Exists(Expression<Func<TEntity, bool>> filter);
 }

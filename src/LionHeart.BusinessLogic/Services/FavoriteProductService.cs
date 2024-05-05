@@ -1,28 +1,51 @@
-﻿using LionHeart.BusinessLogic.Helpers;
+﻿using LionHeart.BusinessLogic.FluentValidations.Models;
+using LionHeart.BusinessLogic.FluentValidations.Validators.FavoriteProduct;
+using LionHeart.BusinessLogic.Helpers;
 using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.FavoriteProduct;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class FavoriteProductService : IFavoriteProductService
 {
-    private readonly IFavoriteProductRepository _favoriteRepository;
+    private readonly IFavoriteProductRepository _favoriteProductRepository;
+    private readonly IProductRepository _productRepository;
+    private readonly FavoriteProductServiceValidators _validators;
+    private readonly UserManager<User> _userManager;
 
-    public FavoriteProductService(IFavoriteProductRepository favoriteRepository)
+    public FavoriteProductService(IFavoriteProductRepository favoriteRepository,
+                                  IProductRepository productRepository,
+                                  FavoriteProductServiceValidators validators,
+                                  UserManager<User> userManager)
     {
-        _favoriteRepository = favoriteRepository;
+        _favoriteProductRepository = favoriteRepository;
+        _productRepository = productRepository;
+        _validators = validators;
+        _userManager = userManager;
     }
 
     public async Task<Result<FavoriteProduct>> GetById(string id)
     {
         try
         {
-            var favoriteProduct = await _favoriteRepository.GetById(id);
-            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
-            
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<FavoriteProduct>.Failure(errorMessages);
+            }
+
+            var favoriteProduct = await _favoriteProductRepository.GetById(id);
+            if (favoriteProduct is null)
+            {
+                return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            }
             return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
@@ -34,9 +57,18 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
-            var favoriteProduct = await _favoriteRepository.GetByAlternateKey(userId, productId);
-            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
-            
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId, productId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<FavoriteProduct>.Failure(errorMessages);
+            }
+
+            var favoriteProduct = await _favoriteProductRepository.GetByAlternateKey(userId, productId);
+            if (favoriteProduct is null)
+            {
+                return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            }
             return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
@@ -48,8 +80,17 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
-            var page = await _favoriteRepository.GetFavoritesByUserId(
-                pageNumber, PageHelper.PageSize, f => f.UserId == userId);
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<FavoriteProduct>>.Failure(errorMessages);
+            }
+
+            var page = await _favoriteProductRepository.GetFavoritesByUserId(
+                pageNumber,
+                PageHelper.PageSize,
+                f => f.UserId == userId);
             
             return Result<PagedResponse<FavoriteProduct>>.Success(page);
         }
@@ -62,14 +103,39 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId, productId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<FavoriteProduct>.Failure(errorMessages);
+            }
+
+            bool favoriteProductAlreadyExists = await _favoriteProductRepository
+                .Exists(f => f.UserId == userId && f.ProductId == productId);
+            bool userExists = await _userManager.Users.AnyAsync(u => u.Id == userId);
+            bool productExists = await _productRepository.Exists(p => p.Id == productId);
+            var validateAddModel = new ValidateAddModel()
+            {
+                FavoriteProductAlreadyExist = favoriteProductAlreadyExists,
+                UserExists = userExists,
+                ProductExist = productExists
+            };
+            var favoriteProductValidatorResult = _validators.FavoriteProductValidator.ValidateAdd(validateAddModel);
+            if (favoriteProductValidatorResult.IsFaulted)
+            {
+                return Result<FavoriteProduct>.Failure(favoriteProductValidatorResult.ErrorMessages);
+            }
+
             var favoriteProduct = new FavoriteProduct
             {
                 UserId = userId,
                 ProductId = productId
             };
-            var result = await _favoriteRepository.Add(favoriteProduct);
-            if (result <= 0) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotCreated);
-           
+            var favoriteProductRepositoryResult = await _favoriteProductRepository.Add(favoriteProduct);
+            if (favoriteProductRepositoryResult <= 0)
+            {
+                return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotCreated);
+            }
             return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
@@ -81,12 +147,39 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
-            var favoriteProduct = await _favoriteRepository.GetByAlternateKey(userId, productId);
-            if (favoriteProduct is null) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
-            
-            var result = await _favoriteRepository.Remove(favoriteProduct);
-            if (result <= 0) return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotRemoved);
-            
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId, productId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<FavoriteProduct>.Failure(errorMessages);
+            }
+
+            bool favoriteProductExists = await _favoriteProductRepository
+                .Exists(f => f.UserId == userId && f.ProductId == productId);
+            bool userExists = await _userManager.Users.AnyAsync(u => u.Id == userId);
+            bool productExists = await _productRepository.Exists(p => p.Id == productId);
+            var validateRemoveModel = new ValidateRemoveModel()
+            {
+                FavoriteProductExist = favoriteProductExists,
+                UserExists = userExists,
+                ProductExist = productExists
+            };
+            var favoriteProductValidatorResult = _validators.FavoriteProductValidator.ValidateRemove(validateRemoveModel);
+            if (favoriteProductValidatorResult.IsFaulted)
+            {
+                return Result<FavoriteProduct>.Failure(favoriteProductValidatorResult.ErrorMessages);
+            }
+
+            var favoriteProduct = await _favoriteProductRepository.GetByAlternateKey(userId, productId);
+            if (favoriteProduct is null)
+            {
+                return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotFound);
+            }
+            var favoriteProductRepositoryResult = await _favoriteProductRepository.Remove(favoriteProduct);
+            if (favoriteProductRepositoryResult <= 0)
+            {
+                return Result<FavoriteProduct>.Failure(ErrorMessage.FavoriteProductNotRemoved);
+            }
             return Result<FavoriteProduct>.Success(favoriteProduct);
         }
         catch
@@ -98,8 +191,8 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
-            var result = await _favoriteRepository.Any(userId);
-            return Result<bool>.Success(result);
+            bool favoriteProductAny = await _favoriteProductRepository.Any(userId);
+            return Result<bool>.Success(favoriteProductAny);
         }
         catch
         {
@@ -110,8 +203,8 @@ public class FavoriteProductService : IFavoriteProductService
     {
         try
         {
-            var result = await _favoriteRepository.Exists(userId, productId);
-            return Result<bool>.Success(result);
+            bool favoriteProductExists = await _favoriteProductRepository.Exists(userId, productId);
+            return Result<bool>.Success(favoriteProductExists);
         }
         catch
         {

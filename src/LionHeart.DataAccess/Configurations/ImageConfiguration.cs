@@ -8,6 +8,6 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
 {
     public void Configure(EntityTypeBuilder<Image> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(i => i.Id).ValueGeneratedOnAdd();
     }
 }

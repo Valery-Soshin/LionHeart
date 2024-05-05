@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
 
 namespace LionHeart.Core.Interfaces.Services;
 

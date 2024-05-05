@@ -124,6 +124,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Бренд уже существует.
+        /// </summary>
+        internal static string BrandAlreadyExists {
+            get {
+                return ResourceManager.GetString("BrandAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Бренд не был добавлен.
         /// </summary>
         internal static string BrandNotCreated {
@@ -156,6 +165,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string CategoriesNotFound {
             get {
                 return ResourceManager.GetString("CategoriesNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Категория уже существует.
+        /// </summary>
+        internal static string CategoryAlreadyExists {
+            get {
+                return ResourceManager.GetString("CategoryAlreadyExists", resourceCulture);
             }
         }
         
@@ -196,6 +214,15 @@ namespace LionHeart.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Компания уже существует.
+        /// </summary>
+        internal static string CompanyAlreadyExists {
+            get {
+                return ResourceManager.GetString("CompanyAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Компания не была создана.
         /// </summary>
         internal static string CompanyNotCreated {
@@ -210,6 +237,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string CompanyNotFound {
             get {
                 return ResourceManager.GetString("CompanyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Продукт уже находится в избранном.
+        /// </summary>
+        internal static string FavoriteProductAlreadyExists {
+            get {
+                return ResourceManager.GetString("FavoriteProductAlreadyExists", resourceCulture);
             }
         }
         
@@ -246,6 +282,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string FavoriteProductsNotFound {
             get {
                 return ResourceManager.GetString("FavoriteProductsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Отзыв уже существует.
+        /// </summary>
+        internal static string FeedbackAlreadyExists {
+            get {
+                return ResourceManager.GetString("FeedbackAlreadyExists", resourceCulture);
             }
         }
         
@@ -309,6 +354,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string InternalServerError {
             get {
                 return ResourceManager.GetString("InternalServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Уведомление уже существует.
+        /// </summary>
+        internal static string NotificationAlreadyExists {
+            get {
+                return ResourceManager.GetString("NotificationAlreadyExists", resourceCulture);
             }
         }
         
@@ -381,6 +435,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string OrdersNotFound {
             get {
                 return ResourceManager.GetString("OrdersNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Продукт с таким именим уже существует.
+        /// </summary>
+        internal static string ProductNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ProductNameAlreadyExists", resourceCulture);
             }
         }
         
@@ -507,6 +570,15 @@ namespace LionHeart.BusinessLogic.Resources {
         internal static string UserHasNotFeedbackPending {
             get {
                 return ResourceManager.GetString("UserHasNotFeedbackPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Пользователь не найден.
+        /// </summary>
+        internal static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
     }

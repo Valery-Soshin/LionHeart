@@ -18,6 +18,11 @@ public class ProductRepository(ApplicationDbContext dbContext) : RepositoryBase<
             .Include(p => p.Image)
             .SingleOrDefaultAsync(p => p.Id == id);
     }
+    public Task<Product?> GetByName(string name)
+    {
+        return _dbContext.Products.AsNoTracking()
+            .SingleOrDefaultAsync(p => p.Name == name);
+    }
     public Task<List<Product>> FindProducts(List<string> ids)
     {
         return _dbContext.Products.AsNoTrackingWithIdentityResolution()

@@ -1,26 +1,76 @@
-﻿using LionHeart.BusinessLogic.Resources;
+﻿using LionHeart.BusinessLogic.FluentValidations.Models;
+using LionHeart.BusinessLogic.FluentValidations.Validators.Notification;
+using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Dtos.Notification;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
-using System.Reflection.Metadata.Ecma335;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.Notification;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LionHeart.BusinessLogic.Services;
 
 public class NotificationService : INotificationService
 {
     private readonly INotificationRepository _notificationRepository;
+    private readonly NotificationServiceValidators _validators;
+    private readonly UserManager<User> _userManager;
 
-    public NotificationService(INotificationRepository notificationRepository)
+    public NotificationService(INotificationRepository notificationRepository,
+                               NotificationServiceValidators validators,
+                               UserManager<User> userManager)
     {
         _notificationRepository = notificationRepository;
+        _validators = validators;
+        _userManager = userManager;
     }
 
+    public async Task<Result<List<Notification>>> GetNotificationsByUserId(string userId)
+    {
+        try
+        {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<List<Notification>>.Failure(errorMessages);
+            }
+
+            var notifications = await _notificationRepository.GetNotificationsByUserId(userId);
+            return Result<List<Notification>>.Success(notifications);
+        }
+        catch
+        {
+            return Result<List<Notification>>.Failure(ErrorMessage.InternalServerError);
+        }
+    }
     public async Task<Result<Notification>> Add(AddNotificationDto dto)
     {
         try
         {
+            var dtoValidationResult = _validators.AddNotificationDtoValidator.Validate(dto);
+            if (!dtoValidationResult.IsValid)
+            {
+                var errorMessages = dtoValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Notification>.Failure(errorMessages);
+            }
+
+            bool notificationAlreadyExists = await _notificationRepository
+                .Exists(n => n.UserId == dto.UserId && n.Content == dto.Content);
+            bool userExists = await _userManager.Users.AnyAsync(u => u.Id == dto.UserId);
+            var validateAddModel = new ValidateAddModel()
+            {
+                NotificationAlreadyExists = notificationAlreadyExists,
+                UserExists = userExists
+            };
+            var notificationValidatorResult = _validators.NotificationValidator.ValidateAdd(validateAddModel);
+            if (notificationValidatorResult.IsFaulted)
+            {
+                return Result<Notification>.Failure(notificationValidatorResult.ErrorMessages);
+            }
+
             var notification = new Notification
             {
                 UserId = dto.UserId,
@@ -28,8 +78,8 @@ public class NotificationService : INotificationService
                 LinkToAction = dto.LinkToAction,
                 CreatedAt = dto.CreatedAt
             };
-            var result = await _notificationRepository.Add(notification);
-            if (result <= 0)
+            var notificationRepositoryResult = await _notificationRepository.Add(notification);
+            if (notificationRepositoryResult <= 0)
             {
                 return Result<Notification>.Failure(ErrorMessage.NotificationNotCreated);
             }
@@ -44,6 +94,30 @@ public class NotificationService : INotificationService
     {
         try
         {
+            foreach (var dto in dtos)
+            {
+                var dtoValidationResult = _validators.AddNotificationDtoValidator.Validate(dto);
+                if (!dtoValidationResult.IsValid)
+                {
+                    var errorMessages = dtoValidationResult.Errors.Select(e => e.ErrorMessage);
+                    return Result<List<Notification>>.Failure(errorMessages);
+                }
+
+                bool notificationAlreadyExists = await _notificationRepository
+                    .Exists(n => n.UserId == dto.UserId && n.Content == dto.Content);
+                bool userExists = await _userManager.Users.AnyAsync(u => u.Id == dto.UserId);
+                var validateAddModel = new ValidateAddModel()
+                {
+                    NotificationAlreadyExists = notificationAlreadyExists,
+                    UserExists = userExists
+                };
+                var notificationValidatorResult = _validators.NotificationValidator.ValidateAdd(validateAddModel);
+                if (notificationValidatorResult.IsFaulted)
+                {
+                    return Result<List<Notification>>.Failure(notificationValidatorResult.ErrorMessages);
+                }
+            }
+
             var notifications = dtos.Select(d => new Notification()
             {
                 UserId = d.UserId,
@@ -51,8 +125,8 @@ public class NotificationService : INotificationService
                 LinkToAction = d.LinkToAction,
                 CreatedAt = d.CreatedAt
             }).ToList();
-            var result = await _notificationRepository.AddRange(notifications);
-            if (result <= 0)
+            var notificationRepositoryResult = await _notificationRepository.AddRange(notifications);
+            if (notificationRepositoryResult <= 0)
             {
                 return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotCreated);
             }
@@ -67,13 +141,20 @@ public class NotificationService : INotificationService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Notification>.Failure(errorMessages);
+            }
+
             var notification = await _notificationRepository.GetById(id);
             if (notification is null)
             {
                 return Result<Notification>.Failure(ErrorMessage.NotificationNotFound);
             }
-            var result = await _notificationRepository.Remove(notification);
-            if (result <= 0)
+            var notificationRepositoryResult = await _notificationRepository.Remove(notification);
+            if (notificationRepositoryResult <= 0)
             {
                 return Result<Notification>.Failure(ErrorMessage.NotificationNotRemoved);
             }
@@ -88,23 +169,23 @@ public class NotificationService : INotificationService
     {
         try
         {
-            var notifications = await _notificationRepository.GetNotificationsByUserId(userId);
-            if (notifications.Count == 0) return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotFound);
-            var result = await _notificationRepository.RemoveRange(notifications);
-            if (result <= 0) return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotRemoved);
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<List<Notification>>.Failure(errorMessages);
+            }
 
-            return Result<List<Notification>>.Success(notifications);
-        }
-        catch
-        {
-            return Result<List<Notification>>.Failure(ErrorMessage.InternalServerError);
-        }
-    }
-    public async Task<Result<List<Notification>>> GetNotificationsByUserId(string userId)
-    {
-        try
-        {
             var notifications = await _notificationRepository.GetNotificationsByUserId(userId);
+            if (notifications.Count == 0)
+            {
+                return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotFound);
+            }
+            var notificationRepositoryResult = await _notificationRepository.RemoveRange(notifications);
+            if (notificationRepositoryResult <= 0)
+            {
+                return Result<List<Notification>>.Failure(ErrorMessage.NotificationsNotRemoved);
+            }
             return Result<List<Notification>>.Success(notifications);
         }
         catch
@@ -116,8 +197,15 @@ public class NotificationService : INotificationService
     {
         try
         {
-            var result = await _notificationRepository.Count(userId);
-            return Result<int>.Success(result);
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<int>.Failure(errorMessages);
+            }
+
+            int notificationCount = await _notificationRepository.Count(userId);
+            return Result<int>.Success(notificationCount);
         }
         catch
         {

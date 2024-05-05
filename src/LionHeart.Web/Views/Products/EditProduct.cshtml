@@ -2,6 +2,7 @@
 @using LionHeart.Web.Models.Product
 @model EditProductViewModel
 @inject ICategoryService categoryService;
+@inject IBrandService brandService;
 
 @{
     ViewBag.Title = "Редактирование товара";
@@ -9,8 +10,7 @@
 
 <div class="site-body-container min-vh-100 d-flex justify-content-center align-items-center">
     <div class="m-5 w-50 main-color">
-        <form asp-action="EditProduct" method="post" class="card">
-            <input hidden asp-for="Id" value="@Model.Id" />
+        <form asp-action="EditProduct" asp-route-id="@Model.Id" method="post" class="card">
             <div class="p-3 main-theme ">
                 <h3 class="text-center m-0 ">Редактирование товара</h3>
             </div>
@@ -28,6 +28,19 @@
                             if (category.Name != Model.CategoryName)
                             {
                                 <option value="@category.Id">@category.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Бренды</label>
+                    <select asp-for="BrandId" class="form-select custom-input">
+                        <option value="@Model.BrandId" selected>@Model.BrandId</option>
+                        @foreach (var brand in (await brandService.GetBrands()).Value)
+                        {
+                            if (brand.Id != Model.BrandId)
+                            {
+                                <option value="@brand.Id">@brand.Name</option>
                             }
                         }
                     </select>

@@ -8,6 +8,8 @@ public class UnitOfWork : IUnitOfWork
     private readonly ApplicationDbContext _dbContext;
     private IDbContextTransaction? _transaction;
 
+    public bool IsTransactionActive => _transaction is not null;
+
     public UnitOfWork(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;

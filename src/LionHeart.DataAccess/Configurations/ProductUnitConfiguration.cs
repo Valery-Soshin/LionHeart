@@ -9,8 +9,8 @@ public class ProductUnitConfiguration : IEntityTypeConfiguration<ProductUnit>
 {
     public void Configure(EntityTypeBuilder<ProductUnit> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(u => u.Id).ValueGeneratedOnAdd();
 
-        builder.HasQueryFilter(pu => pu.SaleStatus == SaleStatus.Available);
+        builder.HasQueryFilter(u => u.SaleStatus == SaleStatus.Available);
     }
 }

@@ -8,6 +8,6 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(i => i.Id).ValueGeneratedOnAdd();
     }
 }

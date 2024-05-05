@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Dtos.Category;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
 
 namespace LionHeart.Core.Interfaces.Services;
 

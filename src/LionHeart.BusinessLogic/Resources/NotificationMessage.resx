@@ -120,7 +120,4 @@
   <data name="ProductPurchased" xml:space="preserve">
     <value>Спасибо за покупку! Теперь у вас есть отличная возможность поделиться своим мнением о приобретенном товаре. Оставьте отзыв и помогите нам стать лучше!</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
 </root>

@@ -1,11 +1,9 @@
-﻿using LionHeart.Core.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace LionHeart.Core.Dtos.Product;
 
 public class AddProductDto
 {
-    public string UserId { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string CategoryId { get; set; } = null!;
     public string BrandId { get; set; } = null!;

@@ -10,7 +10,7 @@
         <div class="text-center main-color" style="font-size: 150px">⊝</div>
         @foreach (var message in Model.Messages)
         {
-            <div>@message</div>
+            <div class="text-center">@message</div>
         }
         <br />
         @if (Model.ReturnUrl is not null)

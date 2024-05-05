@@ -1,12 +1,14 @@
 ﻿using LionHeart.BusinessLogic.Helpers;
 using LionHeart.BusinessLogic.Resources;
+using LionHeart.BusinessLogic.FluentValidations.Validators.Product;
 using LionHeart.Core.Dtos.Product;
-using LionHeart.Core.Dtos.ProductUnit;
 using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.Product;
+using LionHeart.BusinessLogic.FluentValidations.Models;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -14,17 +16,29 @@ public class ProductService : IProductService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
-    private readonly IProductUnitService _productUnitService;
+    private readonly IProductUnitRepository _productUnitRepository;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IBrandRepository _brandRepository;
+    private readonly ICompanyRepository _companyRepository;
+    private readonly ProductServiceValidators _validators;
     private readonly IImageService _imageService;
 
     public ProductService(IUnitOfWork unitOfWork,
                           IProductRepository productRepository,
-                          IProductUnitService productUnitService,
+                          IProductUnitRepository productUnitRepository,
+                          ICategoryRepository categoryRepository,
+                          IBrandRepository brandRepository,
+                          ICompanyRepository companyRepository,
+                          ProductServiceValidators validators,
                           IImageService imageService)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
-        _productUnitService = productUnitService;
+        _productUnitRepository = productUnitRepository;
+        _categoryRepository = categoryRepository;
+        _brandRepository = brandRepository;
+        _companyRepository = companyRepository;
+        _validators = validators;
         _imageService = imageService;
     }
 
@@ -32,6 +46,13 @@ public class ProductService : IProductService
     {
         try
         {
+            var idValidationResult =_validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Product>.Failure(errorMessages);
+            }
+
             var product = await _productRepository.GetById(id);
             if (product is null)
             {
@@ -44,26 +65,17 @@ public class ProductService : IProductService
             return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
-    public async Task<Result<List<Product>>> FindProducts(List<string> ids)
-    {
-        try
-        {
-            var products = await _productRepository.FindProducts(ids);
-            if (products is null)
-            {
-                return Result<List<Product>>.Failure(ErrorMessage.ProductsNotFound);
-            }
-            return Result<List<Product>>.Success(products);
-        }
-        catch
-        {
-            return Result<List<Product>>.Failure(ErrorMessage.InternalServerError);
-        }
-    }
     public async Task<Result<PagedResponse<Product>>> GetProductsByCategoryId(string categoryId, int pageNumber)
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(categoryId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Product>>.Failure(errorMessages);
+            }
+
             var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.CategoryId == categoryId);
 
@@ -78,6 +90,13 @@ public class ProductService : IProductService
     {
         try
         {
+            var idValidationResult =  _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Product>>.Failure(errorMessages);
+            }
+
             var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.Company.UserId == userId);
 
@@ -92,6 +111,13 @@ public class ProductService : IProductService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(companyId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Product>>.Failure(errorMessages);
+            }
+
             var page = await _productRepository.GetProductsByFilter(
                 pageNumber, PageHelper.PageSize, p => p.CompanyId == companyId);
 
@@ -106,6 +132,13 @@ public class ProductService : IProductService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(brandId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Product>>.Failure(errorMessages);
+            }
+
             var page = await _productRepository.GetProductsByFilter(
                  pageNumber, PageHelper.PageSize, p => p.BrandId == brandId);
 
@@ -132,6 +165,15 @@ public class ProductService : IProductService
     {
         try
         {
+            var productNameValidationResult = _validators.ProductNameValidator
+                .Validate(new ProductNameModel(productName));
+
+            if (!productNameValidationResult.IsValid)
+            {
+                var errorMessages = productNameValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Product>>.Failure(errorMessages);
+            }
+
             var page = await _productRepository.Search(productName, pageNumber, PageHelper.PageSize);
             return Result<PagedResponse<Product>>.Success(page);
         }
@@ -140,14 +182,62 @@ public class ProductService : IProductService
             return Result<PagedResponse<Product>>.Failure(ErrorMessage.InternalServerError);
         }
     }
+    public async Task<Result<List<Product>>> FindProducts(List<string> ids)
+    {
+        try
+        {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(ids));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<List<Product>>.Failure(errorMessages);
+            }
+
+            var products = await _productRepository.FindProducts(ids);
+            return Result<List<Product>>.Success(products);
+        }
+        catch
+        {
+            return Result<List<Product>>.Failure(ErrorMessage.InternalServerError);
+        }
+    }
     public async Task<Result<Product>> Add(AddProductDto dto)
     {
         try
         {
+            var dtoValidatorResult = _validators.AddProductDtoValidator.Validate(dto);
+            if (!dtoValidatorResult.IsValid)
+            {
+                var errorMessages = dtoValidatorResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Product>.Failure(errorMessages);
+            }
+
+            bool productAlreadyExists = await _productRepository.Exists(p => p.Name == dto.Name);
+            bool categoryExists = await _categoryRepository.Exists(c => c.Id == dto.CategoryId);
+            bool brandExists = await _brandRepository.Exists(b => b.Id == dto.BrandId);
+            bool companyExists = await _companyRepository.Exists(c => c.Id == dto.CompanyId);
+            var validateAddModel = new ValidateAddModel
+            {
+                ProductAlreadyExists = productAlreadyExists,
+                CategoryExists = categoryExists,
+                BrandExists = brandExists,
+                CompanyExists = companyExists
+            };
+            var productValidatorResult = _validators.ProductValidator.ValidateAdd(validateAddModel);
+            if (productValidatorResult.IsFaulted)
+            {
+                return Result<Product>.Failure(productValidatorResult.ErrorMessages);
+            }
+
             await _unitOfWork.BeginTransaction();
 
             var imageServiceResult = await _imageService.Add(dto.Image);
-            if (imageServiceResult.IsFaulted) return Result<Product>.Failure(imageServiceResult.ErrorMessages);
+            if (imageServiceResult.IsFaulted)
+            {
+                await _unitOfWork.Rollback();
+                return Result<Product>.Failure(imageServiceResult.ErrorMessages);
+            }
+            var imageName = imageServiceResult.Value;
 
             var product = new Product
             {
@@ -159,30 +249,37 @@ public class ProductService : IProductService
                 Description = dto.Description,
                 Specifications = dto.Specifications,
                 CreatedAt = dto.CreatedAt,
-                Image = new Image() { FileName = imageServiceResult.Value }
+                Image = new Image(imageName)
             };
             var productRepositoryResult = await _productRepository.Add(product);
+            if (productRepositoryResult <= 0)
+            {
+                await _unitOfWork.Rollback();
+                return Result<Product>.Failure(ErrorMessage.ProductNotCreated);
+            }
 
-            var productUnitDtos = Enumerable.Range(0, dto.Quantity).Select(i => new AddProductUnitDto
+            var productUnits = Enumerable.Range(0, dto.Quantity).Select(i => new ProductUnit
             {
                 ProductId = product.Id,
                 CreatedAt = product.CreatedAt,
                 SaleStatus = SaleStatus.Available
             }).ToList();
-            var productUnitServiceResult = await _productUnitService.AddRange(productUnitDtos);
-
-            if (productUnitServiceResult.IsFaulted ||
-                productRepositoryResult <= 0)
+            var productUnitRepositoryResult = await _productUnitRepository.AddRange(productUnits);
+            if (productUnitRepositoryResult <= 0)
             {
                 await _unitOfWork.Rollback();
-                return Result<Product>.Failure(ErrorMessage.InternalServerError);
+                return Result<Product>.Failure(ErrorMessage.ProductUnitsNotCreated);
             }
+
             await _unitOfWork.Commit();
             return Result<Product>.Success(product);
         }
         catch
         {
-            await _unitOfWork.Rollback();
+            if (_unitOfWork.IsTransactionActive)
+            {
+                await _unitOfWork.Rollback();
+            }
             return Result<Product>.Failure(ErrorMessage.InternalServerError);
         }
     }
@@ -190,19 +287,44 @@ public class ProductService : IProductService
     {
         try
         {
+            var dtolValidationResult = _validators.UpdateProductDtoValidator.Validate(dto);
+            if (!dtolValidationResult.IsValid)
+            {
+                var errorMessages = dtolValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Product>.Failure(errorMessages);
+            }
+
+            bool productExists = await _productRepository.Exists(p => p.Id == dto.Id);
+            bool categoryExists = await _categoryRepository.Exists(c => c.Id == dto.CategoryId);
+            bool brandExists = await _brandRepository.Exists(b => b.Id == dto.BrandId);
+            var validateUpdateModel = new ValidateUpdateModel
+            {
+                ProductExists = productExists,
+                CategoryExists = categoryExists,
+                BrandExists = brandExists
+            };
+            var productValidatorResult = _validators.ProductValidator.ValidateUpdate(validateUpdateModel);
+            if (productValidatorResult.IsFaulted)
+            {
+                return Result<Product>.Failure(productValidatorResult.ErrorMessages);
+            }
+
             var product = await _productRepository.GetById(dto.Id);
             if (product is null) return Result<Product>.Failure(ErrorMessage.ProductNotFound);
-            
+
             product.CategoryId = dto.CategoryId;
+            product.BrandId = dto.BrandId;
             product.Name = dto.Name;
             product.Price = dto.Price;
             product.Description = dto.Description;
             product.Specifications = dto.Specifications;
             // todo: update image
 
-            var result = await _productRepository.Update(product);
-            if (result <= 0) return Result<Product>.Failure(ErrorMessage.ProductNotUpdated);
-
+            var productRepositoryResult = await _productRepository.Update(product);
+            if (productRepositoryResult <= 0)
+            {
+                return Result<Product>.Failure(ErrorMessage.ProductNotUpdated);
+            }
             return Result<Product>.Success(product);
         }
         catch
@@ -214,21 +336,32 @@ public class ProductService : IProductService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Product>.Failure(errorMessages);
+            }
+
+            bool productExists = await _productRepository.Exists(p => p.Id == id);
+            var validateRemoveModel = new ValidateRemoveModel(productExists);
+            var productValidatorResult = _validators.ProductValidator.ValidateRemove(validateRemoveModel);
+            if (productValidatorResult.IsFaulted)
+            {
+                return Result<Product>.Failure(productValidatorResult.ErrorMessages);
+            }
+
             var product = await _productRepository.GetById(id);
             if (product is null)
             {
-                var errorMessages = new List<string>
-                {
-                    ErrorMessage.ProductNotFound,
-                    ErrorMessage.ProductNotRemoved
-                };
-                return Result<Product>.Failure(errorMessages);
+                return Result<Product>.Failure(ErrorMessage.ProductNotFound);
             }
             product.IsDeleted = true;
-
-            var result = await _productRepository.Update(product);
-            if (result <= 0) return Result<Product>.Failure(ErrorMessage.ProductNotRemoved);
-
+            var productRepositoryResult = await _productRepository.Update(product);
+            if (productRepositoryResult <= 0)
+            {
+                return Result<Product>.Failure(ErrorMessage.ProductNotRemoved);
+            }
             return Result<Product>.Success(product);
         }
         catch

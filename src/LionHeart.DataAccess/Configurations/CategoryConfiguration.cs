@@ -8,7 +8,9 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        builder.Property(b => b.Id).ValueGeneratedOnAdd();
+        builder.Property(c => c.Id).ValueGeneratedOnAdd();
+
+        builder.HasAlternateKey(c => c.Name);
 
         builder.HasMany(c => c.SubCategories)
             .WithOne()

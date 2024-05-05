@@ -47,6 +47,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         _dbSet.RemoveRange(entities);
         return SaveChangesAsync();
     }
+    public virtual Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
+    {
+        return _dbSet.AnyAsync(filter);
+    }
     protected virtual async Task<int> SaveChangesAsync()
     {
         int result = -1;

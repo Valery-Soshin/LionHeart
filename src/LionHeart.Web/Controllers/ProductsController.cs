@@ -132,7 +132,6 @@ public class ProductsController : MainController
 
         var dto = new AddProductDto
         {
-            UserId = userId,
             Name = model.Name,
             CategoryId = model.CategoryId,
             BrandId = model.BrandId,
@@ -146,16 +145,17 @@ public class ProductsController : MainController
         };
         var productServiceResult = await _productService.Add(dto);
         if (productServiceResult.IsFaulted) return Warning(productServiceResult.ErrorMessages, true);
+
         return Redirect(RedirectHelper.SUPPLIER_PANEL_INDEX);
     }
 
     [HttpGet]
     [Authorize(Roles = RoleNameHelper.Supplier)]
-    public async Task<IActionResult> EditProduct(string productId)
+    public async Task<IActionResult> EditProduct(string id)
     {
         if (!ModelState.IsValid) return Warning(ModelState);
 
-        var productServiceResult = await _productService.GetById(productId);
+        var productServiceResult = await _productService.GetById(id);
         if (productServiceResult.IsFaulted) return Warning(productServiceResult.ErrorMessages);
         var product = productServiceResult.Value;
 
@@ -164,6 +164,7 @@ public class ProductsController : MainController
             Id = product.Id,
             CategoryId = product.CategoryId,
             CategoryName = product.Category.Name,
+            BrandId = product.BrandId,
             Name = product.Name,
             Price = product.Price,
             Description = product.Description,
@@ -183,6 +184,7 @@ public class ProductsController : MainController
         {
             Id = model.Id,
             CategoryId = model.CategoryId,
+            BrandId = model.BrandId,
             Name = model.Name,
             Price = model.Price,
             Description = model.Description,

@@ -1,6 +1,6 @@
 ﻿using LionHeart.BusinessLogic.Resources;
 using LionHeart.Core.Interfaces.Services;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
 using Microsoft.AspNetCore.Http;
 
 namespace LionHeart.BusinessLogic.Services;

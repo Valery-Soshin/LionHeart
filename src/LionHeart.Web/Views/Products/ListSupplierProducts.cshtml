@@ -35,7 +35,7 @@
                         <td>@product.Quantity</td>
                         <td>@product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
                         <td class="d-flex justify-content-center">
-                            <a asp-action="EditProduct" asp-route-productId="@product.Id" class="link-secondary">Изменить</a>
+                            <a asp-action="EditProduct" asp-route-id="@product.Id" class="link-secondary">Изменить</a>
                             <a href="#" class="ms-5 link-danger" onclick="showModalWindow('@product.Id')">Удалить</a>
                         </td>
                     </tr>

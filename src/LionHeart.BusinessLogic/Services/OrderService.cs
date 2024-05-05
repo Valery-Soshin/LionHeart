@@ -1,13 +1,14 @@
-﻿using LionHeart.BusinessLogic.Helpers;
+﻿using LionHeart.BusinessLogic.FluentValidations.Models;
+using LionHeart.BusinessLogic.FluentValidations.Validators.Order;
+using LionHeart.BusinessLogic.Helpers;
 using LionHeart.BusinessLogic.Resources;
-using LionHeart.Core.Dtos.Notification;
 using LionHeart.Core.Dtos.Order;
-using LionHeart.Core.Dtos.ProductUnit;
 using LionHeart.Core.Enums;
 using LionHeart.Core.Interfaces.Repositories;
 using LionHeart.Core.Interfaces.Services;
 using LionHeart.Core.Models;
-using LionHeart.Core.Result;
+using LionHeart.Core.Results;
+using LionHeart.Core.ValidationModels.Order;
 
 namespace LionHeart.BusinessLogic.Services;
 
@@ -16,32 +17,42 @@ public class OrderService : IOrderService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
-    private readonly IProductService _productService;
-    private readonly IProductUnitService _productUnitService;
-    private readonly IBasketEntryService _basketEntryService;
-    private readonly INotificationService _notificationService;
+    private readonly IProductRepository _productRepository;
+    private readonly IProductUnitRepository _productUnitRepository;
+    private readonly IBasketEntryRepository _basketEntryRepository;
+    private readonly INotificationRepository _notificationRepository;
+    private readonly OrderServiceValidators _validators;
 
     public OrderService(IUnitOfWork unitOfWork,
                         IOrderRepository orderRepository,
                         IOrderItemRepository orderItemRepository,
-                        IProductService productService,
-                        IProductUnitService productUnitService,
-                        IBasketEntryService basketEntryService,
-                        INotificationService notificationService)
+                        IProductRepository productRepository,
+                        IProductUnitRepository productUnitRepository,
+                        IBasketEntryRepository basketEntryRepository,
+                        INotificationRepository notificationRepository,
+                        OrderServiceValidators validators)
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
-        _productService = productService;
-        _productUnitService = productUnitService;
-        _basketEntryService = basketEntryService;
-        _notificationService = notificationService;
+        _productRepository = productRepository;
+        _productUnitRepository = productUnitRepository;
+        _basketEntryRepository = basketEntryRepository;
+        _notificationRepository = notificationRepository;
+        _validators = validators;
     }
 
     public async Task<Result<Order>> GetById(string id)
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(id));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Order>.Failure(errorMessages);
+            }
+
             var order = await _orderRepository.GetById(id);
             if (order is null)
             {
@@ -58,6 +69,13 @@ public class OrderService : IOrderService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<Order>>.Failure(errorMessages);
+            }
+
             var page = await _orderRepository.GetOrdersByFilter(
                 pageNumber, PageHelper.PageSize, o => o.UserId == userId);
 
@@ -72,6 +90,13 @@ public class OrderService : IOrderService
     {
         try
         {
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<PagedResponse<OrderItem>>.Failure(errorMessages);
+            }
+
             var page = await _orderItemRepository.GetOrderItemsByFilter(
                 pageNumber, PageHelper.PageSize, o => o.Order.UserId == userId);
 
@@ -86,24 +111,29 @@ public class OrderService : IOrderService
     {
         try
         {
+            var dtoValidationResult = _validators.AddOrderDtoValidator.Validate(dto);
+            if (!dtoValidationResult.IsValid)
+            {
+                var errorMessages = dtoValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<Order>.Failure(errorMessages);
+            }
+
+            var productIds = dto.Products.Select(p => p.ProductId).ToList();
+            var entryIds = dto.Products.Select(p => p.EntryId).ToList();
+            var products = await _productRepository.FindProducts(productIds);
+            
+            var validateAddModel = new ValidateAddModel()
+            {
+                FoundDtoProductsInDb = products,
+                DtoProducts = dto.Products
+            };
+            var orderValidatorResult = _validators.OrderValidator.ValidateAdd(validateAddModel);
+            if (orderValidatorResult.IsFaulted)
+            {
+                return Result<Order>.Failure(orderValidatorResult.ErrorMessages);
+            }
+
             await _unitOfWork.BeginTransaction();
-
-            var productServiceResult = await _productService.FindProducts(
-                dto.Products.Select(p => p.ProductId).ToList());
-            if (productServiceResult.IsFaulted)
-            {
-                return Result<Order>.Failure(ErrorMessage.ProductsNotFound);
-            }
-            var products = productServiceResult.Value;
-
-            bool allProductsFound = products.Count == dto.Products.Count;
-            bool areEnoughProducts = products.Exists(
-                p => p.Units.Count < dto.Products.Single(d => d.ProductId == p.Id).ProductQuantity);
-
-            if (areEnoughProducts && allProductsFound)
-            {
-                return Result<Order>.Failure(ErrorMessage.ProductsNotEnough);
-            }
 
             var order = new Order
             {
@@ -111,8 +141,8 @@ public class OrderService : IOrderService
                 TotalPrice = dto.BasketTotalPrice,
                 CreatedAt = dto.CreateAt
             };
-            var productUnitDtos = new List<UpdateProductUnitDto>();
-            var notificationDtos = new List<AddNotificationDto>();
+            var productUnits = new List<ProductUnit>();
+            var notifications = new List<Notification>();
             foreach (var product in products)
             {
                 var productQuantity = dto.Products
@@ -130,11 +160,7 @@ public class OrderService : IOrderService
                 {
                     var productUnit = product.Units[i];
                     productUnit.SaleStatus = SaleStatus.Sold;
-                    productUnitDtos.Add(new UpdateProductUnitDto
-                    {
-                        Id = productUnit.Id,
-                        SaleStatus = productUnit.SaleStatus
-                    });
+                    productUnits.Add(productUnit);
                     orderItem.Details.Add(new OrderItemDetail
                     {
                         OrderItemId = order.Id,
@@ -142,24 +168,23 @@ public class OrderService : IOrderService
                     });
                 }
                 order.Items.Add(orderItem);
-                notificationDtos.Add(new AddNotificationDto()
+                notifications.Add(new Notification()
                 {
                     UserId = dto.UserId,
-                    ProductId = product.Id,
                     Content = NotificationMessage.ProductPurchased,
                     LinkToAction = $"/Feedbacks/CreateFeedback/?productId={product.Id}",
                     CreatedAt = DateTimeOffset.UtcNow
                 });
             }
-            var basketEntryServiceResult = await _basketEntryService.RemoveRange(
-                dto.Products.Select(p => p.EntryId).ToList());
-            var productUnitServiceResult = await _productUnitService.UpdateRange(productUnitDtos);
-            var notificationServiceResult = await _notificationService.AddRange(notificationDtos);
+            var basketEntries = await _basketEntryRepository.Find(entryIds);
+            var basketEntryServiceResult = await _basketEntryRepository.RemoveRange(basketEntries);
+            var productUnitServiceResult = await _productUnitRepository.UpdateRange(productUnits);
+            var notificationServiceResult = await _notificationRepository.AddRange(notifications);
             var orderRepositoryResult = await _orderRepository.Add(order);
 
-            if (basketEntryServiceResult.IsFaulted || 
-                productUnitServiceResult.IsFaulted ||
-                notificationServiceResult.IsFaulted || 
+            if (basketEntryServiceResult <= 0 ||
+                productUnitServiceResult <= 0 ||
+                notificationServiceResult <= 0 ||
                 orderRepositoryResult <= 0)
             {
                 await _unitOfWork.Rollback();
@@ -178,8 +203,15 @@ public class OrderService : IOrderService
     {
         try
         {
-            var result = await _orderRepository.Any(userId);
-            return Result<bool>.Success(result);
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<bool>.Failure(errorMessages);
+            }
+
+            bool orderAny = await _orderRepository.Any(userId);
+            return Result<bool>.Success(orderAny);
         }
         catch
         {
@@ -190,8 +222,15 @@ public class OrderService : IOrderService
     {
         try
         {
-            var result = await _orderRepository.Exists(userId, productId);
-            return Result<bool>.Success(result);
+            var idValidationResult = _validators.IdValidator.Validate(new IdModel(userId, productId));
+            if (!idValidationResult.IsValid)
+            {
+                var errorMessages = idValidationResult.Errors.Select(e => e.ErrorMessage);
+                return Result<bool>.Failure(errorMessages);
+            }
+
+            bool orderExists = await _orderRepository.Exists(userId, productId);
+            return Result<bool>.Success(orderExists);
         }
         catch
         {
