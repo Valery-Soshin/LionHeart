@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LionHeart.BusinessLogic\LionHeart.BusinessLogic.csproj" />
     <ProjectReference Include="..\LionHeart.Core\LionHeart.Core.csproj" />
-    <ProjectReference Include="..\LionHeart.DataAccess\LionHeart.DataAccess.csproj" />
+    <ProjectReference Include="..\LionHeart.Infrastructure\LionHeart.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

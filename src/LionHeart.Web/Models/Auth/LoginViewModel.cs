@@ -13,4 +13,7 @@ public class LoginViewModel
     public string Password { get; set; } = null!;
 
     public bool RememberMe { get; set; }
+
+    [Required]
+    public string Captcha { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
 ﻿using LionHeart.Core.Models;
+using LionHeart.Infrastructure.GoogleReCaptcha;
 using LionHeart.Web.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,14 +13,17 @@ public class AuthController : MainController
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly IGoogleReCaptchaValidator _captchaValidator;
 
     public AuthController(UserManager<User> userManager,
                           RoleManager<IdentityRole> roleManager,
-                          SignInManager<User> signInManager)
+                          SignInManager<User> signInManager,
+                          IGoogleReCaptchaValidator captchaValidator)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
+        _captchaValidator = captchaValidator;
     }
 
     [HttpGet]
@@ -32,6 +36,11 @@ public class AuthController : MainController
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
+        if (!await _captchaValidator.IsValidCaptcha(model.Captcha))
+        {
+            return Content("Captcha validation failed");
+        }
+
         if (ModelState.IsValid)
         {
             var result = await _signInManager.PasswordSignInAsync(
@@ -59,6 +68,11 @@ public class AuthController : MainController
     [HttpPost]
     public async Task<IActionResult> RegisterUser(RegisterUserViewModel model)
     {
+        if (!await _captchaValidator.IsValidCaptcha(model.Captcha))
+        {
+            return Content("Captcha validation failed");
+        }
+
         if (ModelState.IsValid)
         {
             var user = new User

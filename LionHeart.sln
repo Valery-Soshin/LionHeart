@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.Web", "src\LionHeart.Web\LionHeart.Web.csproj", "{16C607C1-DA3A-464D-ACD0-49A18BA94EAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.DataAccess", "src\LionHeart.DataAccess\LionHeart.DataAccess.csproj", "{D2E0E5D5-51FA-4FC5-B483-58F174C3DD37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.Infrastructure", "src\LionHeart.Infrastructure\LionHeart.Infrastructure.csproj", "{D2E0E5D5-51FA-4FC5-B483-58F174C3DD37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.Core", "src\LionHeart.Core\LionHeart.Core.csproj", "{FF383EA9-3A66-4A50-8941-B48647CED924}"
 EndProject

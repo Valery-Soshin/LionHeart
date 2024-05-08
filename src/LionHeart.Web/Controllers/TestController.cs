@@ -1,6 +1,6 @@
 ﻿using LionHeart.Core.Enums;
 using LionHeart.Core.Models;
-using LionHeart.DataAccess;
+using LionHeart.Infrastructure.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -18,4 +18,7 @@ public class RegisterUserViewModel
     public string Password { get; set; } = null!;
 
     public bool RemeberMe { get; set; }
+
+    [Required]
+    public string Captcha { get; set; } = null!;
 }

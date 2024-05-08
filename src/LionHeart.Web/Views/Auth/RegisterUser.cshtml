@@ -1,5 +1,6 @@
 ﻿@using LionHeart.Web.Models.Auth
 @model RegisterUserViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewBag.Title = "Регистрация пользователя";
@@ -12,6 +13,7 @@
         </div>
         <div class="card-body bg-light">
             <form asp-action="RegisterUser" method="post">
+                <input asp-for="Captcha" type="hidden" name="captcha" id="captchaInput" value="" />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="mb-3">
                     <label class="form-label">Имя</label>
@@ -47,3 +49,15 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="https://www.google.com/recaptcha/api.js?render=@Configuration["GoogleReCaptcha:SiteKey"]"></script>
+    <script>
+        grecaptcha.ready(function () {
+            grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', { action: 'Login' }).then(function (token) {
+                $("#captchaInput").val(token);
+            });
+        });
+    </script>
+}

@@ -11,3 +11,5 @@ Technologies:
 - Result Pattern
 - NLog
 - Fluent Validation
+- Refit
+- GoogleReCaptcha

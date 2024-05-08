@@ -1,5 +1,5 @@
 using LionHeart.BusinessLogic.DependencyInjection;
-using LionHeart.DataAccess.DependencyInjection;
+using LionHeart.Infrastructure.DependencyInjection;
 using LionHeart.Web.Configurations;
 using LionHeart.Web.Helpers;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -15,8 +15,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddBusinessLogic(builder.Configuration);
-builder.Services.AddDataAccess(builder.Configuration);
-
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddCookieSettings();
 builder.WebHost.AddKestrelSettings();
 
