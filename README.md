@@ -10,6 +10,7 @@ Technologies:
 - Repository Pattern
 - Result Pattern
 - NLog
+- xUnit, Moq
 - Fluent Validation
 - Refit
 - GoogleReCaptcha
