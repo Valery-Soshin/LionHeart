@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /src/LionHeart.Core/Models/OrderDetail.cs
 /.gitignore
+/src/LionHeart.Web/wwwroot/images
