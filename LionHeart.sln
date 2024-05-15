@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.BusinessLogic", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8ECD739C-4E3D-4548-A502-3684637A35FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LionHeart.BusinessLogic.Tests", "tests\LionHeart.BusinessLogic.Tests\LionHeart.BusinessLogic.Tests.csproj", "{3595A707-2DC7-4438-BBC8-4668D2C66F04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionHeart.BusinessLogic.Tests", "tests\LionHeart.BusinessLogic.Tests\LionHeart.BusinessLogic.Tests.csproj", "{3595A707-2DC7-4438-BBC8-4668D2C66F04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

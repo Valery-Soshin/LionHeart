@@ -6,13 +6,13 @@
 - C#
 - ASP.NET Core MVC
 - ASP.NET Core Identity
-- EF Core
-- PostgreSQL
+- EF Core, PostgreSQL
+- Fluent Validation
 - Layered architecture
 - Repository Pattern
 - Result Pattern
+- Pagination
 - NLog
-- xUnit, Moq
-- Fluent Validation
+- xUnit, Moq, AutoFixture, FluentAssertions
 - Refit
 - GoogleReCaptcha
