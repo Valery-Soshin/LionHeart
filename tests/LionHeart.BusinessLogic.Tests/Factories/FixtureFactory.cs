@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 
-namespace LionHeart.BusinessLogic.Tests.Factories.AutoFixture;
+namespace LionHeart.BusinessLogic.Tests.Factories;
 
 public static class FixtureFactory
 {

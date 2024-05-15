@@ -5,12 +5,12 @@ using FluentAssertions;
 using Moq;
 using LionHeart.Core.Models;
 using AutoFixture;
-using LionHeart.BusinessLogic.Tests.Factories.AutoFixture;
 using AutoFixture.Xunit2;
 using LionHeart.Core.Dtos.ProductUnit;
 using System.Linq.Expressions;
 using LionHeart.BusinessLogic.FluentValidations.Validators.ProductUnit;
 using FluentValidation.Results;
+using LionHeart.BusinessLogic.Tests.Factories;
 
 namespace LionHeart.BusinessLogic.Tests.ServiceTests.ProductUnitServiceTests;
 
@@ -37,12 +37,11 @@ public abstract class ProductUnitServiceTestsBase
 public class GetById : ProductUnitServiceTestsBase
 {
     [Theory, AutoData]
-    public async Task ShouldReturnsSuccessResult_WhenMethodIsCompleted(Core.Models.ProductUnit productUnit)
+    public async Task ShouldReturnsSuccessResult_WhenProductUnitExists(ProductUnit productUnit)
     {
         // Arrange
 
-        _productUnitRepositoryMock
-            .Setup(m => m.GetById(productUnit.Id))
+        _productUnitRepositoryMock.Setup(m => m.GetById(productUnit.Id))
             .ReturnsAsync(productUnit);
 
         // Act
@@ -54,34 +53,34 @@ public class GetById : ProductUnitServiceTestsBase
         productUnitServiceResult.IsCompleted.Should().BeTrue();
     }
 
-    [Fact]
-    public async Task ShouldReturnsFailureResult_WhenProductUnitDoesNotExist()
+    [Theory, AutoData]
+    public async Task ShouldReturnsFailureResult_WhenProductUnitDoesNotExist(string productUnitId)
     {
         // Arrange
 
-        _productUnitRepositoryMock.Setup<Task<Core.Models.ProductUnit>>(m => m.GetById("-"))
-            .ReturnsAsync<IProductUnitRepository, Core.Models.ProductUnit>(null as Core.Models.ProductUnit);
+        _productUnitRepositoryMock.Setup(m => m.GetById(productUnitId))
+            .ReturnsAsync(null as ProductUnit);
 
         // Act
 
-        var productUnitServiceResult = await _productUnitService.GetById("-");
+        var productUnitServiceResult = await _productUnitService.GetById(productUnitId);
 
         // Assert
 
         productUnitServiceResult.IsFaulted.Should().BeTrue();
     }
 
-    [Fact]
-    public async Task ShouldReturnsFailureResult_WhenMethodThrowsException()
+    [Theory, AutoData]
+    public async Task ShouldReturnsFailureResult_WhenRepositoryThrowsException(string productUnitId)
     {
         // Arrange
 
-        _productUnitRepositoryMock.Setup(m => m.GetById("-"))
+        _productUnitRepositoryMock.Setup(m => m.GetById(productUnitId))
             .ThrowsAsync(new Exception());
 
         // Act
 
-        var productUnitServiceResult = await _productUnitService.GetById("-");
+        var productUnitServiceResult = await _productUnitService.GetById(productUnitId);
 
         // Assert
 
@@ -125,7 +124,7 @@ public class Add : ProductUnitServiceTestsBase
     }
 
     [Theory, AutoData]
-    public async Task ShouldReturnsSuccessResult_WhenMethodThrowsException(AddProductUnitDto dto)
+    public async Task ShouldReturnsSuccessResult_WhenRepositoryThrowsException(AddProductUnitDto dto)
     {
         // Arrange
 
@@ -178,7 +177,7 @@ public class AddRange : ProductUnitServiceTestsBase
     }
 
     [Theory, AutoData]
-    public async Task ShouldReturnsFailureResult_WhenMethodThrowsException(List<AddProductUnitDto> dtos)
+    public async Task ShouldReturnsFailureResult_WhenRepositoryThrowsException(List<AddProductUnitDto> dtos)
     {
         // Arrange
 
@@ -237,7 +236,7 @@ public class Update : ProductUnitServiceTestsBase
     }
 
     [Theory, AutoData]
-    public async Task ShouldReturnsFailureResult_WhenMethodThrowsException(UpdateProductUnitDto dto, Core.Models.ProductUnit productUnit)
+    public async Task ShouldReturnsFailureResult_WhenRepositoryThrowsException(UpdateProductUnitDto dto, ProductUnit productUnit)
     {
         // Arrange
 
@@ -356,7 +355,7 @@ public class UpdateRange : ProductUnitServiceTestsBase
 public class Remove : ProductUnitServiceTestsBase
 {
     [Theory, AutoData]
-    public async Task ShouldReturnsSuccessResult_WhenProductUnitExists(string productUnitId, Core.Models.ProductUnit productUnit)
+    public async Task ShouldReturnsSuccessResult_WhenProductUnitExists(string productUnitId, ProductUnit productUnit)
     {
         // Arrange
 
@@ -380,8 +379,8 @@ public class Remove : ProductUnitServiceTestsBase
     {
         // Arrange
 
-        _productUnitRepositoryMock.Setup<Task<Core.Models.ProductUnit>>(m => m.GetById(productUnitId))
-            .ReturnsAsync<IProductUnitRepository, Core.Models.ProductUnit>(null as Core.Models.ProductUnit);
+        _productUnitRepositoryMock.Setup(m => m.GetById(productUnitId))
+            .ReturnsAsync(null as ProductUnit);
 
         // Act
 
@@ -393,7 +392,7 @@ public class Remove : ProductUnitServiceTestsBase
     }
 
     [Theory, AutoData]
-    public async Task ShouldReturnsFailureResult_WhenMethodThrowsException(string productUnitId, Core.Models.ProductUnit productUnit)
+    public async Task ShouldReturnsFailureResult_WhenRepositoryThrowsException(string productUnitId, ProductUnit productUnit)
     {
         // Arrange
 
@@ -432,7 +431,7 @@ public class Count : ProductUnitServiceTestsBase
     }
 
     [Theory, AutoData]
-    public async Task ShouldReturnsFailureResult_WhenMethodThrowsException(string productId)
+    public async Task ShouldReturnsFailureResult_WhenRepositoryThrowsException(string productId)
     {
         // Arrange
 

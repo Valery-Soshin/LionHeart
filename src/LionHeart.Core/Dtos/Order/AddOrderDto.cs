@@ -4,8 +4,8 @@ public class AddOrderDto
 {
     public string UserId { get; set; } = null!;
     public decimal BasketTotalPrice { get; set; }
-    public List<AddOrderProductDto> Products { get; set; } = [];
     public DateTimeOffset CreateAt { get; set; }
+    public List<AddOrderProductDto> Products { get; set; } = [];
 }
 
 public class AddOrderProductDto

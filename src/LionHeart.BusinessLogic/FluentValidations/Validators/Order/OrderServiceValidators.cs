@@ -7,9 +7,9 @@ namespace LionHeart.BusinessLogic.FluentValidations.Validators.Order;
 
 public class OrderServiceValidators
 {
-    public IOrderValidator OrderValidator { get; }
-    public IValidator<AddOrderDto> AddOrderDtoValidator { get; }
-    public IValidator<IdModel> IdValidator { get; }
+    public virtual IOrderValidator OrderValidator { get; }
+    public virtual IValidator<AddOrderDto> AddOrderDtoValidator { get; }
+    public virtual IValidator<IdModel> IdValidator { get; }
 
     public OrderServiceValidators(IOrderValidator orderValidator,
                                   IValidator<AddOrderDto> addOrderDtoValidator,

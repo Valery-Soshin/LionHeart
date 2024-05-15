@@ -7,10 +7,10 @@ namespace LionHeart.BusinessLogic.FluentValidations.Validators.ProductUnit;
 
 public class ProductUnitServiceValidators
 {
-    public IProductUnitValidator ProductUnitValidator { get; }
-    public IValidator<AddProductUnitDto> AddProductUnitDtoVadidator { get; }
-    public IValidator<UpdateProductUnitDto> UpdateProductUnitValidator { get; }
-    public IValidator<IdModel> IdValidator { get; }
+    public virtual IProductUnitValidator ProductUnitValidator { get; }
+    public virtual IValidator<AddProductUnitDto> AddProductUnitDtoVadidator { get; }
+    public virtual IValidator<UpdateProductUnitDto> UpdateProductUnitValidator { get; }
+    public virtual IValidator<IdModel> IdValidator { get; }
 
     public ProductUnitServiceValidators(IProductUnitValidator productUnitValidator,
                                         IValidator<AddProductUnitDto> addProductUnitDtoVadidator,

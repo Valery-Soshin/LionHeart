@@ -11,7 +11,7 @@ public class CompanyNameValidator : AbstractValidator<CompanyNameModel>
     {
         RuleFor(m => m.Name)
             .NotEmpty()
-            .MaximumLength(ModelPropertyConstraints.CompanyNameMinLength)
+            .MinimumLength(ModelPropertyConstraints.CompanyNameMinLength)
             .MaximumLength(ModelPropertyConstraints.CompanyNameMaxLength)
             .WithName(PropertyName.CompanyName);
     }
