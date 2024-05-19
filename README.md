@@ -9,7 +9,7 @@
 - EF Core, PostgreSQL
 - Fluent Validation
 - Layered architecture
-- Repository Pattern
+- Repository Pattern, UnitOfWork pattern
 - Result Pattern
 - Pagination
 - NLog
